@@ -1,0 +1,48 @@
+@import "tailwindcss";
+/* @import url('https://googleapis.com'); */
+@import url('https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+
+/* @tailwind base; */
+/* @tailwind components; */
+/* @tailwind utilities; */
+
+h1, h2, h3 {
+  font-family: "Playfair Display", serif;
+}
+
+body, p {
+  font-family: "Poppins", sans-serif;
+}
+.bagel-fat-one-regular {
+  font-family: "Bagel Fat One", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.container {
+  padding: 15px;
+  /* background: #000; */
+}
+.bgColor {
+  background-color: #0edb0e;
+}
+.circle {
+  width: 450px;
+  height: 450px;
+  background: linear-gradient(to bottom, #0edb0e 40%, #0a9a0a 40%, #0edb0e 80%);
+  filter: blur(120px);
+
+}html, body {
+  overflow-x: hidden;
+}
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}

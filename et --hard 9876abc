@@ -1,0 +1,10 @@
+[33m56ca663[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{0}: reset: moving to HEAD
+[33m56ca663[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{1}: reset: moving to HEAD
+[33m56ca663[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{2}: checkout: moving from main to main
+[33m56ca663[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{3}: Branch: renamed refs/heads/main to refs/heads/main
+[33m56ca663[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{5}: Branch: renamed refs/heads/master to refs/heads/main
+[33m56ca663[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{7}: checkout: moving from greenp to master
+[33m8e6f9b4[m[33m ([m[1;32mgreenp[m[33m)[m HEAD@{8}: commit: updated codes
+[33m48556f7[m HEAD@{9}: commit: updated codes
+[33m56ca663[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{10}: checkout: moving from master to greenp
+[33m56ca663[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/master[m[33m)[m HEAD@{11}: commit (initial): Initial commit
