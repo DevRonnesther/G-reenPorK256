@@ -207,12 +207,13 @@ const hero = () => {
       
 //     }}
 
-    className="absolute inset-0"
+    className="absolute overflow-hidden  inset-0"
             style={{
                 background: "linear-gradient(145deg, #1a0000 0%, #3d0000 40%, #7c1010 75%, #c0392b 100%)",
 
             }}
-            className="overflow-hidden ">
+            
+        >
             <div
                 className="relative w-full h-screen backdrop-blur-none bg-black/10   overflow-hidden"
 
