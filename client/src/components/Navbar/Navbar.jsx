@@ -2,228 +2,213 @@ import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { ImWhatsapp } from "react-icons/im";
 import green from "../../assets/GreenBrandLogo.png";
-
 import {
-  Menu,
-  X,
-  Home,
-  Store,
-  Info,
-  Phone,
-  ShoppingCart,
-  User,
-  PiggyBank,
+  Menu, X, Home, Store, Info, Phone,
+  ShoppingCart, Flame,
 } from "lucide-react";
 
-const HeaderLinks = [
-  {
-    Icon: <Home className="w-4 h-4" />,
-    Display: "HOME",
-    Link: "/",
-  },
-  {
-    Icon: <Store className="w-4 h-4" />,
-    Display: "PRODUCT",
-    Link: "/menu",
-  },
-  {
-    Icon: <Info className="w-4 h-4" />,
-    Display: "WHO WE ARE",
-    Link: "/aboutUs",
-  },
-  {
-    Icon: <Phone className="w-4 h-4" />,
-    Display: "CONTACT",
-    Link: "/contactUs",
-  },
+const NAV_LINKS = [
+  { icon: <Home size={15} />, label: "Home", to: "/" },
+  { icon: <Store size={15} />, label: "Menu", to: "/menu" },
+  { icon: <Info size={15} />, label: "About", to: "/aboutUs" },
+  { icon: <Phone size={15} />, label: "Contact", to: "/contactUs" },
 ];
 
+const CART_COUNT = 2; // wire to real cart state when ready
+
 const Navbar = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isScrolled, setIsScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
-    window.addEventListener("scroll", handleScroll);
-
-    return () => window.removeEventListener("scroll", handleScroll);
+  // Close mobile menu on resize to desktop
+  useEffect(() => {
+    const onResize = () => { if (window.innerWidth >= 1024) setOpen(false); };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
   }, []);
 
   return (
-    <header
-      className={`sticky top-0 z-50 transition-all duration-500 ${isScrolled
-          ? "bg-none backdrop-blur-2xl shadow-2xl"
-          : "bg-none backdrop-blur-xl"
-        }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <>
+      <header className="sticky top-0 z-50">
+        <div
+          className={`transition-all duration-500 ${scrolled ? "bg-black/30 backdrop-blur-2xl shadow-lg shadow-black/20" : "bg-transparent"
+            }`}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex items-center justify-between h-16 sm:h-20">
 
-        {/* NAVBAR */}
-        <div className="flex items-center justify-between h-[85px]">
+              {/* ── Logo ── */}
+              <Link to="/" className="flex items-center gap-2 group shrink-0">
+                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shadow-md shadow-red-900/40 group-hover:scale-105 transition-transform duration-200">
+                  <Flame size={16} className="text-white" />
+                </div>
+                <span className="text-white font-black text-xl tracking-tight leading-none">
+                  GREEN<span className="text-orange-400">Bites</span>
+                </span>
+              </Link>
 
-          {/* LOGO */}
-          <Link
-            to="/"
-            className="flex items-center group shrink-0"
-          >
-            <img
-              src={green}
-              alt="Green Pork"
-              className="w-32 sm:w-40 md:w-60 object-contain transition-transform duration-300 group-hover:scale-105"
-            />
-          </Link>
+              {/* ── Desktop nav pill ── */}
+              <nav className="hidden lg:flex items-center gap-1 bg-white/10 border border-white/15 backdrop-blur-xl px-2 py-1.5 rounded-full">
+                {NAV_LINKS.map(({ icon, label, to }) => (
+                  <NavLink
+                    key={to}
+                    to={to}
+                    className={({ isActive }) =>
+                      `flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-200 ${isActive
+                        ? "bg-white text-gray-900 shadow-sm"
+                        : "text-white/80 hover:text-white hover:bg-white/10"
+                      }`
+                    }
+                  >
+                    {icon}
+                    {label}
+                  </NavLink>
+                ))}
+              </nav>
 
-          {/* DESKTOP NAVIGATION */}
-          <nav className="hidden lg:flex items-center gap-2 bg-white/5 border border-white/10 px-3 py-2 rounded-full backdrop-blur-xl">
+              {/* ── Desktop right actions ── */}
+              <div className="hidden lg:flex items-center gap-3">
+                {/* Cart */}
+                <Link
+                  to="/cart"
+                  className="relative w-10 h-10 rounded-xl bg-white/10 border border-white/15 hover:bg-white/20 flex items-center justify-center transition-all duration-200"
+                  aria-label="Cart"
+                >
+                  <ShoppingCart size={18} className="text-white" />
+                  {CART_COUNT > 0 && (
+                    <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-black flex items-center justify-center leading-none">
+                      {CART_COUNT}
+                    </span>
+                  )}
+                </Link>
 
-            {HeaderLinks.map((item, index) => (
-              <NavLink
-                key={index}
-                to={item.Link}
-                className={({ isActive }) =>
-                  `relative flex items-center gap-2 px-5 py-3 rounded-full text-sm font-semibold transition-all duration-300 ${isActive
-                    ? "bg-[#0edb0e] text-white shadow-lg"
-                    : "text-white hover:bg-white/10 hover:text-[#FACC15]"
-                  }`
-                }
-              >
-                {item.Icon}
-                {item.Display}
-              </NavLink>
-            ))}
-          </nav>
+                {/* WhatsApp order CTA */}
+                <a
+                  href="https://wa.me/+256776464823"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-xs font-black uppercase tracking-wide px-4 py-2.5 rounded-full transition-all duration-200 shadow-lg shadow-green-900/30 hover:scale-[1.02]"
+                >
+                  <ImWhatsapp size={15} />
+                  Order Now
+                </a>
+              </div>
 
-          {/* DESKTOP ACTIONS */}
-          <div className="hidden lg:flex items-center gap-5">
+              {/* ── Mobile: cart + hamburger ── */}
+              <div className="flex lg:hidden items-center gap-2">
+                <Link
+                  to="/cart"
+                  className="relative w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center"
+                  aria-label="Cart"
+                >
+                  <ShoppingCart size={18} className="text-white" />
+                  {CART_COUNT > 0 && (
+                    <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-500 text-white text-[9px] font-black flex items-center justify-center leading-none">
+                      {CART_COUNT}
+                    </span>
+                  )}
+                </Link>
 
-            {/* CART */}
-            <Link
-              to="/cart"
-              className="relative p-2 rounded-full bg-white/5 hover:bg-white/10 transition"
-            >
-              <ShoppingCart className="w-6 h-6 text-white" />
-
-              <span className="absolute -top-1 -right-1 bg-[#0edb0e] text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border border-black">
-                2
-              </span>
-            </Link>
-
-            {/* LOGIN */}
-            <Link
-              to="/login"
-              className="flex items-center gap-2 text-white hover:text-[#0edb0e] transition font-medium"
-            >
-              <User className="w-5 h-5" />
-              LOGIN
-            </Link>
-
-            {/* WHATSAPP */}
-            <div className="flex flex-col leading-tight">
-              <a
-                href="https://wa.me/+256776464823"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center gap-2 text-[#FACC15] text-sm font-semibold hover:text-[#0edb0e] transition"
-              >
-                <ImWhatsapp className="w-5 h-5" />
-                Call & Order
-              </a>
-
-              <a
-                href="tel:0776464823"
-                className="text-white font-bold text-lg hover:text-[#0edb0e] transition"
-              >
-                (0)77-6464-823
-              </a>
+                <button
+                  onClick={() => setOpen((v) => !v)}
+                  className="w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center hover:bg-white/20 transition-all duration-200"
+                  aria-label={open ? "Close menu" : "Open menu"}
+                >
+                  {open
+                    ? <X size={20} className="text-white" />
+                    : <Menu size={20} className="text-white" />
+                  }
+                </button>
+              </div>
             </div>
           </div>
+        </div>
+      </header>
 
-          {/* MOBILE MENU BUTTON */}
+      {/* ── Mobile full-screen overlay ─────────────────────────────────────────── */}
+      <div
+        className={`fixed inset-0 z-40 lg:hidden flex flex-col transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
+        style={{
+          background: "linear-gradient(160deg, #1a0000 0%, #3d0000 45%, #7c1010 80%, #c0392b 100%)",
+        }}
+      >
+        {/* Top bar inside overlay */}
+        <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-white/10">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
+              <Flame size={15} className="text-white" />
+            </div>
+            <span className="text-white font-black text-lg">
+              GREEN<span className="text-orange-400">Bites</span>
+            </span>
+          </div>
           <button
-            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="lg:hidden flex items-center justify-center w-11 h-11 rounded-xl bg-white/10 border border-white/10 backdrop-blur-xl transition hover:bg-white/20"
+            onClick={() => setOpen(false)}
+            className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
+            aria-label="Close menu"
           >
-            {isMobileMenuOpen ? (
-              <X className="w-6 h-6 text-white" />
-            ) : (
-              <Menu className="w-6 h-6 text-white" />
-            )}
+            <X size={20} className="text-white" />
           </button>
         </div>
 
-        {/* MOBILE MENU */}
-        <div
-          className={`lg:hidden overflow-hidden transition-all duration-500 ${isMobileMenuOpen
-              ? "max-h-[700px] opacity-100 pb-6"
-              : "max-h-0 opacity-0"
-            }`}
-        >
-          <div className="mt-2 rounded-3xl bg-black/90 backdrop-blur-2xl border border-white/10 p-4 shadow-2xl">
+        {/* Nav links — large and tap-friendly */}
+        <nav className="flex-1 flex flex-col justify-center px-6 gap-2">
+          {NAV_LINKS.map(({ icon, label, to }, i) => (
+            <NavLink
+              key={to}
+              to={to}
+              onClick={() => setOpen(false)}
+              style={{ animationDelay: `${i * 60}ms` }}
+              className={({ isActive }) =>
+                `flex items-center gap-4 px-5 py-4 rounded-2xl text-base font-black uppercase tracking-wide transition-all duration-200 ${isActive
+                  ? "bg-white text-gray-900"
+                  : "text-white/80 hover:text-white hover:bg-white/10"
+                }`
+              }
+            >
+              <span className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+                // tint icon bg on active is handled by parent, static version:
+                "bg-white/10"
+                }`}>
+                {icon}
+              </span>
+              {label}
+            </NavLink>
+          ))}
+        </nav>
 
-            {/* MOBILE LINKS */}
-            <nav className="flex flex-col gap-2">
+        {/* Bottom action area */}
+        <div className="px-6 pb-10 space-y-3">
+          {/* Phone number */}
+          <a
+            href="tel:0776464823"
+            className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-white/10 border border-white/15 text-white font-bold text-sm hover:bg-white/20 transition-all duration-200"
+          >
+            <Phone size={16} className="text-white/60" />
+            (0) 77-6464-823
+          </a>
 
-              {HeaderLinks.map((item, index) => (
-                <NavLink
-                  key={index}
-                  to={item.Link}
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `flex items-center gap-3 px-4 py-4 rounded-2xl text-sm font-semibold transition-all duration-300 ${isActive
-                      ? "bg-[#0edb0e] text-white"
-                      : "text-white hover:bg-white/10"
-                    }`
-                  }
-                >
-                  {item.Icon}
-                  {item.Display}
-                </NavLink>
-              ))}
-
-              {/* CART */}
-              <Link
-                to="/cart"
-                className="flex items-center gap-3 px-4 py-4 rounded-2xl text-white hover:bg-white/10 transition"
-              >
-                <ShoppingCart className="w-5 h-5" />
-                Cart
-              </Link>
-
-              {/* LOGIN */}
-              <Link
-                to="/login"
-                className="flex items-center gap-3 px-4 py-4 rounded-2xl text-white hover:bg-white/10 transition"
-              >
-                <User className="w-5 h-5" />
-                Login
-              </Link>
-
-              {/* CTA */}
-              <a
-                href="https://wa.me/+256776464823"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-4 bg-[#0edb0e] hover:bg-green-600 transition-all duration-300 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 shadow-xl"
-              >
-                <ImWhatsapp className="w-5 h-5" />
-                Order via WhatsApp
-              </a>
-
-              {/* PHONE */}
-              <a
-                href="tel:0776464823"
-                className="text-center text-[#FACC15] font-semibold pt-3"
-              >
-                Call: (0)77-6464-823
-              </a>
-            </nav>
-          </div>
+          {/* WhatsApp CTA */}
+          <a
+            href="https://wa.me/+256776464823"
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={() => setOpen(false)}
+            className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl bg-green-500 hover:bg-green-600 text-white font-black text-base shadow-xl shadow-green-900/40 transition-all duration-200 hover:scale-[1.01]"
+          >
+            <ImWhatsapp size={20} />
+            Order via WhatsApp
+          </a>
         </div>
       </div>
-    </header>
+    </>
   );
 };
 

@@ -300,12 +300,12 @@ const ReturnPolicy = () => {
 
           <div className="flex items-center gap-3">
 
-            <div className="w-12 h-12 rounded-2xl bg-red-600 flex items-center justify-center text-white font-black">
+            <div className="w-12 hidden h-12 rounded-2xl bg-red-600 flex// items-center justify-center text-white font-black">
               GP
             </div>
 
             <div>
-              <h4 className="font-bold text-gray-900">
+              <h4 className="font-bold hidden text-gray-900">
                 GreenPork
               </h4>
 

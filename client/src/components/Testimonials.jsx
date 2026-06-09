@@ -70,7 +70,7 @@ export function Testimonials() {
                         >
 
                             {/* TOP GLOW */}
-                            <div className="absolute top-0 right-0 w-40 h-40 bg-red-100 rounded-full blur-3xl opacity-40 group-hover:opacity-70 transition-all duration-500" />
+                            <div className="absolute top-0  right-0 w-40 h-40 bg-red-100 rounded-full blur-3xl opacity-40 group-hover:opacity-70 transition-all duration-500" />
 
                             {/* QUOTE ICON */}
                             <div className="relative z-10 flex items-center justify-between mb-8">

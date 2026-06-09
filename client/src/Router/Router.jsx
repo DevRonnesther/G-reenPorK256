@@ -10,7 +10,6 @@ import OnlineOrdering from "../page/onlineOrdering.jsx"
 import Layout from "../components/Layout/layout"
 import Login from "../page/Login"
 import Register from "../page/Register.jsx";
-import Signup from "../page/Signup.jsx"
 import CateringService from "../page/onlineOrdering.jsx";
 
 const Router = () => {
@@ -24,7 +23,6 @@ const Router = () => {
       <Route path="/Login" element={<Login />} />
       <Route path="/Register" element={<Register />} />
       <Route path="/menu" element={<Menu />} />
-      <Route path="/Signup" element={<Signup />} />
       <Route path="/OnlineOrdering" element={<OnlineOrdering/>} />
       <Route path="/CateringService" element={<CateringService />} />
       <Route path="/aboutUs" element={<Abouts />} />
