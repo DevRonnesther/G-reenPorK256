@@ -8,23 +8,21 @@ import { Routes, Route } from "react-router-dom";
 import Menu from "../page/Menu";
 import OnlineOrdering from "../page/onlineOrdering.jsx";
 import Layout from "../components/Layout/layout";
-import login from "../page/Login.jsx";
+import Login from "../page/Login.jsx"; // CHECK THIS PATH
 import Register from "../page/Register.jsx";
-import CateringService from "../page/onlineOrdering.jsx";
 
 const Router = () => {
   return (
     <Routes>
       <Route path="/" element={<Hero />} />
-      <Route path="/layout" elemet={<Layout />} />
+      <Route path="/layout" element={<Layout />} />
       <Route path="/reviewUs" element={<Review />} />
       <Route path="/returnPolicy" element={<ReturnPolicy />} />
       <Route path="/contactUs" element={<Contact />} />
       <Route path="/login" element={<Login />} />
-      <Route path="/Register" element={<Register />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/menu" element={<Menu />} />
-      <Route path="/OnlineOrdering" element={<OnlineOrdering/>} />
-      <Route path="/CateringService" element={<CateringService />} />
+      <Route path="/online-ordering" element={<OnlineOrdering />} />
       <Route path="/aboutUs" element={<Abouts />} />
     </Routes>
   );
