@@ -315,27 +315,21 @@ const OrderingComponent = () => {
               initial="hidden"
               animate="show"
               exit="exit"
-              className="fixed block   inset-0 z-[60]  md:flex flex-col// bg-white md:overflow-hidden"
+              className="fixed inset-0 z-[60] flex flex-col md:flex-row bg-white overflow-hidden"
             >
               {/* ── Hero zone: dark gradient with food image ── */}
               <div
-                className="relative flex-shrink-0 flex-1 items-end justify-between overflow-hidden"
-                /* style={{
-                  background: "linear-gradient(145deg, #1a0000 0%, #3d0000 40%, #7c1010 75%, #c0392b 100%)",
-                 
-                }} */
-
+                className="relative h-[38vh] min-h-[260px] md:h-auto flex-shrink-0 md:flex-1 items-end justify-between overflow-hidden"
                 style={{
                   background: `
-        radial-gradient(
-          circle 900px at 50% 120px,
-          #FF3B30 0%,
-          #E10600 25%,
-          #3d0000 65%,
-          #2B0000 100%
-        )
-      `,
-
+              radial-gradient(
+                circle 900px at 50% 120px,
+                #FF3B30 0%,
+                #E10600 25%,
+                #3d0000 65%,
+                #2B0000 100%
+              )
+            `,
                 }}
               >
                 {/* Radial glow behind image */}
@@ -358,7 +352,7 @@ const OrderingComponent = () => {
                 </div>
 
                 {/* Top bar: back + like */}
-                <div className="absolute flex-1 top-0 left-0 right-0 flex items-center justify-between px-5 pt-5 z-10">
+                <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 pt-5 z-10">
                   <button
                     onClick={() => setModal(null)}
                     className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group"
@@ -384,8 +378,8 @@ const OrderingComponent = () => {
                   </div>
                 </div>
 
-                {/* Food image — right side, large */}
-                <div className="absolute left-0 right-0 top-0 bottom-0 w-1/2 md:w-[100%] flex items-center justify-center pr-4 md:pr-10//">
+                {/* Food image — responsive sizing */}
+                <div className="absolute inset-0 w-full flex items-center justify-center p-4 md:pr-10">
                   <motion.img
                     key={modal.id}
                     initial={{ opacity: 0, scale: 0.8, rotate: -6 }}
@@ -393,110 +387,117 @@ const OrderingComponent = () => {
                     transition={{ type: "spring", stiffness: 220, damping: 20, delay: 0.05 }}
                     src={modal.image}
                     alt={modal.name}
-                    className="w-full max-w-[560px] md:max-w-[500px] object-contain drop-shadow-2xl"
+                    className="w-full max-w-[240px] sm:max-w-[320px] md:max-w-[500px] h-auto max-h-[90%] object-contain drop-shadow-2xl"
                     style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.5))" }}
                   />
                 </div>
-
               </div>
 
               {/* ── Detail zone: scrollable white panel ── */}
-              <div className="flex-1   overflow-y-auto// overflow-hidden">
-                <div className="max-w-2xl mx-auto px-6 py-0 flex flex-col gap-6">
+              <div className="flex-1 flex flex-col overflow-hidden">
+                {/* Scrollable details */}
+                <div className="flex-1 overflow-y-auto px-6 py-4 md:py-6">
+                  <div className="max-w-2xl mx-auto flex flex-col gap-6">
 
-                  {/* Left text overlay on hero */}
-                  <div className="relative  z-10 px-6 py-8  ">
+                    {/* Text/Price details */}
+                    <div className="relative z-10 pt-2 pb-4">
+                      <motion.div
+                        initial={{ opacity: 0, y: 16 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.1, duration: 0.35 }}
+                      >
+                        <Stars rating={modal.rating} />
+                        <h2 className="text-3xl md:text-5xl font-black text-black leading-tight mt-2 mb-1">{modal.name}</h2>
+                        <div className="flex flex-wrap items-center gap-2 mt-3">
+                          <span className="text-2xl md:text-3xl font-black text-black">UGX {fmt(modal.price)}</span>
+                          <span className="text-sm text-slate-500/80 line-through">UGX {fmt(modal.anchoring)}</span>
+                          <span className="bg-red-500 text-white text-xs font-black px-2.5 py-1 rounded-full">
+                            -{pct(modal.price, modal.anchoring)}%
+                          </span>
+                        </div>
+                      </motion.div>
+                    </div>
+
+                    {/* Description */}
+                    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
+                      <p className="text-xs font-black uppercase tracking-widest text-red-500 mb-2">About this dish</p>
+                      <p className="text-gray-600 leading-relaxed text-sm md:text-base">{modal.description}</p>
+                    </motion.div>
+
+                    {/* Feature chips */}
                     <motion.div
-                      initial={{ opacity: 0, y: 16 }}
+                      initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.1, duration: 0.35 }}
+                      transition={{ delay: 0.2 }}
+                      className="grid grid-cols-3 gap-2 sm:gap-3"
                     >
-                      <Stars rating={modal.rating} />
-                      <h2 className="text-3xl md:text-5xl font-black text-black leading-tight mt-2 mb-1">{modal.name}</h2>
-                      <div className="flex items-center gap-2 mt-3">
-                        <span className="text-2xl md:text-3xl font-black text-black">UGX {fmt(modal.price)}</span>
-                        <span className="text-sm text-slate-500/80 line-through">UGX {fmt(modal.anchoring)}</span>
-                        <span className="bg-red-500 text-white text-xs font-black px-2.5 py-1 rounded-full ml-1">
-                          -{pct(modal.price, modal.anchoring)}%
-                        </span>
+                      {[
+                        { Icon: Clock, label: "Prep time", value: modal.cookTime, color: "text-red-500", bg: "bg-red-50" },
+                        { Icon: Truck, label: "Delivery", value: "Free", color: "text-emerald-600", bg: "bg-emerald-50" },
+                        { Icon: ShieldCheck, label: "Quality", value: "Premium", color: "text-amber-500", bg: "bg-amber-50" },
+                      ].map(({ Icon, label, value, color, bg }) => (
+                        <div key={label} className={`flex flex-col items-center gap-1.5 rounded-2xl ${bg} py-3 px-2 sm:py-4 sm:px-3 text-center`}>
+                          <Icon size={18} className={color} />
+                          <div>
+                            <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wide text-gray-400">{label}</p>
+                            <p className="text-xs sm:text-sm font-black text-gray-800 mt-0.5">{value}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </motion.div>
+
+                    {/* Savings callout */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.25 }}
+                      className="flex items-center justify-between bg-gradient-to-r from-[#0edb0e]/10 to-green-50 border border-green-100 rounded-2xl p-4 sm:px-5 sm:py-4"
+                    >
+                      <div>
+                        <p className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-red-400 mb-0.5">You save</p>
+                        <p className="text-xl sm:text-2xl font-black text-red-600">UGX {fmt(parseInt(modal.anchoring) - modal.price)}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-xs text-gray-400 line-through">UGX {fmt(modal.anchoring)}</p>
+                        <p className="text-base sm:text-lg font-black text-gray-800">UGX {fmt(modal.price)}</p>
                       </div>
                     </motion.div>
+
                   </div>
-                  {/* Description */}
-                  <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-                    <p className="text-xs font-black uppercase tracking-widest text-red-500 mb-2">About this dish</p>
-                    <p className="text-gray-600 leading-relaxed text-base">{modal.description}</p>
-                  </motion.div>
-
-                  {/* Feature chips */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                    className="grid grid-cols-3 gap-3"
-                  >
-                    {[
-                      { Icon: Clock, label: "Prep time", value: modal.cookTime, color: "text-red-500", bg: "bg-red-50" },
-                      { Icon: Truck, label: "Delivery", value: "Free", color: "text-emerald-600", bg: "bg-emerald-50" },
-                      { Icon: ShieldCheck, label: "Quality", value: "Premium", color: "text-amber-500", bg: "bg-amber-50" },
-                    ].map(({ Icon, label, value, color, bg }) => (
-                      <div key={label} className={`flex flex-col items-center gap-2 rounded-2xl ${bg} py-4 px-3 text-center`}>
-                        <Icon size={20} className={color} />
-                        <div>
-                          <p className="text-[10px] font-bold uppercase tracking-wide text-gray-400">{label}</p>
-                          <p className="text-sm font-black text-gray-800 mt-0.5">{value}</p>
-                        </div>
-                      </div>
-                    ))}
-                  </motion.div>
-
-                  {/* Savings callout */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.25 }}
-                    className="flex items-center justify-between bg-gradient-to-r from-[#0edb0e]/10 to-green-50 border border-green-100 rounded-2xl px-5 py-4"
-                  >
-                    <div>
-                      <p className="text-xs font-black uppercase tracking-widest text-red-400 mb-0.5">You save</p>
-                      <p className="text-2xl font-black text-red-600">UGX {fmt(parseInt(modal.anchoring) - modal.price)}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-xs text-gray-400 line-through">UGX {fmt(modal.anchoring)}</p>
-                      <p className="text-lg font-black text-gray-800">UGX {fmt(modal.price)}</p>
-                    </div>
-                  </motion.div>
-
-                  {/* ── Sticky CTA bar at bottom ── */}
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="flex-shrink-0  px-6 py-5 border-t border-gray-100 bg-white flex gap-3 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]"
-                  >
-                    <button
-                      onClick={() => { addToCart(modal); setModal(null); setCartOpen(true); }}
-                      className="flex-1 h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-base flex items-center justify-center gap-2.5 transition-all duration-200 shadow-xl shadow-red-600/25 hover:shadow-red-600/35 hover:scale-[1.01]"
-                    >
-                      <ShoppingBasket size={19} />
-                      Add to cart · UGX {fmt(modal.price)}
-                    </button>
-
-                    <button
-                      onClick={() => toggleLike(modal.id)}
-                      aria-label={liked.has(modal.id) ? "Unlike" : "Save"}
-                      className={`w-14 h-14 rounded-2xl flex items-center justify-center border-2 transition-all duration-200 ${liked.has(modal.id)
-                        ? "bg-red-600 border-red-600 shadow-lg shadow-red-500/30"
-                        : "bg-white border-gray-200 hover:border-red-300"
-                        }`}
-                    >
-                      <Heart size={19} className={liked.has(modal.id) ? "fill-white text-white" : "text-gray-500"} />
-                    </button>
-                  </motion.div>
                 </div>
+
+                {/* ── Fixed CTA bar at bottom ── */}
+                <div className="flex-shrink-0 border-t border-gray-100 bg-white px-6 py-5 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+                  <div className="max-w-2xl mx-auto">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                      className="flex gap-3"
+                    >
+                      <button
+                        onClick={() => { addToCart(modal); setModal(null); setCartOpen(true); }}
+                        className="flex-1 h-12 sm:h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all duration-200 shadow-xl shadow-red-600/25 hover:shadow-red-600/35 hover:scale-[1.01]"
+                      >
+                        <ShoppingBasket size={19} />
+                        Add to cart · UGX {fmt(modal.price)}
+                      </button>
+
+                      <button
+                        onClick={() => toggleLike(modal.id)}
+                        aria-label={liked.has(modal.id) ? "Unlike" : "Save"}
+                        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center border-2 transition-all duration-200 ${liked.has(modal.id)
+                          ? "bg-red-600 border-red-600 shadow-lg shadow-red-500/30"
+                          : "bg-white border-gray-200 hover:border-red-300"
+                          }`}
+                      >
+                        <Heart size={19} className={liked.has(modal.id) ? "fill-white text-white" : "text-gray-500"} />
+                      </button>
+                    </motion.div>
+                  </div>
+                </div>
+
               </div>
-
-
             </motion.div>
           </>
         )}
