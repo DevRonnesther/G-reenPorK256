@@ -8,7 +8,7 @@ import { Routes, Route } from "react-router-dom";
 import Menu from "../page/Menu";
 import OnlineOrdering from "../page/onlineOrdering.jsx";
 import Layout from "../components/Layout/layout";
-import Signin from "../page/Login.jsx" // CHECK THIS PATH
+import Login from "../page/Login.jsx" // CHECK THIS PATH
 import Register from "../page/Register.jsx";
 
 const Router = () => {
@@ -19,7 +19,7 @@ const Router = () => {
       <Route path="/reviewUs" element={<Review />} />
       <Route path="/returnPolicy" element={<ReturnPolicy />} />
       <Route path="/contactUs" element={<Contact />} />
-      <Route path="/login" element={<Signin />} />
+      <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/menu" element={<Menu />} />
       <Route path="/online-ordering" element={<OnlineOrdering />} />
