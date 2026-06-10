@@ -726,7 +726,7 @@ const RegisterForm = () => {
             >
               Already have an account?{" "}
 
-              <span
+              <a href="/login"
                 className="
                   text-red-600
                   font-bold
@@ -735,7 +735,7 @@ const RegisterForm = () => {
                 "
               >
                 Sign In
-              </span>
+              </a>
             </p>
           </div>
         </div>

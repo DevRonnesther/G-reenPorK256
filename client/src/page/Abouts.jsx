@@ -213,7 +213,7 @@ const About = () => {
       {/* ──────────────────────────────────────────────────────────────────────────
           TEAM
       ────────────────────────────────────────────────────────────────────────── */}
-      <section className="py-24 px-6">
+      <section className="py-12 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14">
             <Eyebrow>The People</Eyebrow>
@@ -226,18 +226,15 @@ const About = () => {
       {/* ──────────────────────────────────────────────────────────────────────────
           TESTIMONIALS
       ────────────────────────────────────────────────────────────────────────── */}
-      <section className="py-16 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-6 text-center mb-12">
-          <Eyebrow>Reviews</Eyebrow>
-          <h2 className="text-4xl md:text-5xl font-black text-gray-900">What People Say</h2>
-        </div>
+      <section className="py-12 bg-gray-50">
+        
         <Testimonials />
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
           GALLERY
       ────────────────────────────────────────────────────────────────────────── */}
-      <section className="py-16">
+      <section className="py-12">
         <div className="max-w-7xl mx-auto px-6 text-center mb-12">
           <Eyebrow>Gallery</Eyebrow>
           <h2 className="text-4xl md:text-5xl font-black text-gray-900">Our Kitchen & Food</h2>
@@ -249,8 +246,13 @@ const About = () => {
           DELIVERY BANNER
           Signature element: full-bleed dark-red half with large bike image
       ────────────────────────────────────────────────────────────────────────── */}
-      <section className="py-24 px-6">
+      <section className="py-12 px-6">
+
         <div className="max-w-7xl mx-auto">
+        <div className="max-w-7xl mx-auto px-6 text-center mb-12">
+          <Eyebrow>Delivery</Eyebrow>
+          <h2 className="text-4xl md:text-5xl font-black text-gray-900">Fast Delivery</h2>
+        </div>
           <div className="rounded-[48px] overflow-hidden shadow-2xl grid lg:grid-cols-2">
 
             {/* Left — dark red, bike image */}

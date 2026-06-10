@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 // IMAGES
 import FreshPork from "../assets/freshporke.png";
 // import FreshPork from "../assets/pngwing.com (23).png";
+// import PorkStake from "../assets/ChatGPT Image Apr 18, 2026, 04_21_59 PM.png";
 import PorkStake from "../assets/PremiumPlate.png";
 // import PorkStake from "../assets/pngwing.com (21).png";
 import Burger from "../assets/Burger.png";
@@ -152,7 +153,7 @@ const hero = () => {
                 setAnimKey((k) => k + 1);
                 return (prev + 1) % slides.length;
             });
-        }, 9000);
+        }, 5000);
 
         return () => clearInterval(interval);
     }, [isPaused, slides.length]);
@@ -193,26 +194,26 @@ const hero = () => {
     return (
         <div
 
-// className="absolute inset-0"
-//     style={{
-//       background: `
-//         radial-gradient(
-//           circle 900px at 50% 120px,
-//           #FF3B30 0%,
-//           #E10600 25%,
-//           #8B0000 55%,
-//           #2B0000 100%
-//         )
-//       `,
-      
-//     }}
+            className="absolute inset-0"
 
-    className="absolute overflow-hidden  inset-0"
             style={{
-                background: "linear-gradient(145deg, #1a0000 0%, #3d0000 40%, #7c1010 75%, #c0392b 100%)",
+                background: `
+        radial-gradient(
+          circle 900px at 50% 120px,
+          #FF3B30 0%,
+          #E10600 25%,
+          #3d0000 65%,
+          #2B0000 100%
+        )
+      `,
 
             }}
-            
+
+        /* className="absolute overflow-hidden inset-0"
+        style={{
+            background: "linear-gradient(145deg, #1a0000 0%, #3d0000 40%, #7c1010 75%, #c0392b 100%)",
+
+        }} */
         >
             <div
                 className="relative w-full h-screen backdrop-blur-none bg-black/10   overflow-hidden"
@@ -253,7 +254,7 @@ const hero = () => {
                     <Navbar />
                 </div>
                 <div
-                    className="md:flex md:flex-row absolute top-10 bg-black///  w-full h-screen  flex flex-col items-center justify-center overflow-hidden"
+                    className="md:flex bg-black/10 absolute top-0 min-h-screen backdrop-blur-xl md:flex-row  bg-black///  w-full   flex flex-col items-center justify-center overflow-hidden"
                     onMouseEnter={() => setIsPaused(true)}
                     onMouseLeave={() => setIsPaused(false)}
                 >
@@ -304,9 +305,21 @@ const hero = () => {
                     </div>
 
 
-                    <div className="w-1/2// absolute top-10 sm:top-10 left-0 right-0 flex justify-center items-center" style={{ zIndex: 3 }}>
+                    <div className="w-1/2// absolute top-10 md:top-20 sm:top-10 left-0 right-0 flex justify-center items-center" style={{ zIndex: 3 }}>
+                        
+                        {/* Radial glow behind image */}
+                        {/* <div
+                            className="absolute inset-0 pointer-events-none"
+                            style={{
+                                background: "radial-gradient(ellipse 60% 60% at 70% 55%, rgba(249,115,22,0.25) 0%, transparent 70%)",
+                            }}
+                        /> */}
+                        {/* Radial glow behind image */}
                         <div
                             className="absolute inset-0 pointer-events-none"
+                            style={{
+                                background: "radial-gradient(ellipse 60% 60% at 70% 55%, rgba(249,115,22,0.25) 0%, transparent 70%)",
+                            }}
                         />
                         {/* IMAGE — retrigger animation on every slide change via key */}
                         <img
@@ -328,7 +341,7 @@ const hero = () => {
                         {/* TITLE */}
                         <h1
                             key={`title-${animKey}`}
-                            className="text-5xl hidden md:block md:text-[120px] sm:text-[60px]  uppercase text-white font-extrabold"
+                            className="text-5xl hidden md:block md:text-[120px] sm:text-[60px]  uppercase text-[white]/90 font-extrabold"
                             style={{ animation: `heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.05s both` }}
                         >
                             {slides[current].title}
@@ -480,7 +493,7 @@ const hero = () => {
                         </div>
 
                         {/* DOTS */}
-                        <div className="flex flex-col justify-center absolute top-20 -left-2 mt-4 gap-2">
+                        <div className="flex flex-col justify-center absolute top-0 -left-2 mt-4 gap-2">
                             {slides.map((_, index) => (
                                 <div
                                     key={index}
@@ -502,7 +515,7 @@ const hero = () => {
                         </div>
 
                         {/* ---- copyright policy ----- */}
-                        <footer className=" absolute bottom-14 left-0 right-0   w-full  bg-transparent border-none border-gray-100">
+                        <footer className=" absolute bottom-14 md:bottom-2 left-0 right-0   w-full  bg-transparent border-none border-gray-100">
                             <div className="mx-auto px-4 ">
                                 <div className="">
                                     <div className="flex place-items-center justify-center items-center gap-4">

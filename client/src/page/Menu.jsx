@@ -9,8 +9,9 @@ import { Link } from "react-router-dom";
 
 // ASSETS
 import Pizza from "../assets/pizza(17).png";
+// import PorkStake from "../assets/PremiumPlate.png";
 import FreshPork from "../assets/freshporke.png";
-import Porkies from "../assets/PikPng.com_png-restaurant_5027947.png";
+import Porkies from "../assets/PremiumPlate.png";
 import Burger from "../assets/Burger.png";
 import Chicken from "../assets/pngwing.com (25).png";
 
@@ -31,7 +32,7 @@ const CATEGORIES = [
 
 const ITEMS = [
   { id: 1, image: Burger, category: "burgers", anchoring: "8000", name: "Beef Burger", price: 6000, description: "Juicy grilled beef patty with fresh lettuce, cheese and creamy sauce.", rating: 4.8, cookTime: "15–20 min", tag: "Popular" },
-  { id: 2, image: Porkies, category: "pork", anchoring: "15000", name: "Roasted Pork", price: 10000, description: "Roasted pork with fried cassava, salad and chapati.", rating: 4.9, cookTime: "30–35 min", tag: "Best Seller" },
+  { id: 2, image: Porkies, category: "pork", anchoring: "15000", name: "Roasted Premium Pork", price: 10000, description: "Roasted pork with fried cassava, salad and chapati.", rating: 4.9, cookTime: "30–35 min", tag: "Best Seller" },
   { id: 3, image: Chicken, category: "chicken", anchoring: "78000", name: "Crispy Chicken", price: 55000, description: "Golden crispy chicken with a fiery spice blend.", rating: 4.6, cookTime: "20–25 min", tag: "Spicy" },
   { id: 4, image: Pizza, category: "pizza", anchoring: "18000", name: "Chicken Pizza", price: 15000, description: "Hand-tossed dough with premium chicken and mozzarella.", rating: 4.7, cookTime: "40–45 min", tag: "New" },
   { id: 5, image: Chicken, category: "chicken", anchoring: "55000", name: "Whole Chicken", price: 45000, description: "Farm-fresh whole chicken, marinated and roasted.", rating: 4.7, cookTime: "35–40 min", tag: null },
@@ -314,14 +315,27 @@ const OrderingComponent = () => {
               initial="hidden"
               animate="show"
               exit="exit"
-              className="fixed flex inset-0 z-[60]  md:flex flex-col// bg-white overflow-hidden"
+              className="fixed block   inset-0 z-[60]  md:flex flex-col// bg-white md:overflow-hidden"
             >
               {/* ── Hero zone: dark gradient with food image ── */}
               <div
                 className="relative flex-shrink-0 flex-1 items-end justify-between overflow-hidden"
-                style={{
+                /* style={{
                   background: "linear-gradient(145deg, #1a0000 0%, #3d0000 40%, #7c1010 75%, #c0392b 100%)",
                  
+                }} */
+
+                style={{
+                  background: `
+        radial-gradient(
+          circle 900px at 50% 120px,
+          #FF3B30 0%,
+          #E10600 25%,
+          #3d0000 65%,
+          #2B0000 100%
+        )
+      `,
+
                 }}
               >
                 {/* Radial glow behind image */}
@@ -387,27 +401,27 @@ const OrderingComponent = () => {
               </div>
 
               {/* ── Detail zone: scrollable white panel ── */}
-              <div className="flex-1   overflow-y-auto">
-                <div className="max-w-2xl// mx-auto px-6 py-8 flex flex-col gap-6">
+              <div className="flex-1   overflow-y-auto// overflow-hidden">
+                <div className="max-w-2xl mx-auto px-6 py-0 flex flex-col gap-6">
 
-                {/* Left text overlay on hero */}
-                <div className="relative  z-10 px-6 pb-8 pt-20 ">
-                  <motion.div
-                    initial={{ opacity: 0, y: 16 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.1, duration: 0.35 }}
-                  >
-                    <Stars rating={modal.rating} />
-                    <h2 className="text-3xl md:text-5xl font-black text-black leading-tight mt-2 mb-1">{modal.name}</h2>
-                    <div className="flex items-center gap-2 mt-3">
-                      <span className="text-2xl md:text-3xl font-black text-black">UGX {fmt(modal.price)}</span>
-                      <span className="text-sm text-slate-500/80 line-through">UGX {fmt(modal.anchoring)}</span>
-                      <span className="bg-red-500 text-white text-xs font-black px-2.5 py-1 rounded-full ml-1">
-                        -{pct(modal.price, modal.anchoring)}%
-                      </span>
-                    </div>
-                  </motion.div>
-                </div>
+                  {/* Left text overlay on hero */}
+                  <div className="relative  z-10 px-6 py-8  ">
+                    <motion.div
+                      initial={{ opacity: 0, y: 16 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.1, duration: 0.35 }}
+                    >
+                      <Stars rating={modal.rating} />
+                      <h2 className="text-3xl md:text-5xl font-black text-black leading-tight mt-2 mb-1">{modal.name}</h2>
+                      <div className="flex items-center gap-2 mt-3">
+                        <span className="text-2xl md:text-3xl font-black text-black">UGX {fmt(modal.price)}</span>
+                        <span className="text-sm text-slate-500/80 line-through">UGX {fmt(modal.anchoring)}</span>
+                        <span className="bg-red-500 text-white text-xs font-black px-2.5 py-1 rounded-full ml-1">
+                          -{pct(modal.price, modal.anchoring)}%
+                        </span>
+                      </div>
+                    </motion.div>
+                  </div>
                   {/* Description */}
                   <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
                     <p className="text-xs font-black uppercase tracking-widest text-red-500 mb-2">About this dish</p>
@@ -441,7 +455,7 @@ const OrderingComponent = () => {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.25 }}
-                    className="flex items-center justify-between bg-gradient-to-r from-red-50 to-orange-50 border border-red-100 rounded-2xl px-5 py-4"
+                    className="flex items-center justify-between bg-gradient-to-r from-[#0edb0e]/10 to-green-50 border border-green-100 rounded-2xl px-5 py-4"
                   >
                     <div>
                       <p className="text-xs font-black uppercase tracking-widest text-red-400 mb-0.5">You save</p>
@@ -482,7 +496,7 @@ const OrderingComponent = () => {
                 </div>
               </div>
 
-              
+
             </motion.div>
           </>
         )}

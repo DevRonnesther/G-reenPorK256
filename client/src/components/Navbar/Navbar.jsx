@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { ImWhatsapp } from "react-icons/im";
-import green from "../../assets/GreenBrandLogo.png";
+import green from "../../assets/file_0000000082847246b4bc227a74036a02.jpg";
+// import green from "../../assets/GreenBrandLogo.png";
 import {
   Menu, X, Home, Store, Info, Phone,
   ShoppingCart, Flame,
@@ -45,10 +46,13 @@ const Navbar = () => {
 
               {/* ── Logo ── */}
               <Link to="/" className="flex items-center gap-2 group shrink-0">
-                <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shadow-md shadow-red-900/40 group-hover:scale-105 transition-transform duration-200">
+                <div>
+                  <img src={green} alt="" className="w-80 hidden" srcset="" />
+                </div>
+                <div className="w-8 h-8 rounded-xl hidden// bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shadow-md shadow-red-900/40 group-hover:scale-105 transition-transform duration-200">
                   <Flame size={16} className="text-white" />
                 </div>
-                <span className="text-white font-black text-xl tracking-tight leading-none">
+                <span className="text-white hidden// font-black text-xl tracking-tight leading-none">
                   GREEN<span className="text-orange-400">Bites</span>
                 </span>
               </Link>

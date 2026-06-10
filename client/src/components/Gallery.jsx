@@ -12,20 +12,13 @@ export function Gallery() {
         'https://images.unsplash.com/photo-1466692476868-aef1dfb1e735?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80',
     ]
     return (
-        <div className="py-12 bg-gradient-to-r from-green-50 to-gray-50">
+        <div className="">
             <div className="container mx-auto px-4">
-                <div className="flex flex-col items-center mb-12">
-                    {/* <Image className="h-10 w-10 text-[#0edb0e] mb-4" /> */}
-                    <h2 className="text-3xl font-bold text-black text-center">
-                        Our Gallery
-                    </h2>
-                    {/* <div className="w-20 h-1 bg-[#0edb0e] mt-4"></div> */}
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3  gap-8 ">
                     {images.map((src, index) => (
                         <div
                             key={index}
-                            className="aspect-square overflow-hidden rounded-lg cursor-pointer hover:opacity-90 transition-opacity"
+                            className="aspect-square overflow-hidden border-8a border-red-600 rounded-[2rem] cursor-pointer hover:opacity-90 transition-opacity"
                             onClick={() => setSelectedImage(src)}
                         >
                             <img
