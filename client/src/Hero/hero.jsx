@@ -194,7 +194,7 @@ const hero = () => {
     return (
         <div
 
-            className="absolute inset-0"
+            className="absolute bg-white inset-0"
 
             style={{
                 background: `
@@ -305,7 +305,7 @@ const hero = () => {
                     </div>
 
 
-                    <div className="w-1/2// absolute top-10 md:top-20 sm:top-10 left-0 right-0 flex justify-center items-center" style={{ zIndex: 3 }}>
+                    <div className=" absolute top-24 md:top-20 sm:top-10 left-0 right-0 flex justify-center items-center" style={{ zIndex: 3 }}>
                         
                         {/* Radial glow behind image */}
                         {/* <div
@@ -331,17 +331,17 @@ const hero = () => {
                                 filter: "drop-shadow(0 20px 40px rgba(249,115,22,0.35))",
                                 ...imgAnimStyle,
                             }}
-                            className="w-120  h-120 md:w-130 md:h-130 sm:w-80 sm:h-80 object-contain drop-shadow-3xl transition-all duration-700 ease-in-out hover:scale-105"
+                            className="w-100  h-100 md:w-130 md:h-130 sm:w-80 sm:h-80 object-contain drop-shadow-3xl transition-all duration-700 ease-in-out hover:scale-105"
                         />
                     </div>
 
                     {/* CONTENT */}
-                    <div className="mt-6 max-w-300    text-center flex flex-col  px-4">
+                    <div className="mt-0     text-center flex flex-col  px-4">
 
                         {/* TITLE */}
                         <h1
                             key={`title-${animKey}`}
-                            className="text-5xl hidden md:block md:text-[120px] sm:text-[60px]  uppercase text-[white]/90 font-extrabold"
+                            className="text-5xl hidden font-serif md:block md:text-[120px] sm:text-[60px]  uppercase text-[white]/90 font-extrabold"
                             style={{ animation: `heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.05s both` }}
                         >
                             {slides[current].title}
@@ -367,11 +367,11 @@ const hero = () => {
                         {/* RATING */}
                         <div
                             key={`rating-${animKey}`}
-                            className="flex justify-center absolute left-20 bottom-70 items-center mt-3"
+                            className="flex justify-center absolute left-20 sm:bottom-70 bottom-82 items-center mt-3"
                             style={ratingAnim}
                         >
                             <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                            <span className="ml-2 text-white/80">
+                            <span className="ml-2 text-white">
                                 {slides[current].rating}
                             </span>
 
@@ -387,7 +387,7 @@ const hero = () => {
 
                         {/* PRICE */}
                         <div
-                            className="mt-4 absolute  left-18 bottom-20 flex flex-col justify-center items-center gap-3"
+                            className="mt-4 absolute  left-18 sm:bottom-20 bottom-26 flex flex-col justify-center items-center gap-3"
                         >
                             <h1
                                 key={`title-sm-${animKey}`}
@@ -493,7 +493,7 @@ const hero = () => {
                         </div>
 
                         {/* DOTS */}
-                        <div className="flex flex-col justify-center absolute top-0 -left-2 mt-4 gap-2">
+                        <div className="flex flex-col justify-center absolute bottom-20 -left-2 mt-4 gap-2">
                             {slides.map((_, index) => (
                                 <div
                                     key={index}
@@ -502,7 +502,7 @@ const hero = () => {
                                         setAnimKey((k) => k + 1);
                                         setCurrent(index);
                                     }}
-                                    className="w-8 h-2 rounded-full// rounded-none cursor-pointer"
+                                    className="w-8 h-2 rounded-full  cursor-pointer"
                                     style={{
                                         backgroundColor:
                                             current === index
@@ -515,7 +515,7 @@ const hero = () => {
                         </div>
 
                         {/* ---- copyright policy ----- */}
-                        <footer className=" absolute bottom-14 md:bottom-2 left-0 right-0   w-full  bg-transparent border-none border-gray-100">
+                        <footer className=" absolute bottom-8 md:bottom-2 left-0 right-0   w-full  bg-transparent border-none border-gray-100">
                             <div className="mx-auto px-4 ">
                                 <div className="">
                                     <div className="flex place-items-center justify-center items-center gap-4">

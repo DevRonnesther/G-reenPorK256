@@ -143,11 +143,11 @@ const OrderingComponent = () => {
           {/* Brand mark */}
           <div className="flex items-center gap-3 min-w-0">
             {/* Flame icon accent */}
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shrink-0 shadow-md shadow-red-500/25">
+            <div className="w-9 h-9 hidden rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex// items-center justify-center shrink-0 shadow-md shadow-red-500/25">
               <span className="text-white text-base leading-none select-none">🔥</span>
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-black tracking-[3px] uppercase text-red-500 leading-none mb-0.5">GREENBites</p>
+              <p className="text-[10px] font-black tracking-[3px] uppercase text-[#0edb0e] leading-none mb-0.5">GREENPORK</p>
               <h1 className="text-lg md:text-2xl font-black leading-tight text-gray-900 truncate">Food Collection</h1>
             </div>
           </div>
@@ -201,7 +201,7 @@ const OrderingComponent = () => {
       {/* ── Product grid ── */}
       <div className="max-w-7xl mx-auto px-5 py-8">
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+          className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
           initial="hidden"
           animate="show"
           variants={{ show: { transition: { staggerChildren: 0.07 } } }}
@@ -211,7 +211,7 @@ const OrderingComponent = () => {
               key={item.id}
               variants={cardVariants}
               onClick={() => setModal(item)}
-              className="group relative rounded-3xl overflow-hidden bg-white border border-gray-100 hover:border-red-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-red-500/10 transition-all duration-300 cursor-pointer"
+              className="group relative rounded-3xl overflow-hidden bg-white border  border-gray-100 hover:border-red-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-red-500/10 transition-all duration-300 cursor-pointer"
             >
               {/* Image zone */}
               <div className="relative h-52 flex items-center justify-center bg-gradient-to-b from-gray-50 to-white overflow-hidden">
@@ -240,18 +240,20 @@ const OrderingComponent = () => {
               {/* Info */}
               <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
+                 <div className="sm:block md:block hidden">
                   <Tag label={item.tag} />
+                 </div>
                   <Stars rating={item.rating} />
                 </div>
 
                 <h2 className="font-black text-lg leading-tight mb-1">{item.name}</h2>
 
-                <p className="text-gray-400 text-xs leading-relaxed mb-3 line-clamp-2">{item.description}</p>
+                <p className="text-gray-400 hidden md:block sm:block  text-xs leading-relaxed mb-3 line-clamp-2">{item.description}</p>
 
                 <div className="flex items-center justify-between">
                   <div>
                     <p className="text-gray-400 line-through text-xs">UGX {fmt(item.anchoring)}</p>
-                    <p className="text-red-600 font-black text-xl">UGX {fmt(item.price)}</p>
+                    <p className="text-red-600 font-black text-sm md:block sm:text-xl">UGX {fmt(item.price)}</p>
                   </div>
 
                   <button
@@ -269,7 +271,7 @@ const OrderingComponent = () => {
                 </div>
 
                 {/* Cook time strip */}
-                <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
+                <div className="mt-3 hidden  pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
                   <div className="flex items-center gap-1.5">
                     <Clock size={12} className="text-red-400" />
                     {item.cookTime}

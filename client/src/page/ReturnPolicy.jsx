@@ -17,43 +17,7 @@ const ReturnPolicy = () => {
     <div className="min-h-screen bg-white overflow-hidden">
 
       {/* HERO */}
-      <section className="relative bg-gradient-to-br from-[#991B1B] via-[#DC2626] to-[#7F1D1D] text-white overflow-hidden">
-
-        {/* BACKGROUND EFFECTS */}
-        <div className="absolute top-0 left-0 w-96 h-96 bg-yellow-400/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-0 w-96 h-96 bg-black/20 rounded-full blur-3xl" />
-
-        <div className="relative max-w-7xl mx-auto px-6 lg:px-12 py-24">
-
-          <div className="max-w-3xl">
-
-            {/* BADGE */}
-            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-xl">
-
-              <ShieldCheck size={16} className="text-yellow-300" />
-
-              <span className="text-sm font-semibold">
-                Food Safety & Customer Care
-              </span>
-            </div>
-
-            {/* TITLE */}
-            <h1 className="mt-8 text-5xl md:text-6xl font-black leading-tight">
-              Return Policy
-              <span className="block text-yellow-300">
-                & Refund Guidelines
-              </span>
-            </h1>
-
-            {/* TEXT */}
-            <p className="mt-6 text-lg text-red-50/90 leading-relaxed">
-              GreenPork is committed to serving fresh, premium-quality meals.
-              Please review our refund, cancellation, delivery,
-              and food safety policies below.
-            </p>
-          </div>
-        </div>
-      </section>
+      
 
       {/* CONTENT */}
       <main className="max-w-7xl mx-auto px-6 lg:px-12 py-16">
@@ -231,10 +195,11 @@ const ReturnPolicy = () => {
           </div>
         </div>
 
+        
         {/* CONTACT */}
         <section className="mt-16 bg-gradient-to-br from-black to-[#111827] rounded-[2.5rem] text-white overflow-hidden">
 
-          <div className="px-8 md:px-12 py-14">
+          <div className="px-8  md:px-12 py-14">
 
             <div className="text-center mb-12">
 
