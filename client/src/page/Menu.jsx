@@ -201,7 +201,7 @@ const OrderingComponent = () => {
       {/* ── Product grid ── */}
       <div className="max-w-7xl mx-auto px-5 py-8">
         <motion.div
-          className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5"
+          className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-5 md:gap-5"
           initial="hidden"
           animate="show"
           variants={{ show: { transition: { staggerChildren: 0.07 } } }}
