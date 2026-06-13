@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { ImWhatsapp } from "react-icons/im";
-import green from "../../assets/file_0000000082847246b4bc227a74036a02.jpg";
+// import green from "../../assets/file_0000000082847246b4bc227a74036a02.jpg";
+import green from "../../assets/1000158403-removebg-preview.png";
 // import green from "../../assets/GreenBrandLogo.png";
 import {
   Menu, X, Home, Store, Info, Phone,
-  ShoppingCart, Flame,
+  ShoppingCart, Hamburger, Flame,
+  PiggyBank,
 } from "lucide-react";
 
 const NAV_LINKS = [
@@ -42,23 +44,18 @@ const Navbar = () => {
             }`}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="flex items-center justify-between h-16 sm:h-20">
+            <div className="flex  items-center justify-between h-16 sm:h-20">
 
               {/* ── Logo ── */}
-              <Link to="/" className="flex items-center gap-2 group shrink-0">
+              <Link to="/" className="mt-8     gap-2 group shrink-0">
                 <div>
-                  <img src={green} alt="" className="w-80 hidden" srcset="" />
+                  <img src={green} alt="" className=" w-[200px] sm:md:w-[250px] " srcset="" />
                 </div>
-                <div className="w-8 h-8 rounded-xl hidden// bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center shadow-md shadow-red-900/40 group-hover:scale-105 transition-transform duration-200">
-                  <Flame size={16} className="text-white" />
-                </div>
-                <span className="text-white hidden// font-black text-xl tracking-tight leading-none">
-                  GREEN<span className="text-orange-400">Bites</span>
-                </span>
+                
               </Link>
 
               {/* ── Desktop nav pill ── */}
-              <nav className="hidden lg:flex items-center gap-1 bg-white/10 border border-white/15 backdrop-blur-xl px-2 py-1.5 rounded-full">
+              <nav className="hidden lg:flex items-center gap-1 bg-black/10 border border-black/15 backdrop-blur-xl px-2 py-1.5 rounded-full">
                 {NAV_LINKS.map(({ icon, label, to }) => (
                   <NavLink
                     key={to}
@@ -126,7 +123,7 @@ const Navbar = () => {
                 >
                   {open
                     ? <X size={20} className="text-white" />
-                    : <Menu size={20} className="text-white" />
+                    : <Hamburger size={20} className="text-white" />
                   }
                 </button>
               </div>
@@ -137,15 +134,24 @@ const Navbar = () => {
 
       {/* ── Mobile full-screen overlay ─────────────────────────────────────────── */}
       <div
-        className={`fixed inset-0 z-40 lg:hidden flex flex-col transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-          }`}
         style={{
-          background: "linear-gradient(160deg, #1a0000 0%, #3d0000 45%, #7c1010 80%, #c0392b 100%)",
+          background: `
+              radial-gradient(
+                circle 0px at 80% 120px,
+                #FF3B30 0%,
+                #E10600 25%,
+                #3d0000 65%,
+                #2B0000 100%
+              )
+            `,
         }}
+        className={`fixed  inset-0 z-40 lg:hidden flex flex-col transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
+        
       >
         {/* Top bar inside overlay */}
-        <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-white/10">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b-0 border-white/10">
+          <div className="flex// hidden items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
               <Flame size={15} className="text-white" />
             </div>
@@ -155,7 +161,7 @@ const Navbar = () => {
           </div>
           <button
             onClick={() => setOpen(false)}
-            className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-white/20 transition-all"
+            className="w-10 h-10 rounded-xl bg-white/10 flex hidden items-center justify-center hover:bg-white/20 transition-all"
             aria-label="Close menu"
           >
             <X size={20} className="text-white" />
@@ -193,7 +199,7 @@ const Navbar = () => {
           {/* Phone number */}
           <a
             href="tel:0776464823"
-            className="flex items-center justify-center gap-2 w-full py-4 rounded-2xl bg-white/10 border border-white/15 text-white font-bold text-sm hover:bg-white/20 transition-all duration-200"
+            className="flex/// hidden items-center justify-center gap-2 w-full py-4 rounded-2xl bg-white/10 border border-white/15 text-white font-bold text-sm hover:bg-white/20 transition-all duration-200"
           >
             <Phone size={16} className="text-white/60" />
             (0) 77-6464-823
@@ -205,9 +211,10 @@ const Navbar = () => {
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => setOpen(false)}
-            className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl bg-green-500 hover:bg-green-600 text-white font-black text-base shadow-xl shadow-green-900/40 transition-all duration-200 hover:scale-[1.01]"
+            className="flex items-center justify-center gap-3 w-full py-4 rounded-2xl bg-[#0edb0e]
+            text-white hover:bg-green-600 text-white// font-black text-base shadow-md shadow-[#0edb0e]/40// transition-all duration-200 hover:scale-[1.01]"
           >
-            <ImWhatsapp size={20} />
+            <ImWhatsapp size={32} />
             Order via WhatsApp
           </a>
         </div>

@@ -475,11 +475,11 @@ const OrderingComponent = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.3 }}
-                      className="flex gap-3"
+                      className="flex flex-row-reverse gap-3"
                     >
                       <button
                         onClick={() => { addToCart(modal); setModal(null); setCartOpen(true); }}
-                        className="flex-1 h-12 sm:h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all duration-200 shadow-xl shadow-red-600/25 hover:shadow-red-600/35 hover:scale-[1.01]"
+                        className="flex-1 h-12 sm:h-14 rounded-full bg-red-600 hover:bg-red-700 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all duration-200 shadow-xl shadow-red-600/25 hover:shadow-red-600/35 hover:scale-[1.01]"
                       >
                         <ShoppingBasket size={19} />
                         Add to cart · UGX {fmt(modal.price)}
@@ -488,7 +488,7 @@ const OrderingComponent = () => {
                       <button
                         onClick={() => toggleLike(modal.id)}
                         aria-label={liked.has(modal.id) ? "Unlike" : "Save"}
-                        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center border-2 transition-all duration-200 ${liked.has(modal.id)
+                        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${liked.has(modal.id)
                           ? "bg-red-600 border-red-600 shadow-lg shadow-red-500/30"
                           : "bg-white border-gray-200 hover:border-red-300"
                           }`}

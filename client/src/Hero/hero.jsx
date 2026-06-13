@@ -111,7 +111,7 @@ const hero = () => {
             description:
                 "Juicy grilled beef patty layered with fresh lettuce, cheese, tomatoes and creamy sauce.",
         },
-        /* {
+        {
             title: "Classic Chicken Pizza",
             image: Pizza,
             price: "UGX 10,000",
@@ -130,7 +130,7 @@ const hero = () => {
             dataaos: "flip-left",
             description:
                 "Premium farm fresh pork cuts, hygienically prepared and ready for your favorite recipes.",
-        }, */
+        },
         {
             title: "Crispy Spicy Chicken",
             image: Chicken,
@@ -297,16 +297,16 @@ const hero = () => {
 
                     {/* Social Media */}
                     <div
-                        className="absolute block  md:flex sm:flex sm: justify-center items-center gap-4 md:right-18 right-10 md:bottom-10 z-50 space-y-3 bottom-20  -translate-y-1/2 bg-black/80// backdrop-blur-xl// shadow-md// text-white  hidden// p-3 rounded-full shadow//"
+                        className="absolute block   md:flex sm:flex sm: justify-center items-center gap-4 md:right-18 right-2 md:bottom-10 z-50 space-y-3 bottom-20  -translate-y-1/2 bg-black/80// backdrop-blur-xl// shadow-md// text-white  hidden// p-3 rounded-full shadow//"
                     >
                         <span style={socialAnim(0)}><Twitter size={25} /></span>
-                        <span style={socialAnim(1)}><Facebook size={25} /></span>
+                        <span className="my-2" style={socialAnim(1)}><Facebook size={25} /></span>
                         <span style={socialAnim(2)}><FaTiktok size={25} /></span>
                     </div>
 
 
                     <div className=" absolute top-24 md:top-20 sm:top-10 left-0 right-0 flex justify-center items-center" style={{ zIndex: 3 }}>
-                        
+
                         {/* Radial glow behind image */}
                         {/* <div
                             className="absolute inset-0 pointer-events-none"
@@ -352,22 +352,10 @@ const hero = () => {
                             {slides[current].description}
                         </p>
 
-                        {/* FEATURES */}
-                        <div className="flex// hidden justify-center mt-3 gap-6 text-sm text-gray-600">
-                            <div className="flex items-center gap-2">
-                                <Truck style={{ color: COLORS.success }} />
-                                Fast Delivery
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <ShieldCheck style={{ color: COLORS.success }} />
-                                Quality Guaranteed
-                            </div>
-                        </div>
-
                         {/* RATING */}
                         <div
                             key={`rating-${animKey}`}
-                            className="flex justify-center absolute left-20 sm:bottom-70 bottom-82 items-center mt-3"
+                            className="flex justify-center absolute left-20 sm:bottom-70 bottom-74 items-center mt-3"
                             style={ratingAnim}
                         >
                             <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
@@ -387,7 +375,7 @@ const hero = () => {
 
                         {/* PRICE */}
                         <div
-                            className="mt-4 absolute  left-18 sm:bottom-20 bottom-26 flex flex-col justify-center items-center gap-3"
+                            className="mt-4 absolute  left-18 sm:bottom-20 bottom-22 flex flex-col justify-center items-center gap-3"
                         >
                             <h1
                                 key={`title-sm-${animKey}`}
@@ -412,7 +400,7 @@ const hero = () => {
                                 </p>
                             </div>
 
-                            {/* BUTTON */}
+                            {/* ORDERING BUTTON */}
                             <button
                                 key={`btn-${animKey}`}
                                 onClick={() => {
