@@ -9,7 +9,6 @@ import { Link } from "react-router-dom";
 
 // ASSETS
 import Pizza from "../assets/pizza(17).png";
-// import PorkStake from "../assets/PremiumPlate.png";
 import FreshPork from "../assets/freshporke.png";
 import Porkies from "../assets/PremiumPlate.png";
 import Burger from "../assets/Burger.png";
@@ -41,11 +40,11 @@ const ITEMS = [
 
 // ─── Tag badge ────────────────────────────────────────────────────────────────
 const TAG_STYLES = {
-  Popular: "bg-emerald-100 text-emerald-700",
-  "Best Seller": "bg-orange-100 text-orange-700",
-  Spicy: "bg-red-100    text-red-700",
-  New: "bg-violet-100 text-violet-700",
-  Organic: "bg-lime-100   text-lime-700",
+  Popular: "bg-amber-100 text-amber-800",
+  "Best Seller": "bg-orange-100 text-orange-800",
+  Spicy: "bg-red-100 text-red-700",
+  New: "bg-stone-100 text-stone-700",
+  Organic: "bg-lime-100 text-lime-700",
 };
 
 const Tag = ({ label }) =>
@@ -65,11 +64,11 @@ const Stars = ({ rating }) => (
         className={
           i < Math.floor(rating)
             ? "text-amber-400 fill-amber-400"
-            : "text-gray-300 fill-gray-200"
+            : "text-stone-300 fill-stone-200"
         }
       />
     ))}
-    <span className="text-xs font-bold text-gray-600 ml-1">{rating}</span>
+    <span className="text-xs font-bold text-stone-600 ml-1">{rating}</span>
   </div>
 );
 
@@ -116,11 +115,11 @@ const OrderingComponent = () => {
   }, {});
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-white text-stone-900">
 
       {/* ── Ambient blobs ── */}
-      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden">
-        <div className="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-red-100/60 blur-[120px]" />
+      <div className="fixed hidden inset-0 -z-10 pointer-events-none overflow-hidden">
+        <div className="absolute -top-32 -left-32 w-[480px] h-[480px] rounded-full bg-amber-100/60 blur-[120px]" />
         <div className="absolute -bottom-32 -right-32 w-[420px] h-[420px] rounded-full bg-orange-100/60 blur-[120px]" />
       </div>
 
@@ -128,7 +127,7 @@ const OrderingComponent = () => {
       <div className="px-5 pt-5">
         <Link
           to="/"
-          className="inline-flex items-center gap-2 text-gray-400 hover:text-gray-900 transition-colors duration-200 group"
+          className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-900 transition-colors duration-200 group"
         >
           <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform duration-200" />
           <span className="text-xs uppercase tracking-widest font-bold">Back to home</span>
@@ -136,19 +135,19 @@ const OrderingComponent = () => {
       </div>
 
       {/* ── Sticky header ── */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-2xl border-b border-gray-100/80 shadow-[0_1px_20px_rgba(0,0,0,0.06)]">
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-2xl border-b border-stone-100/85 shadow-[0_1px_20px_rgba(0,0,0,0.05)]">
         {/* Top bar */}
         <div className="max-w-7xl mx-auto px-5 pt-4 pb-3 flex items-center justify-between gap-4">
 
           {/* Brand mark */}
           <div className="flex items-center gap-3 min-w-0">
             {/* Flame icon accent */}
-            <div className="w-9 h-9 hidden rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex// items-center justify-center shrink-0 shadow-md shadow-red-500/25">
+            <div className="w-9 h-9 hidden rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center shrink-0 shadow-md shadow-amber-500/25">
               <span className="text-white text-base leading-none select-none">🔥</span>
             </div>
             <div className="min-w-0">
-              <p className="text-[10px] font-black tracking-[3px] uppercase text-[#0edb0e] leading-none mb-0.5">GREENPORK</p>
-              <h1 className="text-lg md:text-2xl font-black leading-tight text-gray-900 truncate">Food Collection</h1>
+              <p className="text-[10px] font-black tracking-[3px] uppercase text-amber-500 leading-none mb-0.5">EverGrill</p>
+              <h1 className="text-lg md:text-2xl font-black leading-tight text-stone-900 truncate">Food Collection</h1>
             </div>
           </div>
 
@@ -156,7 +155,7 @@ const OrderingComponent = () => {
           <div className="flex items-center gap-2 shrink-0">
             {/* Item count chip */}
             {filtered.length > 0 && (
-              <span className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-gray-100 text-gray-500 text-xs font-bold">
+              <span className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-stone-100 text-stone-500 text-xs font-bold">
                 {filtered.length} items
               </span>
             )}
@@ -164,13 +163,13 @@ const OrderingComponent = () => {
             {/* Cart button */}
             <button
               onClick={() => setCartOpen(true)}
-              className="relative flex items-center gap-2 h-11 pl-3 pr-4 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black text-sm transition-all duration-200 shadow-lg shadow-red-600/30 hover:shadow-red-600/40 hover:scale-[1.02] group"
+              className="relative flex items-center gap-2 h-11 pl-3 pr-4 rounded-2xl bg-amber-500 hover:bg-amber-600 text-stone-950 font-black text-sm transition-all duration-200 shadow-lg shadow-amber-500/20 hover:scale-[1.02] group"
               aria-label="Open cart"
             >
               <ShoppingBag size={17} className="group-hover:scale-110 transition-transform duration-200" />
               <span className="hidden sm:inline">Cart</span>
               {cart.length > 0 && (
-                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-white text-red-600 text-[10px] font-black leading-none">
+                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-stone-900 text-amber-400 text-[10px] font-black leading-none">
                   {cart.length}
                 </span>
               )}
@@ -185,13 +184,13 @@ const OrderingComponent = () => {
               key={cat.key}
               onClick={() => setActiveCategory(cat.key)}
               className={`relative px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 ${activeCategory === cat.key
-                ? "bg-gray-900 text-white shadow-md"
-                : "bg-gray-100/80 text-gray-500 hover:bg-gray-200/80 hover:text-gray-800"
+                ? "bg-stone-900 text-white shadow-md"
+                : "bg-stone-100/80 text-stone-500 hover:bg-stone-200/80 hover:text-stone-800"
                 }`}
             >
               {cat.label}
               {activeCategory === cat.key && (
-                <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-red-500" />
+                <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-amber-500" />
               )}
             </button>
           ))}
@@ -211,10 +210,10 @@ const OrderingComponent = () => {
               key={item.id}
               variants={cardVariants}
               onClick={() => setModal(item)}
-              className="group relative rounded-3xl overflow-hidden bg-white border  border-gray-100 hover:border-red-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-red-500/10 transition-all duration-300 cursor-pointer"
+              className="group relative rounded-3xl overflow-hidden bg-white border border-stone-100 hover:border-amber-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-300 cursor-pointer"
             >
               {/* Image zone */}
-              <div className="relative h-52 flex items-center justify-center bg-gradient-to-b from-gray-50 to-white overflow-hidden">
+              <div className="relative h-52 flex items-center justify-center bg-gradient-to-b from-stone-50 to-white overflow-hidden">
                 <img
                   src={item.image}
                   alt={item.name}
@@ -222,7 +221,7 @@ const OrderingComponent = () => {
                 />
 
                 {/* Discount pill */}
-                <div className="absolute top-3 left-3 bg-red-600 text-white px-2.5 py-1 rounded-full text-[11px] font-black shadow">
+                <div className="absolute top-3 left-3 bg-stone-900 text-amber-400 px-2.5 py-1 rounded-full text-[11px] font-black shadow">
                   -{pct(item.price, item.anchoring)}%
                 </div>
 
@@ -230,40 +229,40 @@ const OrderingComponent = () => {
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleLike(item.id); }}
                   aria-label={liked.has(item.id) ? "Unlike" : "Like"}
-                  className={`absolute top-3 right-3 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${liked.has(item.id) ? "bg-red-600 shadow-md" : "bg-white shadow border border-gray-100"
+                  className={`absolute top-3 right-3 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${liked.has(item.id) ? "bg-amber-500 shadow-md" : "bg-white shadow border border-stone-100"
                     }`}
                 >
-                  <Heart size={16} className={liked.has(item.id) ? "fill-white text-white" : "text-gray-500"} />
+                  <Heart size={16} className={liked.has(item.id) ? "fill-stone-950 text-stone-950" : "text-stone-500"} />
                 </button>
               </div>
 
               {/* Info */}
               <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
-                 <div className="sm:block md:block hidden">
-                  <Tag label={item.tag} />
-                 </div>
+                  <div className="sm:block md:block hidden">
+                    <Tag label={item.tag} />
+                  </div>
                   <Stars rating={item.rating} />
                 </div>
 
-                <h2 className="font-black text-lg leading-tight mb-1">{item.name}</h2>
+                <h2 className="font-black text-lg leading-tight mb-1 text-stone-900">{item.name}</h2>
 
-                <p className="text-gray-400 hidden md:block sm:block  text-xs leading-relaxed mb-3 line-clamp-2">{item.description}</p>
+                <p className="text-stone-400 hidden md:block sm:block text-xs leading-relaxed mb-3 line-clamp-2">{item.description}</p>
 
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-gray-400 line-through text-xs">UGX {fmt(item.anchoring)}</p>
-                    <p className="text-red-600 font-black text-sm md:block sm:text-xl">UGX {fmt(item.price)}</p>
+                    <p className="text-stone-400 line-through text-xs">UGX {fmt(item.anchoring)}</p>
+                    <p className="text-amber-600 font-black text-sm md:block sm:text-xl">UGX {fmt(item.price)}</p>
                   </div>
 
                   <button
                     onClick={(e) => { e.stopPropagation(); addToCart(item); }}
                     aria-label={`Add ${item.name} to cart`}
-                    className="relative w-12 h-12 rounded-2xl bg-red-600 hover:bg-red-700 text-white flex items-center justify-center shadow-lg shadow-red-600/25 hover:scale-105 transition-all duration-200"
+                    className="relative w-12 h-12 rounded-2xl bg-amber-500 hover:bg-amber-600 text-stone-950 flex items-center justify-center shadow-lg shadow-amber-500/20 hover:scale-105 transition-all duration-200"
                   >
                     <ShoppingBasket size={18} />
                     {cartCountMap[item.id] > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-white text-red-600 text-[9px] font-black flex items-center justify-center border border-red-100">
+                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-stone-900 text-amber-400 text-[9px] font-black flex items-center justify-center border border-amber-100">
                         {cartCountMap[item.id]}
                       </span>
                     )}
@@ -271,9 +270,9 @@ const OrderingComponent = () => {
                 </div>
 
                 {/* Cook time strip */}
-                <div className="mt-3 hidden  pt-3 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
+                <div className="mt-3 hidden pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-400">
                   <div className="flex items-center gap-1.5">
-                    <Clock size={12} className="text-red-400" />
+                    <Clock size={12} className="text-amber-500" />
                     {item.cookTime}
                   </div>
                   <div className="flex items-center gap-1.5">
@@ -288,7 +287,7 @@ const OrderingComponent = () => {
 
         {/* Empty state */}
         {filtered.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-24 text-gray-400">
+          <div className="flex flex-col items-center justify-center py-24 text-stone-400">
             <ShoppingBag size={48} className="mb-4 opacity-30" />
             <p className="font-bold text-lg">Nothing here yet</p>
             <p className="text-sm mt-1">Try a different category</p>
@@ -307,7 +306,7 @@ const OrderingComponent = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setModal(null)}
-              className="fixed inset-0 bg-black/60 backdrop-blur-md z-50"
+              className="fixed inset-0 bg-stone-950/60 backdrop-blur-md z-50"
             />
 
             {/* Full-screen sheet — slides up from bottom */}
@@ -319,26 +318,26 @@ const OrderingComponent = () => {
               exit="exit"
               className="fixed inset-0 z-[60] flex flex-col md:flex-row bg-white overflow-hidden"
             >
-              {/* ── Hero zone: dark gradient with food image ── */}
+              {/* ── Hero zone: warm stone/amber gradient with food image ── */}
               <div
                 className="relative h-[38vh] min-h-[260px] md:h-auto flex-shrink-0 md:flex-1 items-end justify-between overflow-hidden"
                 style={{
                   background: `
-              radial-gradient(
-                circle 900px at 50% 120px,
-                #FF3B30 0%,
-                #E10600 25%,
-                #3d0000 65%,
-                #2B0000 100%
-              )
-            `,
+                    radial-gradient(
+                      circle 900px at 50% 120px,
+                      #f59e0b 0%,
+                      #d97706 25%,
+                      #1c1917 65%,
+                      #0c0a09 100%
+                    )
+                  `,
                 }}
               >
                 {/* Radial glow behind image */}
                 <div
                   className="absolute inset-0 pointer-events-none"
                   style={{
-                    background: "radial-gradient(ellipse 60% 60% at 70% 55%, rgba(249,115,22,0.25) 0%, transparent 70%)",
+                    background: "radial-gradient(ellipse 60% 60% at 70% 55%, rgba(245,158,11,0.2) 0%, transparent 70%)",
                   }}
                 />
 
@@ -371,11 +370,11 @@ const OrderingComponent = () => {
                       onClick={() => toggleLike(modal.id)}
                       aria-label={liked.has(modal.id) ? "Unlike" : "Like"}
                       className={`w-10 h-10 rounded-2xl backdrop-blur-sm flex items-center justify-center transition-all duration-200 ${liked.has(modal.id)
-                        ? "bg-red-500 shadow-lg shadow-red-500/40"
+                        ? "bg-amber-500 shadow-lg shadow-amber-500/40"
                         : "bg-white/10 hover:bg-white/20"
                         }`}
                     >
-                      <Heart size={17} className={liked.has(modal.id) ? "fill-white text-white" : "text-white/80"} />
+                      <Heart size={17} className={liked.has(modal.id) ? "fill-stone-950 text-stone-950" : "text-white/80"} />
                     </button>
                   </div>
                 </div>
@@ -409,11 +408,11 @@ const OrderingComponent = () => {
                         transition={{ delay: 0.1, duration: 0.35 }}
                       >
                         <Stars rating={modal.rating} />
-                        <h2 className="text-3xl md:text-5xl font-black text-black leading-tight mt-2 mb-1">{modal.name}</h2>
+                        <h2 className="text-3xl md:text-5xl font-black text-stone-950 leading-tight mt-2 mb-1">{modal.name}</h2>
                         <div className="flex flex-wrap items-center gap-2 mt-3">
-                          <span className="text-2xl md:text-3xl font-black text-black">UGX {fmt(modal.price)}</span>
-                          <span className="text-sm text-slate-500/80 line-through">UGX {fmt(modal.anchoring)}</span>
-                          <span className="bg-red-500 text-white text-xs font-black px-2.5 py-1 rounded-full">
+                          <span className="text-2xl md:text-3xl font-black text-stone-950">UGX {fmt(modal.price)}</span>
+                          <span className="text-sm text-stone-400 line-through font-medium">UGX {fmt(modal.anchoring)}</span>
+                          <span className="bg-stone-900 text-amber-400 text-xs font-black px-2.5 py-1 rounded-full">
                             -{pct(modal.price, modal.anchoring)}%
                           </span>
                         </div>
@@ -422,8 +421,8 @@ const OrderingComponent = () => {
 
                     {/* Description */}
                     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-                      <p className="text-xs font-black uppercase tracking-widest text-red-500 mb-2">About this dish</p>
-                      <p className="text-gray-600 leading-relaxed text-sm md:text-base">{modal.description}</p>
+                      <p className="text-xs font-black uppercase tracking-widest text-amber-500 mb-2">About this dish</p>
+                      <p className="text-stone-600 leading-relaxed text-sm md:text-base">{modal.description}</p>
                     </motion.div>
 
                     {/* Feature chips */}
@@ -434,15 +433,15 @@ const OrderingComponent = () => {
                       className="grid grid-cols-3 gap-2 sm:gap-3"
                     >
                       {[
-                        { Icon: Clock, label: "Prep time", value: modal.cookTime, color: "text-red-500", bg: "bg-red-50" },
+                        { Icon: Clock, label: "Prep time", value: modal.cookTime, color: "text-amber-500", bg: "bg-amber-50" },
                         { Icon: Truck, label: "Delivery", value: "Free", color: "text-emerald-600", bg: "bg-emerald-50" },
                         { Icon: ShieldCheck, label: "Quality", value: "Premium", color: "text-amber-500", bg: "bg-amber-50" },
                       ].map(({ Icon, label, value, color, bg }) => (
                         <div key={label} className={`flex flex-col items-center gap-1.5 rounded-2xl ${bg} py-3 px-2 sm:py-4 sm:px-3 text-center`}>
                           <Icon size={18} className={color} />
                           <div>
-                            <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wide text-gray-400">{label}</p>
-                            <p className="text-xs sm:text-sm font-black text-gray-800 mt-0.5">{value}</p>
+                            <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wide text-stone-400">{label}</p>
+                            <p className="text-xs sm:text-sm font-black text-stone-800 mt-0.5">{value}</p>
                           </div>
                         </div>
                       ))}
@@ -453,15 +452,15 @@ const OrderingComponent = () => {
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.25 }}
-                      className="flex items-center justify-between bg-gradient-to-r from-[#0edb0e]/10 to-green-50 border border-green-100 rounded-2xl p-4 sm:px-5 sm:py-4"
+                      className="flex items-center justify-between bg-gradient-to-r from-amber-500/10 to-stone-50 border border-amber-500/20 rounded-2xl p-4 sm:px-5 sm:py-4"
                     >
                       <div>
-                        <p className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-red-400 mb-0.5">You save</p>
-                        <p className="text-xl sm:text-2xl font-black text-red-600">UGX {fmt(parseInt(modal.anchoring) - modal.price)}</p>
+                        <p className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-stone-500 mb-0.5">You save</p>
+                        <p className="text-xl sm:text-2xl font-black text-amber-600">UGX {fmt(parseInt(modal.anchoring) - modal.price)}</p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-gray-400 line-through">UGX {fmt(modal.anchoring)}</p>
-                        <p className="text-base sm:text-lg font-black text-gray-800">UGX {fmt(modal.price)}</p>
+                        <p className="text-xs text-stone-400 line-through">UGX {fmt(modal.anchoring)}</p>
+                        <p className="text-base sm:text-lg font-black text-stone-800">UGX {fmt(modal.price)}</p>
                       </div>
                     </motion.div>
 
@@ -469,7 +468,7 @@ const OrderingComponent = () => {
                 </div>
 
                 {/* ── Fixed CTA bar at bottom ── */}
-                <div className="flex-shrink-0 border-t border-gray-100 bg-white px-6 py-5 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
+                <div className="flex-shrink-0 border-t border-stone-100 bg-white px-6 py-5 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
                   <div className="max-w-2xl mx-auto">
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
@@ -479,7 +478,7 @@ const OrderingComponent = () => {
                     >
                       <button
                         onClick={() => { addToCart(modal); setModal(null); setCartOpen(true); }}
-                        className="flex-1 h-12 sm:h-14 rounded-full bg-red-600 hover:bg-red-700 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all duration-200 shadow-xl shadow-red-600/25 hover:shadow-red-600/35 hover:scale-[1.01]"
+                        className="flex-1 h-12 sm:h-14 rounded-full bg-amber-500 hover:bg-amber-600 text-stone-950 font-black text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all duration-200 shadow-xl shadow-amber-500/20 hover:scale-[1.01]"
                       >
                         <ShoppingBasket size={19} />
                         Add to cart · UGX {fmt(modal.price)}
@@ -489,11 +488,11 @@ const OrderingComponent = () => {
                         onClick={() => toggleLike(modal.id)}
                         aria-label={liked.has(modal.id) ? "Unlike" : "Save"}
                         className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${liked.has(modal.id)
-                          ? "bg-red-600 border-red-600 shadow-lg shadow-red-500/30"
-                          : "bg-white border-gray-200 hover:border-red-300"
+                          ? "bg-amber-500 border-amber-500 shadow-lg shadow-amber-500/30"
+                          : "bg-white border-stone-200 hover:border-amber-300"
                           }`}
                       >
-                        <Heart size={19} className={liked.has(modal.id) ? "fill-white text-white" : "text-gray-500"} />
+                        <Heart size={19} className={liked.has(modal.id) ? "fill-stone-950 text-stone-950" : "text-stone-500"} />
                       </button>
                     </motion.div>
                   </div>
@@ -515,7 +514,7 @@ const OrderingComponent = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setCartOpen(false)}
-              className="fixed inset-0 bg-black/30 z-[70]"
+              className="fixed inset-0 bg-stone-950/30 z-[70]"
             />
 
             <motion.div
@@ -524,18 +523,18 @@ const OrderingComponent = () => {
               initial="hidden"
               animate="show"
               exit="exit"
-              className="fixed top-0 right-0 h-full w-full max-w-md bg-white border-l border-gray-100 z-[80] flex flex-col shadow-2xl"
+              className="fixed top-0 right-0 h-full w-full max-w-md bg-white border-l border-stone-100 z-[80] flex flex-col shadow-2xl"
             >
               {/* Drawer header */}
-              <div className="px-6 py-5 border-b border-gray-100 flex items-center justify-between">
+              <div className="px-6 py-5 border-b border-stone-100 flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-black">Your cart</h2>
-                  <p className="text-gray-400 text-sm mt-0.5">{cart.length} item{cart.length !== 1 ? "s" : ""}</p>
+                  <h2 className="text-2xl font-black text-stone-900">Your cart</h2>
+                  <p className="text-stone-400 text-sm mt-0.5">{cart.length} item{cart.length !== 1 ? "s" : ""}</p>
                 </div>
                 <button
                   onClick={() => setCartOpen(false)}
                   aria-label="Close cart"
-                  className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center hover:bg-gray-200 transition-colors"
+                  className="w-10 h-10 rounded-xl bg-stone-100 flex items-center justify-center hover:bg-stone-200 transition-colors"
                 >
                   <X size={18} />
                 </button>
@@ -544,27 +543,27 @@ const OrderingComponent = () => {
               {/* Cart items */}
               <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
                 {cart.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-gray-400 pb-20">
+                  <div className="flex flex-col items-center justify-center h-full text-stone-400 pb-20">
                     <ShoppingBag size={48} className="mb-4 opacity-30" />
                     <p className="font-bold">Your cart is empty</p>
                     <p className="text-sm mt-1">Add something delicious</p>
                   </div>
                 ) : (
                   cart.map((item) => (
-                    <div key={item.cartId} className="flex items-center gap-4 bg-gray-50 border border-gray-100 rounded-2xl p-3">
-                      <div className="w-16 h-16 rounded-xl bg-white border border-gray-100 flex items-center justify-center shrink-0">
+                    <div key={item.cartId} className="flex items-center gap-4 bg-stone-50 border border-stone-100 rounded-2xl p-3">
+                      <div className="w-16 h-16 rounded-xl bg-white border border-stone-100 flex items-center justify-center shrink-0">
                         <img src={item.image} alt={item.name} className="w-12 h-12 object-contain" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-sm truncate">{item.name}</p>
-                        <p className="text-red-600 font-black text-sm mt-0.5">UGX {fmt(item.price)}</p>
+                        <p className="font-bold text-sm truncate text-stone-900">{item.name}</p>
+                        <p className="text-amber-600 font-black text-sm mt-0.5">UGX {fmt(item.price)}</p>
                       </div>
                       <button
                         onClick={() => removeFromCart(item.cartId)}
                         aria-label="Remove item"
-                        className="w-9 h-9 rounded-xl bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors shrink-0"
+                        className="w-9 h-9 rounded-xl bg-amber-50 hover:bg-amber-100 flex items-center justify-center transition-colors shrink-0"
                       >
-                        <Minus size={14} className="text-red-600" />
+                        <Minus size={14} className="text-amber-600" />
                       </button>
                     </div>
                   ))
@@ -573,11 +572,11 @@ const OrderingComponent = () => {
 
               {/* Drawer footer */}
               {cart.length > 0 && (
-                <div className="px-5 py-5 border-t border-gray-100">
-                  <div className="bg-gray-50 border border-gray-100 rounded-2xl px-5 py-4 mb-4 flex items-center justify-between">
+                <div className="px-5 py-5 border-t border-stone-100">
+                  <div className="bg-stone-50 border border-stone-100 rounded-2xl px-5 py-4 mb-4 flex items-center justify-between">
                     <div>
-                      <p className="text-gray-500 text-sm">Total</p>
-                      <p className="text-2xl font-black text-red-600 mt-0.5">UGX {fmt(total)}</p>
+                      <p className="text-stone-500 text-sm">Total</p>
+                      <p className="text-2xl font-black text-amber-600 mt-0.5">UGX {fmt(total)}</p>
                     </div>
                     <div className="flex items-center gap-1.5 text-emerald-600 text-xs font-bold">
                       <Truck size={14} />
@@ -591,7 +590,7 @@ const OrderingComponent = () => {
                       const msg = `Hello GREENBites! I'd like to order:\n\n${lines}\n\nTotal: UGX ${fmt(total)}`;
                       window.open(`https://wa.me/2567XXXXXXXX?text=${encodeURIComponent(msg)}`, "_blank");
                     }}
-                    className="w-full h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-black flex items-center justify-center gap-2 transition-all duration-200 shadow-lg shadow-red-600/20"
+                    className="w-full h-14 rounded-2xl bg-amber-500 hover:bg-amber-600 text-stone-950 font-black flex items-center justify-center gap-2 transition-all duration-200 shadow-lg shadow-amber-500/20"
                   >
                     Checkout via WhatsApp
                     <ArrowRight size={18} />

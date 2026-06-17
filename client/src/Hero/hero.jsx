@@ -92,12 +92,13 @@ const hero = () => {
 
     const slides = [
         {
-            title: "Roasted Skewed Pork",
+            title: "Pork skewer",
             image: PorkStake,
             price: "UGX 6,000",
             oldPrice: "UGX 8,000",
             rating: 4.4,
             dataaos: "fade-up",
+            slogan: "smoky flavor  in every Taste.",
             description:
                 "Roasted pork with fried cassava, salad, chapati, and bananas.",
         },
@@ -108,6 +109,7 @@ const hero = () => {
             oldPrice: "UGX 12,000",
             rating: 4.7,
             dataaos: "fade-down",
+            slogan: "Bold in every Bite.",
             description:
                 "Juicy grilled beef patty layered with fresh lettuce, cheese, tomatoes and creamy sauce.",
         },
@@ -118,6 +120,7 @@ const hero = () => {
             oldPrice: "UGX 12,000",
             rating: 4.7,
             dataaos: "zoom-in",
+            slogan: "Crust . Cheese . Joy",
             description:
                 "Juicy grilled beef patty layered with fresh lettuce, cheese, tomatoes and creamy sauce.",
         },
@@ -128,6 +131,7 @@ const hero = () => {
             oldPrice: "UGX 18,000",
             rating: 4.5,
             dataaos: "flip-left",
+            slogan: "Pure . Fresh . Trusted",
             description:
                 "Premium farm fresh pork cuts, hygienically prepared and ready for your favorite recipes.",
         },
@@ -137,6 +141,7 @@ const hero = () => {
             price: "UGX 55,000",
             oldPrice: "UGX 78,000",
             rating: 4.5,
+            slogan: "Crispy . Juicy . Bold",
             dataaos: "flip-left",
             description:
                 "Premium farm fresh pork cuts, hygienically prepared and ready for your favorite recipes.",
@@ -194,61 +199,34 @@ const hero = () => {
     return (
         <div
 
-            className="absolute bg-white inset-0"
+            className="absolute bg-[#0edb0e inset-0"
+
 
             style={{
                 background: `
-        radial-gradient(
-          circle 900px at 50% 120px,
-          #FF3B30 0%,
-          #E10600 25%,
-          #3d0000 65%,
-          #2B0000 100%
-        )
-      `,
-
+                    radial-gradient(
+                      circle 900px at 50% 120px,
+                      #f59e0b 0%,
+                      #d97706 25%,
+                      #1c1917 65%,
+                      #0c0a09 100%
+                    )
+                  `,
             }}
+            /* className="absolute overflow-hidden inset-0"
+            style={{
+                background: `radial - gradient(
+                circle 900px at 50% 120px,
+  rgba(14, 219, 14, 0.08) 0%,
+  #FFFFFF 100%)`,
 
-        /* className="absolute overflow-hidden inset-0"
-        style={{
-            background: "linear-gradient(145deg, #1a0000 0%, #3d0000 40%, #7c1010 75%, #c0392b 100%)",
-
-        }} */
+            }} */
         >
             <div
-                className="relative w-full h-screen backdrop-blur-none bg-black/10   overflow-hidden"
+                className="relative w-full h-screen backdrop-blur-2xl bg-black/20   overflow-hidden"
 
             >
-                {/* ── Pulsing ambient rings (pure CSS, no layout change) ── */}
-                <div
-                    style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        width: "380px",
-                        height: "380px",
-                        borderRadius: "50%",
-                        border: "1.5px solid rgba(255,255,255,0.15)",
-                        pointerEvents: "none",
-                        zIndex: 1,
-                        animation: "heroRingPulse 3.5s ease-in-out infinite",
-                    }}
-                />
-                <div
-                    style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        width: "520px",
-                        height: "520px",
-                        borderRadius: "50%",
-                        border: "1px solid rgba(255,255,255,0.07)",
-                        pointerEvents: "none",
-                        zIndex: 1,
-                        animation: "heroRingPulse 3.5s ease-in-out 1s infinite",
-                    }}
-                />
-
+                
                 {/* nav bar */}
                 <div>
                     <Navbar />
@@ -259,11 +237,11 @@ const hero = () => {
                     onMouseLeave={() => setIsPaused(false)}
                 >
                     {/* ARROWS */}
-                    <div className="absolute md:flex hidden  gap-3 right-5 top-12// md:right-20 md:bottom-40 z-50">
+                    <div className="absolute md:flex hidden  gap-3 right-5 top-12// md:right-280 md:top-40 z-50">
                         <button
                             onClick={prevSlide}
                             className="
-            bg-black/30
+            bg-white/10
             hover:bg-white/40
             backdrop-blur-md
             text-white
@@ -280,7 +258,7 @@ const hero = () => {
                         <button
                             onClick={nextSlide}
                             className="
-            bg-black/30
+            bg-white/10
             hover:bg-white/40
             backdrop-blur-md
             text-white
@@ -297,7 +275,7 @@ const hero = () => {
 
                     {/* Social Media */}
                     <div
-                        className="absolute block   md:flex sm:flex sm: justify-center items-center gap-4 md:right-18 right-2 md:bottom-10 z-50 space-y-3 bottom-20  -translate-y-1/2 bg-black/80// backdrop-blur-xl// shadow-md// text-white  hidden// p-3 rounded-full shadow//"
+                        className="absolute block   md:flex sm:flex sm: justify-center items-center gap-4 md:-left-260 right-2 md:bottom-10 z-50 space-y-3 bottom-20  -translate-y-1/2 bg-black/80// backdrop-blur-xl// shadow-md// text-white  hidden// p-3 rounded-full shadow//"
                     >
                         <span style={socialAnim(0)}><Twitter size={25} /></span>
                         <span className="my-2" style={socialAnim(1)}><Facebook size={25} /></span>
@@ -307,13 +285,6 @@ const hero = () => {
 
                     <div className=" absolute top-24 md:top-20 sm:top-10 left-0 right-0 flex justify-center items-center" style={{ zIndex: 3 }}>
 
-                        {/* Radial glow behind image */}
-                        {/* <div
-                            className="absolute inset-0 pointer-events-none"
-                            style={{
-                                background: "radial-gradient(ellipse 60% 60% at 70% 55%, rgba(249,115,22,0.25) 0%, transparent 70%)",
-                            }}
-                        /> */}
                         {/* Radial glow behind image */}
                         <div
                             className="absolute inset-0 pointer-events-none"
@@ -331,31 +302,36 @@ const hero = () => {
                                 filter: "drop-shadow(0 20px 40px rgba(249,115,22,0.35))",
                                 ...imgAnimStyle,
                             }}
-                            className="w-100  h-100 md:w-130 md:h-130 sm:w-80 sm:h-80 object-contain drop-shadow-3xl transition-all duration-700 ease-in-out hover:scale-105"
+                            className="w-90  h-100 md:w-120 md:h-130 sm:w-80 sm:h-80 object-contain drop-shadow-3xl transition-all duration-700 ease-in-out hover:scale-105"
                         />
                     </div>
 
                     {/* CONTENT */}
-                    <div className="mt-0     text-center flex flex-col  px-4">
+                    <div className="mt-0    text-center flex flex-col  px-4">
 
                         {/* TITLE */}
                         <h1
                             key={`title-${animKey}`}
-                            className="text-5xl hidden font-serif md:block md:text-[120px] sm:text-[60px]  uppercase text-[white]/90 font-extrabold"
+                            className="text-5xl hidden font-serif md:block/// md:text-[120px] sm:text-[60px]  uppercase text-[white]/60 font-extrabold"
                             style={{ animation: `heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.05s both` }}
                         >
                             {slides[current].title}
                         </h1>
 
                         {/* DESCRIPTION */}
-                        <p className="mt-2 absolute top-20 hidden sm:hidden// md:top-10 md:block// left-80 text-xl leading-relaxed text-black/80 font-medium">
+                        <p className="mt-2 w-100 hidden sm:hidden md:block  absolute text-center left-10  md:top-80 sm:block  text-xl font-serif leading-relaxed text-white font-medium">
                             {slides[current].description}
                         </p>
+
+                        {/* SLOGAN */}
+                        <h3 className="text-white text-xl sm:text-3xl font-extrabold font-serif absolute bottom-10 capitalize left-0 right-0">
+                            #{" "}{slides[current].slogan}
+                        </h3>
 
                         {/* RATING */}
                         <div
                             key={`rating-${animKey}`}
-                            className="flex justify-center absolute left-20 sm:bottom-70 bottom-74 items-center mt-3"
+                            className="flex justify-center md:hidden absolute left-20 sm:bottom-70 bottom-74 items-center mt-3"
                             style={ratingAnim}
                         >
                             <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
@@ -375,11 +351,11 @@ const hero = () => {
 
                         {/* PRICE */}
                         <div
-                            className="mt-4 absolute  left-18 sm:bottom-20 bottom-22 flex flex-col justify-center items-center gap-3"
+                            className="mt-4 absolute  left-18 md:-right-240 md:top-20  sm:bottom-20 bottom-22 flex flex-col justify-center items-center gap-3"
                         >
                             <h1
                                 key={`title-sm-${animKey}`}
-                                className="capitalize text-yellow-500 sm:hidden// md:block font-extrabold"
+                                className="capitalize text-white text-3xl sm:hidden// md:block  font-extrabold"
                                 style={titleAnim}
                             >
                                 {slides[current].title}
@@ -390,12 +366,12 @@ const hero = () => {
                                 style={priceAnim}
                             >
                                 <p
-                                    className="text-4xl text-white/80 font-black"
+                                    className="text-4xl text-white font-black"
                                 >
                                     {slides[current].price}
                                 </p>
 
-                                <p className="line-through text-2xl  text-gray-400">
+                                <p className="line-through text-2xl md:mt-3  text-white">
                                     {slides[current].oldPrice}
                                 </p>
                             </div>
@@ -418,6 +394,7 @@ const hero = () => {
         bg-white
         rounded-full
         px-3
+        md:flex
         py-2.5
         flex
         items-center
@@ -435,11 +412,13 @@ const hero = () => {
 
                                 {/* ICON */}
                                 <div
-                                    style={{ backgroundColor: COLORS.secondary }}
+                                    // style={{ backgroundColor: COLORS.secondary }}
                                     className="
             h-12
             w-12
             rounded-full
+            bg-[#FACC15]
+            // bg-[#0edb0e]
             flex
             items-center
             justify-center
@@ -458,11 +437,11 @@ const hero = () => {
                                 {/* TEXT */}
                                 <div className="flex flex-col items-start leading-tight">
 
-                                    <span className="text-[10px] uppercase tracking-[0.2em] text-gray-400 font-bold">
+                                    <span className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold">
                                         Fast Delivery
                                     </span>
 
-                                    <p className="text-[#DC2626] text-lg font-extrabold">
+                                    <p className=" text-[#FACC15] text-lg font-extrabold">
                                         Order Now
                                     </p>
                                 </div>
@@ -471,7 +450,7 @@ const hero = () => {
                                 <ArrowRight
                                     size={20}
                                     className="
-            text-[#DC2626]
+            text-[#0edb0e]
             group-hover:translate-x-1
             transition-transform
             duration-300
@@ -503,12 +482,12 @@ const hero = () => {
                         </div>
 
                         {/* ---- copyright policy ----- */}
-                        <footer className=" absolute bottom-8 md:bottom-2 left-0 right-0   w-full  bg-transparent border-none border-gray-100">
+                        <footer className=" absolute  bottom-2 md:bottom-2 -right-30 sm:-right-20   w-full  bg-transparent border-none border-gray-100">
                             <div className="mx-auto px-4 ">
                                 <div className="">
-                                    <div className="flex place-items-center justify-center items-center gap-4">
+                                    <div className="flex place-items-start justify-start items-center gap-4">
                                         <p className="text-white/90 font-semibold md:text-base  leading-2 text-sm">
-                                            &copy; {year} GREENBites.
+                                            &copy; {year} EverGrill.
                                         </p>
                                     </div>
                                 </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { ImWhatsapp } from "react-icons/im";
 // import green from "../../assets/file_0000000082847246b4bc227a74036a02.jpg";
-import green from "../../assets/1000158403-removebg-preview.png";
+import green from "../../assets/Evergrill.png";
 // import green from "../../assets/GreenBrandLogo.png";
 import {
   Menu, X, Home, Store, Info, Phone,
@@ -55,7 +55,7 @@ const Navbar = () => {
               </Link>
 
               {/* ── Desktop nav pill ── */}
-              <nav className="hidden lg:flex items-center gap-1 bg-black/10 border border-black/15 backdrop-blur-xl px-2 py-1.5 rounded-full">
+              <nav className="hidden lg:flex// items-center gap-1 bg-black/10 border border-black/15 backdrop-blur-xl px-2 py-1.5 rounded-full">
                 {NAV_LINKS.map(({ icon, label, to }) => (
                   <NavLink
                     key={to}
@@ -74,7 +74,7 @@ const Navbar = () => {
               </nav>
 
               {/* ── Desktop right actions ── */}
-              <div className="hidden lg:flex items-center gap-3">
+              <div className="hidden lg:flex// items-center gap-3">
                 {/* Cart */}
                 <Link
                   to="/cart"
@@ -94,7 +94,7 @@ const Navbar = () => {
                   href="https://wa.me/+256776464823"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-xs font-black uppercase tracking-wide px-4 py-2.5 rounded-full transition-all duration-200 shadow-lg shadow-green-900/30 hover:scale-[1.02]"
+                  className="flex hidden items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-xs font-black uppercase tracking-wide px-4 py-2.5 rounded-full transition-all duration-200 shadow-lg shadow-green-900/30 hover:scale-[1.02]"
                 >
                   <ImWhatsapp size={15} />
                   Order Now
@@ -102,7 +102,7 @@ const Navbar = () => {
               </div>
 
               {/* ── Mobile: cart + hamburger ── */}
-              <div className="flex lg:hidden items-center gap-2">
+              <div className="flex  items-center gap-2">
                 <Link
                   to="/cart"
                   className="relative w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center"
@@ -134,7 +134,7 @@ const Navbar = () => {
 
       {/* ── Mobile full-screen overlay ─────────────────────────────────────────── */}
       <div
-        style={{
+        /* style={{
           background: `
               radial-gradient(
                 circle 0px at 80% 120px,
@@ -144,8 +144,8 @@ const Navbar = () => {
                 #2B0000 100%
               )
             `,
-        }}
-        className={`fixed  inset-0 z-40 lg:hidden flex flex-col transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        }} */
+        className={`fixed md:w-[420px] md:border-l border-white/10 bg-black backdrop-blur-3xl  inset-0 z-40 flex flex-col transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
         
       >
