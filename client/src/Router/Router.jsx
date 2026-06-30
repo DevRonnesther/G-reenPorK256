@@ -10,6 +10,7 @@ import OnlineOrdering from "../page/onlineOrdering.jsx";
 import Layout from "../components/Layout/layout";
 // import Login from "../page/Login.jsx" // CHECK THIS PATH
 import Register from "../page/Register.jsx";
+import Cart from "../components/Cart.jsx"
 
 const Router = () => {
   return (
@@ -19,6 +20,7 @@ const Router = () => {
       <Route path="/reviewUs" element={<Review />} />
       <Route path="/returnPolicy" element={<ReturnPolicy />} />
       <Route path="/contactUs" element={<Contact />} />
+      <Route path="/cart" element={<Cart />} />
       {/* <Route path="/login" element={<Login />} /> */}
       <Route path="/register" element={<Register />} />
       <Route path="/menu" element={<Menu />} />

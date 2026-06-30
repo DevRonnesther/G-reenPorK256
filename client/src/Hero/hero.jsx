@@ -1,507 +1,421 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Star,
+  StarHalf,
+  ShoppingBasket,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Twitter,
+  Facebook,
+} from "lucide-react";
+import { FaTiktok } from "react-icons/fa6";
 
-// IMAGES
+import Navbar from "../components/Navbar/Navbar";
+import green from "../assets/Evergrill.png";
 import FreshPork from "../assets/freshporke.png";
-// import FreshPork from "../assets/pngwing.com (23).png";
-// import PorkStake from "../assets/ChatGPT Image Apr 18, 2026, 04_21_59 PM.png";
-import PorkStake from "../assets/PremiumPlate.png";
-// import PorkStake from "../assets/pngwing.com (21).png";
+import PorkStake from "../assets/ChatGPT Image Jun 18, 2026, 03_34_25 PM.png";
 import Burger from "../assets/Burger.png";
 import Pizza from "../assets/pizza(17).png";
 import Chicken from "../assets/pngwing.com (25).png";
 
-// ICONS
-import {
-    ShieldCheck,
-    Truck,
-    Star,
-    ShoppingCart,
-    ArrowRight,
-    ArrowLeft,
-    Twitter,
-    Facebook,
-    StarHalf,
-    ShoppingBag,
-    ShoppingBasket,
-    ChevronLeft,
-    ChevronRight,
-} from "lucide-react";
-import Navbar from "../components/Navbar/Navbar";
-import { FaTiktok } from "react-icons/fa6";
+// ─── Config ──────────────────────────────────────────────────────────────
+const WHATSAPP_NUMBER = "256776464823";
+const AUTOPLAY_INTERVAL_MS = 5000;
 
-// ─── Animation keyframes injected once into <head> ───────────────────────────
-const ANIMATION_STYLES = `
-@keyframes heroImgEnterRight {
-    0%   { opacity: 0; transform: translateX(80px) scale(0.85) rotate(6deg); }
-    100% { opacity: 1; transform: translateX(0)    scale(1)    rotate(0deg); }
-}
-@keyframes heroImgEnterLeft {
-    0%   { opacity: 0; transform: translateX(-80px) scale(0.85) rotate(-6deg); }
-    100% { opacity: 1; transform: translateX(0)     scale(1)    rotate(0deg); }
-}
-@keyframes heroBgTitleReveal {
-    0%   { opacity: 0; transform: scale(1.15) translateY(16px); letter-spacing: 0.25em; }
-    100% { opacity: 1; transform: scale(1)    translateY(0);    letter-spacing: 0.04em; }
-}
-@keyframes heroFadeUp {
-    0%   { opacity: 0; transform: translateY(30px); }
-    100% { opacity: 1; transform: translateY(0); }
-}
-@keyframes heroBadgePop {
-    0%   { opacity: 0; transform: scale(0.4) rotate(-10deg); }
-    70%  { transform: scale(1.15) rotate(2deg); }
-    100% { opacity: 1; transform: scale(1) rotate(0deg); }
-}
-@keyframes heroRingPulse {
-    0%, 100% { transform: translate(-50%, -50%) scale(0.88); opacity: 0.06; }
-    50%       { transform: translate(-50%, -50%) scale(1.12); opacity: 0.14; }
-}
-@keyframes heroImgFloat {
-    0%, 100% { transform: translateY(0px); }
-    50%       { transform: translateY(-14px); }
-}
-@keyframes heroSocialFadeIn {
-    0%   { opacity: 0; transform: translateX(20px); }
-    100% { opacity: 1; transform: translateX(0); }
-}
-`;
-
-// Inject styles once
-if (typeof document !== "undefined" && !document.getElementById("hero-anim-styles")) {
-    const styleTag = document.createElement("style");
-    styleTag.id = "hero-anim-styles";
-    styleTag.innerHTML = ANIMATION_STYLES;
-    document.head.appendChild(styleTag);
-}
-
-const hero = () => {
-    const year = new Date().getFullYear();
-    const [current, setCurrent] = useState(0);
-    const [isPaused, setIsPaused] = useState(false);
-    const [imgDir, setImgDir] = useState("right"); // "right" | "left"
-    const [animKey, setAnimKey] = useState(0);     // bump to retrigger animations
-
-    // 🔥 BRAND COLORS
-    const COLORS = {
-        primary: "#F97316",   // Orange
-        secondary: "#DC2626", // Red
-        accent: "#FACC15",    // Yellow
-        success: "#0edb0e",   // Green
-    };
-
-    const slides = [
-        {
-            title: "Pork skewer",
-            image: PorkStake,
-            price: "UGX 6,000",
-            oldPrice: "UGX 8,000",
-            rating: 4.4,
-            dataaos: "fade-up",
-            slogan: "smoky flavor  in every Taste.",
-            description:
-                "Roasted pork with fried cassava, salad, chapati, and bananas.",
-        },
-        {
-            title: "Classic Beef Burger",
-            image: Burger,
-            price: "UGX 10,000",
-            oldPrice: "UGX 12,000",
-            rating: 4.7,
-            dataaos: "fade-down",
-            slogan: "Bold in every Bite.",
-            description:
-                "Juicy grilled beef patty layered with fresh lettuce, cheese, tomatoes and creamy sauce.",
-        },
-        {
-            title: "Classic Chicken Pizza",
-            image: Pizza,
-            price: "UGX 10,000",
-            oldPrice: "UGX 12,000",
-            rating: 4.7,
-            dataaos: "zoom-in",
-            slogan: "Crust . Cheese . Joy",
-            description:
-                "Juicy grilled beef patty layered with fresh lettuce, cheese, tomatoes and creamy sauce.",
-        },
-        {
-            title: "Fresh Organic Pork",
-            image: FreshPork,
-            price: "UGX 16,000",
-            oldPrice: "UGX 18,000",
-            rating: 4.5,
-            dataaos: "flip-left",
-            slogan: "Pure . Fresh . Trusted",
-            description:
-                "Premium farm fresh pork cuts, hygienically prepared and ready for your favorite recipes.",
-        },
-        {
-            title: "Crispy Spicy Chicken",
-            image: Chicken,
-            price: "UGX 55,000",
-            oldPrice: "UGX 78,000",
-            rating: 4.5,
-            slogan: "Crispy . Juicy . Bold",
-            dataaos: "flip-left",
-            description:
-                "Premium farm fresh pork cuts, hygienically prepared and ready for your favorite recipes.",
-        },
-    ];
-
-    // AUTO SLIDE
-    useEffect(() => {
-        if (isPaused) return;
-
-        const interval = setInterval(() => {
-            setCurrent((prev) => {
-                setImgDir("right");
-                setAnimKey((k) => k + 1);
-                return (prev + 1) % slides.length;
-            });
-        }, 5000);
-
-        return () => clearInterval(interval);
-    }, [isPaused, slides.length]);
-
-    // NEXT SLIDE
-    const nextSlide = () => {
-        setImgDir("right");
-        setAnimKey((k) => k + 1);
-        setCurrent((prev) => (prev + 1) % slides.length);
-    };
-
-    // PREVIOUS SLIDE
-    const prevSlide = () => {
-        setImgDir("left");
-        setAnimKey((k) => k + 1);
-        setCurrent((prev) =>
-            prev === 0 ? slides.length - 1 : prev - 1
-        );
-    };
-
-    // ── Animation styles (inline, keyed so they retrigger on every slide change) ──
-
-    // Background ghost title
-
-    // Food image — direction-aware entrance + continuous float after
-    const imgAnimStyle = {
-        animation: `${imgDir === "right" ? "heroImgEnterRight" : "heroImgEnterLeft"} 0.55s cubic-bezier(0.16,1,0.3,1) both, heroImgFloat 4s ease-in-out 0.6s infinite`,
-    };
-
-    // Staggered content entrance (delay each piece)
-    const badgeAnim = { animation: `heroBadgePop 0.45s cubic-bezier(0.34,1.56,0.64,1) 0.05s both` };
-    const ratingAnim = { animation: `heroFadeUp 0.45s cubic-bezier(0.16,1,0.3,1) 0.15s both` };
-    const titleAnim = { animation: `heroFadeUp 0.45s cubic-bezier(0.16,1,0.3,1) 0.22s both` };
-    const priceAnim = { animation: `heroFadeUp 0.5s  cubic-bezier(0.16,1,0.3,1) 0.30s both` };
-    const btnAnim = { animation: `heroFadeUp 0.5s  cubic-bezier(0.16,1,0.3,1) 0.40s both` };
-    const socialAnim = (i) => ({ animation: `heroSocialFadeIn 0.4s cubic-bezier(0.16,1,0.3,1) ${0.1 + i * 0.1}s both` });
-
-    return (
-        <div
-
-            className="absolute bg-[#0edb0e inset-0"
-
-
-            style={{
-                background: `
-                    radial-gradient(
-                      circle 900px at 50% 120px,
-                      #f59e0b 0%,
-                      #d97706 25%,
-                      #1c1917 65%,
-                      #0c0a09 100%
-                    )
-                  `,
-            }}
-            /* className="absolute overflow-hidden inset-0"
-            style={{
-                background: `radial - gradient(
-                circle 900px at 50% 120px,
-  rgba(14, 219, 14, 0.08) 0%,
-  #FFFFFF 100%)`,
-
-            }} */
-        >
-            <div
-                className="relative w-full h-screen backdrop-blur-2xl bg-black/20   overflow-hidden"
-
-            >
-                
-                {/* nav bar */}
-                <div>
-                    <Navbar />
-                </div>
-                <div
-                    className="md:flex bg-black/10 absolute top-0 min-h-screen backdrop-blur-xl md:flex-row  bg-black///  w-full   flex flex-col items-center justify-center overflow-hidden"
-                    onMouseEnter={() => setIsPaused(true)}
-                    onMouseLeave={() => setIsPaused(false)}
-                >
-                    {/* ARROWS */}
-                    <div className="absolute md:flex hidden  gap-3 right-5 top-12// md:right-280 md:top-40 z-50">
-                        <button
-                            onClick={prevSlide}
-                            className="
-            bg-white/10
-            hover:bg-white/40
-            backdrop-blur-md
-            text-white
-            p-3
-            rounded-full
-            transition-all
-            duration-300
-            shadow-lg
-        "
-                        >
-                            <ChevronLeft size={32} />
-                        </button>
-
-                        <button
-                            onClick={nextSlide}
-                            className="
-            bg-white/10
-            hover:bg-white/40
-            backdrop-blur-md
-            text-white
-            p-3
-            rounded-full
-            transition-all
-            duration-300
-            shadow-lg
-        "
-                        >
-                            <ChevronRight size={32} />
-                        </button>
-                    </div>
-
-                    {/* Social Media */}
-                    <div
-                        className="absolute block   md:flex sm:flex sm: justify-center items-center gap-4 md:-left-260 right-2 md:bottom-10 z-50 space-y-3 bottom-20  -translate-y-1/2 bg-black/80// backdrop-blur-xl// shadow-md// text-white  hidden// p-3 rounded-full shadow//"
-                    >
-                        <span style={socialAnim(0)}><Twitter size={25} /></span>
-                        <span className="my-2" style={socialAnim(1)}><Facebook size={25} /></span>
-                        <span style={socialAnim(2)}><FaTiktok size={25} /></span>
-                    </div>
-
-
-                    <div className=" absolute top-24 md:top-20 sm:top-10 left-0 right-0 flex justify-center items-center" style={{ zIndex: 3 }}>
-
-                        {/* Radial glow behind image */}
-                        <div
-                            className="absolute inset-0 pointer-events-none"
-                            style={{
-                                background: "radial-gradient(ellipse 60% 60% at 70% 55%, rgba(249,115,22,0.25) 0%, transparent 70%)",
-                            }}
-                        />
-                        {/* IMAGE — retrigger animation on every slide change via key */}
-                        <img
-                            key={`img-${animKey}`}
-                            data-aos={slides[current].dataaos}
-                            src={slides[current].image}
-                            alt={slides[current].title}
-                            style={{
-                                filter: "drop-shadow(0 20px 40px rgba(249,115,22,0.35))",
-                                ...imgAnimStyle,
-                            }}
-                            className="w-90  h-100 md:w-120 md:h-130 sm:w-80 sm:h-80 object-contain drop-shadow-3xl transition-all duration-700 ease-in-out hover:scale-105"
-                        />
-                    </div>
-
-                    {/* CONTENT */}
-                    <div className="mt-0    text-center flex flex-col  px-4">
-
-                        {/* TITLE */}
-                        <h1
-                            key={`title-${animKey}`}
-                            className="text-5xl hidden font-serif md:block/// md:text-[120px] sm:text-[60px]  uppercase text-[white]/60 font-extrabold"
-                            style={{ animation: `heroFadeUp 0.6s cubic-bezier(0.16,1,0.3,1) 0.05s both` }}
-                        >
-                            {slides[current].title}
-                        </h1>
-
-                        {/* DESCRIPTION */}
-                        <p className="mt-2 w-100 hidden sm:hidden md:block  absolute text-center left-10  md:top-80 sm:block  text-xl font-serif leading-relaxed text-white font-medium">
-                            {slides[current].description}
-                        </p>
-
-                        {/* SLOGAN */}
-                        <h3 className="text-white text-xl sm:text-3xl font-extrabold font-serif absolute bottom-10 capitalize left-0 right-0">
-                            #{" "}{slides[current].slogan}
-                        </h3>
-
-                        {/* RATING */}
-                        <div
-                            key={`rating-${animKey}`}
-                            className="flex justify-center md:hidden absolute left-20 sm:bottom-70 bottom-74 items-center mt-3"
-                            style={ratingAnim}
-                        >
-                            <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                            <span className="ml-2 text-white">
-                                {slides[current].rating}
-                            </span>
-
-                            {/* DISCOUNT */}
-                            <span
-                                key={`badge-${animKey}`}
-                                className="text-white text-sm ml-2 font-bold px-2 py-1 rounded-full"
-                                style={{ backgroundColor: COLORS.secondary, ...badgeAnim }}
-                            >
-                                -20% off
-                            </span>
-                        </div>
-
-                        {/* PRICE */}
-                        <div
-                            className="mt-4 absolute  left-18 md:-right-240 md:top-20  sm:bottom-20 bottom-22 flex flex-col justify-center items-center gap-3"
-                        >
-                            <h1
-                                key={`title-sm-${animKey}`}
-                                className="capitalize text-white text-3xl sm:hidden// md:block  font-extrabold"
-                                style={titleAnim}
-                            >
-                                {slides[current].title}
-                            </h1>
-                            <div
-                                key={`price-${animKey}`}
-                                className="block"
-                                style={priceAnim}
-                            >
-                                <p
-                                    className="text-4xl text-white font-black"
-                                >
-                                    {slides[current].price}
-                                </p>
-
-                                <p className="line-through text-2xl md:mt-3  text-white">
-                                    {slides[current].oldPrice}
-                                </p>
-                            </div>
-
-                            {/* ORDERING BUTTON */}
-                            <button
-                                key={`btn-${animKey}`}
-                                onClick={() => {
-                                    const message = `I want to order ${slides[current].title} at ${slides[current].price}`;
-
-                                    window.open(
-                                        `https://wa.me/2567XXXXXXXX?text=${encodeURIComponent(message)}`,
-                                        "_blank"
-                                    );
-                                }}
-                                style={btnAnim}
-                                className="
-        group
-        mt-2
-        bg-white
-        rounded-full
-        px-3
-        md:flex
-        py-2.5
-        flex
-        items-center
-        gap-3
-        shadow-2xl
-        hover:scale-105
-        hover:shadow-red-500/20
-        transition-all
-        duration-300
-        border
-        border-white/20
-        backdrop-blur-xl
-    "
-                            >
-
-                                {/* ICON */}
-                                <div
-                                    // style={{ backgroundColor: COLORS.secondary }}
-                                    className="
-            h-12
-            w-12
-            rounded-full
-            bg-[#FACC15]
-            // bg-[#0edb0e]
-            flex
-            items-center
-            justify-center
-            shadow-md
-            group-hover:rotate-6
-            transition-transform
-            duration-300
-        "
-                                >
-                                    <ShoppingBasket
-                                        size={22}
-                                        className="text-white"
-                                    />
-                                </div>
-
-                                {/* TEXT */}
-                                <div className="flex flex-col items-start leading-tight">
-
-                                    <span className="text-[10px] uppercase tracking-[0.2em] text-gray-500 font-bold">
-                                        Fast Delivery
-                                    </span>
-
-                                    <p className=" text-[#FACC15] text-lg font-extrabold">
-                                        Order Now
-                                    </p>
-                                </div>
-
-                                {/* ARROW */}
-                                <ArrowRight
-                                    size={20}
-                                    className="
-            text-[#0edb0e]
-            group-hover:translate-x-1
-            transition-transform
-            duration-300
-        "
-                                />
-                            </button>
-                        </div>
-
-                        {/* DOTS */}
-                        <div className="flex flex-col justify-center absolute bottom-20 -left-2 mt-4 gap-2">
-                            {slides.map((_, index) => (
-                                <div
-                                    key={index}
-                                    onClick={() => {
-                                        setImgDir(index > current ? "right" : "left");
-                                        setAnimKey((k) => k + 1);
-                                        setCurrent(index);
-                                    }}
-                                    className="w-8 h-2 rounded-full  cursor-pointer"
-                                    style={{
-                                        backgroundColor:
-                                            current === index
-                                                ? COLORS.secondary
-                                                : "#fff",
-                                        transition: "background-color 0.3s ease",
-                                    }}
-                                />
-                            ))}
-                        </div>
-
-                        {/* ---- copyright policy ----- */}
-                        <footer className=" absolute  bottom-2 md:bottom-2 -right-30 sm:-right-20   w-full  bg-transparent border-none border-gray-100">
-                            <div className="mx-auto px-4 ">
-                                <div className="">
-                                    <div className="flex place-items-start justify-start items-center gap-4">
-                                        <p className="text-white/90 font-semibold md:text-base  leading-2 text-sm">
-                                            &copy; {year} EverGrill.
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                        </footer>
-                    </div>
-                </div>
-            </div>
-
-            {/* <About  /> */}
-        </div>
-
-
-    );
+const COLORS = {
+  primary: "#F97316",
+  secondary: "#DC2626",
+  accent: "#FACC15",
+  success: "#0EDB0E",
 };
 
-export default hero;
+/**
+ * Slide data lives outside the component so it is never recreated on render.
+ * Each slide is a self-contained product offer.
+ */
+const SLIDES = [
+  {
+    id: "pork-skewer",
+    title: "Pork Skewer",
+    image: PorkStake,
+    price: "UGX 6,000",
+    oldPrice: "UGX 8,000",
+    rating: 4.4,
+    slogan: "Smoky in every taste.",
+    description: "Roasted pork with fried cassava, salad, chapati, and bananas.",
+  },
+  {
+    id: "beef-burger",
+    title: "Classic Beef Burger",
+    image: Burger,
+    price: "UGX 10,000",
+    oldPrice: "UGX 12,000",
+    rating: 4.7,
+    slogan: "Bold, tasty bite.",
+    description: "Juicy grilled beef patty with fresh lettuce, cheese, tomato and creamy sauce.",
+  },
+  {
+    id: "chicken-pizza",
+    title: "Classic Chicken Pizza",
+    image: Pizza,
+    price: "UGX 10,000",
+    oldPrice: "UGX 12,000",
+    rating: 4.7,
+    slogan: "Crust. Cheese. Joy.",
+    description: "Hand-tossed crust topped with grilled chicken, mozzarella and house tomato sauce.",
+  },
+  {
+    id: "fresh-pork",
+    title: "Fresh Organic Pork",
+    image: FreshPork,
+    price: "UGX 16,000",
+    oldPrice: "UGX 18,000",
+    rating: 4.5,
+    slogan: "Pure. Fresh. Trusted.",
+    description: "Premium farm-fresh pork cuts, hygienically prepared and ready for your recipes.",
+  },
+  {
+    id: "spicy-chicken",
+    title: "Crispy Spicy Chicken",
+    image: Chicken,
+    price: "UGX 55,000",
+    oldPrice: "UGX 78,000",
+    rating: 4.5,
+    slogan: "Crispy. Juicy. Bold.",
+    description: "Double-fried spiced chicken pieces, finished with our signature hot glaze.",
+  },
+];
+
+// ─── Animation variants ─────────────────────────────────────────────────
+const imageVariants = {
+  enter: (direction) => ({
+    opacity: 0,
+    x: direction === "right" ? 80 : -80,
+    scale: 0.85,
+    rotate: direction === "right" ? 6 : -6,
+  }),
+  center: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    rotate: 0,
+    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+  },
+  exit: (direction) => ({
+    opacity: 0,
+    x: direction === "right" ? -60 : 60,
+    scale: 0.9,
+    transition: { duration: 0.3, ease: "easeIn" },
+  }),
+};
+
+const floatAnimation = {
+  y: [0, -14, 0],
+  transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
+};
+
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 24 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.45, delay, ease: [0.16, 1, 0.3, 1] } },
+});
+
+// ─── Subcomponents ──────────────────────────────────────────────────────
+
+/** Product image stage with glow, drag-free crossfade/slide transition. */
+function SlideVisual({ slide, direction }) {
+  return (
+    <div className="relative flex items-center justify-center h-72 sm:h-80 md:h-[28rem]">
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 60% 60% at 50% 50%, rgba(249,115,22,0.25) 0%, transparent 70%)",
+        }}
+      />
+      <AnimatePresence mode="wait" custom={direction}>
+        <motion.img
+          key={slide.id}
+          src={slide.image}
+          alt={slide.title}
+          custom={direction}
+          variants={imageVariants}
+          initial="enter"
+          animate="center"
+          exit="exit"
+          style={{ filter: "drop-shadow(0 20px 40px rgba(249,115,22,0.35))" }}
+          className="w-64 h-64 sm:w-80 sm:h-80 md:w-[30rem] md:h-[30rem] object-contain"
+        />
+      </AnimatePresence>
+      {/* Continuous idle float, decoupled from the slide-change transition */}
+      <motion.div className="absolute inset-0 pointer-events-none" animate={floatAnimation} />
+    </div>
+  );
+}
+
+/** Text content: slogan, rating, description, price, CTA. */
+function SlideContent({ slide }) {
+  const whatsappHref = useMemo(() => {
+    const message = `I want to order ${slide.title} at ${slide.price}`;
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  }, [slide.title, slide.price]);
+
+  return (
+    <div className="flex flex-col items-center md:items-start text-center md:text-left gap-3 px-6 md:px-0 max-w-md">
+      <motion.h3
+        key={`slogan-${slide.id}`}
+        {...fadeUp(0.05)}
+        className="text-xl sm:text-2xl font-extrabold font-serif"
+        style={{ color: COLORS.success }}
+      >
+        # {slide.slogan}
+      </motion.h3>
+
+      <motion.h1
+        key={`title-${slide.id}`}
+        {...fadeUp(0.1)}
+        className="text-3xl sm:text-4xl font-serif font-extrabold uppercase text-stone-900"
+      >
+        {slide.title}
+      </motion.h1>
+
+      <motion.div
+        key={`rating-${slide.id}`}
+        {...fadeUp(0.15)}
+        className="flex items-center gap-2"
+      >
+        <span className="flex" role="img" aria-label={`Rated ${slide.rating} out of 5`}>
+          {[...Array(4)].map((_, i) => (
+            <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+          ))}
+          <StarHalf className="w-5 h-5 text-yellow-400 fill-yellow-400" />
+        </span>
+        <span className="text-stone-700 font-medium">{slide.rating}</span>
+        <span
+          className="text-white text-xs font-bold px-2 py-1 rounded-full"
+          style={{ backgroundColor: COLORS.secondary }}
+        >
+          -20% off
+        </span>
+      </motion.div>
+
+      <motion.p
+        key={`desc-${slide.id}`}
+        {...fadeUp(0.2)}
+        className="text-stone-600 leading-relaxed hidden sm:block"
+      >
+        {slide.description}
+      </motion.p>
+
+      <motion.div
+        key={`price-${slide.id}`}
+        {...fadeUp(0.28)}
+        className="flex items-baseline gap-3 mt-1"
+      >
+        <span className="text-3xl sm:text-4xl font-black text-stone-900">{slide.price}</span>
+        <span className="text-lg text-stone-400 line-through">{slide.oldPrice}</span>
+      </motion.div>
+
+      <motion.a
+        key={`cta-${slide.id}`}
+        {...fadeUp(0.36)}
+        href={whatsappHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Order ${slide.title} on WhatsApp`}
+        className="group mt-2 bg-white rounded-full pl-2 pr-5 py-2 flex items-center gap-3 shadow-xl hover:shadow-2xl hover:scale-[1.03] transition-all duration-300 border border-stone-200"
+      >
+        <span
+          className="h-11 w-11 rounded-full flex items-center justify-center group-hover:rotate-6 transition-transform duration-300"
+          style={{ backgroundColor: COLORS.primary }}
+        >
+          <ShoppingBasket size={20} className="text-white" aria-hidden="true" />
+        </span>
+        <span className="flex flex-col items-start leading-tight">
+          <span className="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-bold">
+            Fast delivery
+          </span>
+          <span className="text-base font-extrabold" style={{ color: COLORS.primary }}>
+            Order now
+          </span>
+        </span>
+        <ArrowRight
+          size={18}
+          style={{ color: COLORS.primary }}
+          className="group-hover:translate-x-1 transition-transform duration-300"
+          aria-hidden="true"
+        />
+      </motion.a>
+    </div>
+  );
+}
+
+/** Prev/next arrows + dot pagination. */
+function CarouselControls({ slides, current, onSelect, onPrev, onNext }) {
+  return (
+    <>
+      <div className="hidden md:flex gap-3 absolute right-6 bottom-8 z-20">
+        <button
+          type="button"
+          onClick={onPrev}
+          aria-label="Previous slide"
+          className="bg-white/70 hover:bg-white text-stone-900 p-3 rounded-full shadow-lg backdrop-blur-md transition-colors duration-300"
+        >
+          <ChevronLeft size={26} aria-hidden="true" />
+        </button>
+        <button
+          type="button"
+          onClick={onNext}
+          aria-label="Next slide"
+          className="bg-white/70 hover:bg-white text-stone-900 p-3 rounded-full shadow-lg backdrop-blur-md transition-colors duration-300"
+        >
+          <ChevronRight size={26} aria-hidden="true" />
+        </button>
+      </div>
+
+      <div
+        className="flex md:flex-col gap-2 absolute bottom-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 left-1/2 md:left-6 -translate-x-1/2 md:translate-x-0 z-20"
+        role="tablist"
+        aria-label="Featured products"
+      >
+        {slides.map((slide, index) => (
+          <button
+            key={slide.id}
+            type="button"
+            role="tab"
+            aria-selected={current === index}
+            aria-label={`Show ${slide.title}`}
+            onClick={() => onSelect(index)}
+            className="w-8 h-1.5 md:w-1.5 md:h-8 rounded-full transition-colors duration-300"
+            style={{ backgroundColor: current === index ? COLORS.accent : "rgba(0,0,0,0.15)" }}
+          />
+        ))}
+      </div>
+    </>
+  );
+}
+
+/** Bottom brand bar: logo, social links, copyright. */
+function BrandFooterBar({ year }) {
+  return (
+    <footer className="relative z-10 w-full">
+      <div
+        className="mx-auto max-w-3xl rounded-t-[2.5rem] px-6 sm:px-12 py-4 flex items-center justify-between gap-4"
+        style={{ backgroundColor: COLORS.accent }}
+      >
+        <Link to="/" className="shrink-0" aria-label="EverGrill home">
+          <img src={green} alt="EverGrill" className="w-24 sm:w-28" />
+        </Link>
+
+        <div className="hidden sm:block bg-white h-8 w-px rounded-full" aria-hidden="true" />
+
+        <nav aria-label="Social media" className="flex items-center gap-3">
+          <a
+            href="#"
+            aria-label="EverGrill on Twitter"
+            className="h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center hover:scale-110 transition-transform"
+          >
+            <Twitter size={18} aria-hidden="true" />
+          </a>
+          <a
+            href="#"
+            aria-label="EverGrill on Facebook"
+            className="h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center hover:scale-110 transition-transform"
+          >
+            <Facebook size={18} aria-hidden="true" />
+          </a>
+          <a
+            href="#"
+            aria-label="EverGrill on TikTok"
+            className="h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center hover:scale-110 transition-transform"
+          >
+            <FaTiktok size={18} aria-hidden="true" />
+          </a>
+        </nav>
+
+        <div className="hidden sm:block bg-white h-8 w-px rounded-full" aria-hidden="true" />
+
+        <p className="text-stone-900/80 font-semibold text-xs sm:text-sm whitespace-nowrap">
+          &copy; {year} EverGrill
+        </p>
+      </div>
+    </footer>
+  );
+}
+
+// ─── Main component ─────────────────────────────────────────────────────
+export default function Hero() {
+  const year = useMemo(() => new Date().getFullYear(), []);
+  const [current, setCurrent] = useState(0);
+  const [direction, setDirection] = useState("right");
+  const [isPaused, setIsPaused] = useState(false);
+
+  const goTo = useCallback(
+    (index) => {
+      setDirection(index > current ? "right" : "left");
+      setCurrent(index);
+    },
+    [current]
+  );
+
+  const next = useCallback(() => {
+    setDirection("right");
+    setCurrent((prev) => (prev + 1) % SLIDES.length);
+  }, []);
+
+  const prev = useCallback(() => {
+    setDirection("left");
+    setCurrent((prevIndex) => (prevIndex === 0 ? SLIDES.length - 1 : prevIndex - 1));
+  }, []);
+
+  // Respect reduced-motion preference: skip autoplay entirely if requested.
+  const prefersReducedMotion = useMemo(
+    () =>
+      typeof window !== "undefined" &&
+      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
+    []
+  );
+
+  useEffect(() => {
+    if (isPaused || prefersReducedMotion) return undefined;
+    const interval = setInterval(next, AUTOPLAY_INTERVAL_MS);
+    return () => clearInterval(interval);
+  }, [isPaused, prefersReducedMotion, next]);
+
+  const slide = SLIDES[current];
+
+  return (
+    <section
+      aria-label="Featured products"
+      className="relative w-full min-h-screen bg-white overflow-hidden"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <Navbar />
+
+      <div className="relative flex flex-col md:flex-row items-center justify-center md:justify-between max-w-6xl mx-auto px-6 md:px-12 pt-28 md:pt-32 pb-40 gap-8">
+        <div className="order-2 md:order-1">
+          <SlideContent slide={slide} />
+        </div>
+        <div className="order-1 md:order-2 flex-1 flex justify-center">
+          <SlideVisual slide={slide} direction={direction} />
+        </div>
+      </div>
+
+      <CarouselControls
+        slides={SLIDES}
+        current={current}
+        onSelect={goTo}
+        onPrev={prev}
+        onNext={next}
+      />
+
+      <div className="absolute bottom-0 left-0 right-0">
+        <BrandFooterBar year={year} />
+      </div>
+    </section>
+  );
+}

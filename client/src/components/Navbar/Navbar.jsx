@@ -55,15 +55,15 @@ const Navbar = () => {
               </Link>
 
               {/* ── Desktop nav pill ── */}
-              <nav className="hidden lg:flex// items-center gap-1 bg-black/10 border border-black/15 backdrop-blur-xl px-2 py-1.5 rounded-full">
+              <nav className="hidden lg:flex items-center gap-1   px-2 py-1.5 rounded-full">
                 {NAV_LINKS.map(({ icon, label, to }) => (
                   <NavLink
                     key={to}
                     to={to}
                     className={({ isActive }) =>
-                      `flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wide transition-all duration-200 ${isActive
-                        ? "bg-white text-gray-900 shadow-sm"
-                        : "text-white/80 hover:text-white hover:bg-white/10"
+                      `flex items-center gap-1.5 px-4 py-2 rounded-full// text-xs font-bold capatilize tracking-wide transition-all duration-200 ${isActive
+                        ? "bg-orange-400 text-gray-900 shadow-sm//"
+                        : "text-black hover:text-white hover:bg-white/10"
                       }`
                     }
                   >
@@ -74,7 +74,20 @@ const Navbar = () => {
               </nav>
 
               {/* ── Desktop right actions ── */}
-              <div className="hidden lg:flex// items-center gap-3">
+              <div className="hidden// lg:flex items-center gap-3">
+                
+                <div></div>
+
+                {/* WhatsApp order CTA */}
+                <a
+                  href="https://wa.me/+256776464823"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex  items-center gap-2  text-black text-xs font-black uppercase tracking-wide px-4 py-2.5 rounded-full transition-all duration-200  hover:scale-[1.02]"
+                >
+                  <Phone className="text-[#F97316]" size={25} />
+                  +256-000-000-000
+                </a>
                 {/* Cart */}
                 <Link
                   to="/cart"
@@ -88,21 +101,10 @@ const Navbar = () => {
                     </span>
                   )}
                 </Link>
-
-                {/* WhatsApp order CTA */}
-                <a
-                  href="https://wa.me/+256776464823"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex hidden items-center gap-2 bg-green-500 hover:bg-green-600 text-white text-xs font-black uppercase tracking-wide px-4 py-2.5 rounded-full transition-all duration-200 shadow-lg shadow-green-900/30 hover:scale-[1.02]"
-                >
-                  <ImWhatsapp size={15} />
-                  Order Now
-                </a>
               </div>
 
               {/* ── Mobile: cart + hamburger ── */}
-              <div className="flex  items-center gap-2">
+              <div className="flex md:hidden  items-center gap-2">
                 <Link
                   to="/cart"
                   className="relative w-10 h-10 rounded-xl bg-white/10 border border-white/15 flex items-center justify-center"
@@ -145,12 +147,23 @@ const Navbar = () => {
               )
             `,
         }} */
-        className={`fixed md:w-[420px] md:border-l border-white/10 bg-black backdrop-blur-3xl  inset-0 z-40 flex flex-col transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        style={{
+          background: `
+                    radial-gradient(
+                      circle 900px at 50% 120px,
+                      #f59e0b 0%,
+                      #d97706 25%,
+                      #1c1917 65%,
+                      #0c0a09 100%
+                    )
+                  `,
+        }}
+        className={`fixed md:w-[420px] md:border-l border-white/10  backdrop-blur-none  inset-0 z-10 flex flex-col transition-all duration-300 ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
         
       >
         {/* Top bar inside overlay */}
-        <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b-0 border-white/10">
+        <div className="flex items-center  justify-between px-5 pt-5 pb-4 border-b-0 border-white/10">
           <div className="flex// hidden items-center gap-2">
             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-red-500 to-orange-500 flex items-center justify-center">
               <Flame size={15} className="text-white" />
@@ -161,7 +174,7 @@ const Navbar = () => {
           </div>
           <button
             onClick={() => setOpen(false)}
-            className="w-10 h-10 rounded-xl bg-white/10 flex hidden items-center justify-center hover:bg-white/20 transition-all"
+            className="w-10 h-10 rounded-xl bg-white/10 flex// hidden items-center justify-center hover:bg-white/20 transition-all"
             aria-label="Close menu"
           >
             <X size={20} className="text-white" />
