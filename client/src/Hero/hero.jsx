@@ -2,364 +2,106 @@ import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
-  Star,
-  StarHalf,
-  ShoppingBasket,
-  ArrowRight,
-  ChevronLeft,
-  ChevronRight,
-  Twitter,
-  Facebook,
+  Twitter, Facebook,
+  ChevronLeft, ChevronRight,
 } from "lucide-react";
-import { FaTiktok } from "react-icons/fa6";
+import { useCart } from "../components/cart/CartContext"; // adjust path to match your folder structure
 
-import Navbar from "../components/Navbar/Navbar";
-import green from "../assets/Evergrill.png";
 import FreshPork from "../assets/freshporke.png";
 import PorkStake from "../assets/ChatGPT Image Jun 18, 2026, 03_34_25 PM.png";
 import Burger from "../assets/Burger.png";
 import Pizza from "../assets/pizza(17).png";
 import Chicken from "../assets/pngwing.com (25).png";
 
-// ─── Config ──────────────────────────────────────────────────────────────
+// ─── Config ─────────────────────────────────────────────────
 const WHATSAPP_NUMBER = "256776464823";
-const AUTOPLAY_INTERVAL_MS = 5000;
+const AUTOPLAY_INTERVAL_MS = 5500;
+const SPICE_LEVELS = ["Mild", "Spicy", "Hot"];
 
-const COLORS = {
-  primary: "#F97316",
-  secondary: "#DC2626",
-  accent: "#FACC15",
-  success: "#0EDB0E",
-};
-
-/**
- * Slide data lives outside the component so it is never recreated on render.
- * Each slide is a self-contained product offer.
- */
 const SLIDES = [
   {
     id: "pork-skewer",
-    title: "Pork Skewer",
+    title: "We make the smoky pork skewer.",
+    category: "Pork Skewer",
+    spiceLevel: "Mild",
     image: PorkStake,
-    price: "UGX 6,000",
-    oldPrice: "UGX 8,000",
+    price: 6000,
+    oldPrice: 8000,
     rating: 4.4,
-    slogan: "Smoky in every taste.",
     description: "Roasted pork with fried cassava, salad, chapati, and bananas.",
   },
   {
     id: "beef-burger",
-    title: "Classic Beef Burger",
+    title: "We make the double cheesy burger.",
+    category: "Classic Beef Burger",
+    spiceLevel: "Spicy",
     image: Burger,
-    price: "UGX 10,000",
-    oldPrice: "UGX 12,000",
+    price: 10000,
+    oldPrice: 12000,
     rating: 4.7,
-    slogan: "Bold, tasty bite.",
-    description: "Juicy grilled beef patty with fresh lettuce, cheese, tomato and creamy sauce.",
+    description: "Juicy grilled beef patty layered with fresh lettuce, cheese, tomato and creamy sauce.",
   },
   {
     id: "chicken-pizza",
-    title: "Classic Chicken Pizza",
+    title: "We make the cheesy classic pizza.",
+    category: "Classic Chicken Pizza",
+    spiceLevel: "Mild",
     image: Pizza,
-    price: "UGX 10,000",
-    oldPrice: "UGX 12,000",
+    price: 10000,
+    oldPrice: 12000,
     rating: 4.7,
-    slogan: "Crust. Cheese. Joy.",
     description: "Hand-tossed crust topped with grilled chicken, mozzarella and house tomato sauce.",
   },
   {
     id: "fresh-pork",
-    title: "Fresh Organic Pork",
+    title: "We make the farmhouse fresh cut.",
+    category: "Fresh Organic Pork",
+    spiceLevel: "Mild",
     image: FreshPork,
-    price: "UGX 16,000",
-    oldPrice: "UGX 18,000",
+    price: 16000,
+    oldPrice: 18000,
     rating: 4.5,
-    slogan: "Pure. Fresh. Trusted.",
     description: "Premium farm-fresh pork cuts, hygienically prepared and ready for your recipes.",
   },
   {
     id: "spicy-chicken",
-    title: "Crispy Spicy Chicken",
+    title: "We make the firecracker chicken.",
+    category: "Crispy Spicy Chicken",
+    spiceLevel: "Hot",
     image: Chicken,
-    price: "UGX 55,000",
-    oldPrice: "UGX 78,000",
+    price: 55000,
+    oldPrice: 78000,
     rating: 4.5,
-    slogan: "Crispy. Juicy. Bold.",
     description: "Double-fried spiced chicken pieces, finished with our signature hot glaze.",
   },
 ];
 
+const fmt = (n) => Number(n).toLocaleString();
+
 // ─── Animation variants ─────────────────────────────────────────────────
 const imageVariants = {
-  enter: (direction) => ({
-    opacity: 0,
-    x: direction === "right" ? 80 : -80,
-    scale: 0.85,
-    rotate: direction === "right" ? 6 : -6,
-  }),
-  center: {
-    opacity: 1,
-    x: 0,
-    scale: 1,
-    rotate: 0,
-    transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
-  },
-  exit: (direction) => ({
-    opacity: 0,
-    x: direction === "right" ? -60 : 60,
-    scale: 0.9,
-    transition: { duration: 0.3, ease: "easeIn" },
-  }),
+  enter: (direction) => ({ opacity: 0, x: direction === "right" ? 70 : -70, scale: 0.9, rotate: direction === "right" ? 4 : -4 }),
+  center: { opacity: 1, x: 0, scale: 1, rotate: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+  exit: (direction) => ({ opacity: 0, x: direction === "right" ? -50 : 50, scale: 0.92, transition: { duration: 0.25, ease: "easeIn" } }),
 };
 
-const floatAnimation = {
-  y: [0, -14, 0],
-  transition: { duration: 4, repeat: Infinity, ease: "easeInOut" },
-};
+const floatAnimation = { y: [0, -12, 0], transition: { duration: 4, repeat: Infinity, ease: "easeInOut" } };
 
 const fadeUp = (delay = 0) => ({
-  initial: { opacity: 0, y: 24 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.45, delay, ease: [0.16, 1, 0.3, 1] } },
+  initial: { opacity: 0, y: 18 },
+  animate: { opacity: 1, y: 0, transition: { duration: 0.4, delay, ease: [0.16, 1, 0.3, 1] } },
 });
 
-// ─── Subcomponents ──────────────────────────────────────────────────────
-
-/** Product image stage with glow, drag-free crossfade/slide transition. */
-function SlideVisual({ slide, direction }) {
-  return (
-    <div className="relative flex items-center justify-center h-72 sm:h-80 md:h-[28rem]">
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(ellipse 60% 60% at 50% 50%, rgba(249,115,22,0.25) 0%, transparent 70%)",
-        }}
-      />
-      <AnimatePresence mode="wait" custom={direction}>
-        <motion.img
-          key={slide.id}
-          src={slide.image}
-          alt={slide.title}
-          custom={direction}
-          variants={imageVariants}
-          initial="enter"
-          animate="center"
-          exit="exit"
-          style={{ filter: "drop-shadow(0 20px 40px rgba(249,115,22,0.35))" }}
-          className="w-64 h-64 sm:w-80 sm:h-80 md:w-[30rem] md:h-[30rem] object-contain"
-        />
-      </AnimatePresence>
-      {/* Continuous idle float, decoupled from the slide-change transition */}
-      <motion.div className="absolute inset-0 pointer-events-none" animate={floatAnimation} />
-    </div>
-  );
-}
-
-/** Text content: slogan, rating, description, price, CTA. */
-function SlideContent({ slide }) {
-  const whatsappHref = useMemo(() => {
-    const message = `I want to order ${slide.title} at ${slide.price}`;
-    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-  }, [slide.title, slide.price]);
-
-  return (
-    <div className="flex flex-col items-center md:items-start text-center md:text-left gap-3 px-6 md:px-0 max-w-md">
-      <motion.h3
-        key={`slogan-${slide.id}`}
-        {...fadeUp(0.05)}
-        className="text-xl sm:text-2xl font-extrabold font-serif"
-        style={{ color: COLORS.success }}
-      >
-        # {slide.slogan}
-      </motion.h3>
-
-      <motion.h1
-        key={`title-${slide.id}`}
-        {...fadeUp(0.1)}
-        className="text-3xl sm:text-4xl font-serif font-extrabold uppercase text-stone-900"
-      >
-        {slide.title}
-      </motion.h1>
-
-      <motion.div
-        key={`rating-${slide.id}`}
-        {...fadeUp(0.15)}
-        className="flex items-center gap-2"
-      >
-        <span className="flex" role="img" aria-label={`Rated ${slide.rating} out of 5`}>
-          {[...Array(4)].map((_, i) => (
-            <Star key={i} className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-          ))}
-          <StarHalf className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-        </span>
-        <span className="text-stone-700 font-medium">{slide.rating}</span>
-        <span
-          className="text-white text-xs font-bold px-2 py-1 rounded-full"
-          style={{ backgroundColor: COLORS.secondary }}
-        >
-          -20% off
-        </span>
-      </motion.div>
-
-      <motion.p
-        key={`desc-${slide.id}`}
-        {...fadeUp(0.2)}
-        className="text-stone-600 leading-relaxed hidden sm:block"
-      >
-        {slide.description}
-      </motion.p>
-
-      <motion.div
-        key={`price-${slide.id}`}
-        {...fadeUp(0.28)}
-        className="flex items-baseline gap-3 mt-1"
-      >
-        <span className="text-3xl sm:text-4xl font-black text-stone-900">{slide.price}</span>
-        <span className="text-lg text-stone-400 line-through">{slide.oldPrice}</span>
-      </motion.div>
-
-      <motion.a
-        key={`cta-${slide.id}`}
-        {...fadeUp(0.36)}
-        href={whatsappHref}
-        target="_blank"
-        rel="noopener noreferrer"
-        aria-label={`Order ${slide.title} on WhatsApp`}
-        className="group mt-2 bg-white rounded-full pl-2 pr-5 py-2 flex items-center gap-3 shadow-xl hover:shadow-2xl hover:scale-[1.03] transition-all duration-300 border border-stone-200"
-      >
-        <span
-          className="h-11 w-11 rounded-full flex items-center justify-center group-hover:rotate-6 transition-transform duration-300"
-          style={{ backgroundColor: COLORS.primary }}
-        >
-          <ShoppingBasket size={20} className="text-white" aria-hidden="true" />
-        </span>
-        <span className="flex flex-col items-start leading-tight">
-          <span className="text-[10px] uppercase tracking-[0.2em] text-stone-400 font-bold">
-            Fast delivery
-          </span>
-          <span className="text-base font-extrabold" style={{ color: COLORS.primary }}>
-            Order now
-          </span>
-        </span>
-        <ArrowRight
-          size={18}
-          style={{ color: COLORS.primary }}
-          className="group-hover:translate-x-1 transition-transform duration-300"
-          aria-hidden="true"
-        />
-      </motion.a>
-    </div>
-  );
-}
-
-/** Prev/next arrows + dot pagination. */
-function CarouselControls({ slides, current, onSelect, onPrev, onNext }) {
-  return (
-    <>
-      <div className="hidden md:flex gap-3 absolute right-6 bottom-8 z-20">
-        <button
-          type="button"
-          onClick={onPrev}
-          aria-label="Previous slide"
-          className="bg-white/70 hover:bg-white text-stone-900 p-3 rounded-full shadow-lg backdrop-blur-md transition-colors duration-300"
-        >
-          <ChevronLeft size={26} aria-hidden="true" />
-        </button>
-        <button
-          type="button"
-          onClick={onNext}
-          aria-label="Next slide"
-          className="bg-white/70 hover:bg-white text-stone-900 p-3 rounded-full shadow-lg backdrop-blur-md transition-colors duration-300"
-        >
-          <ChevronRight size={26} aria-hidden="true" />
-        </button>
-      </div>
-
-      <div
-        className="flex md:flex-col gap-2 absolute bottom-4 md:bottom-auto md:top-1/2 md:-translate-y-1/2 left-1/2 md:left-6 -translate-x-1/2 md:translate-x-0 z-20"
-        role="tablist"
-        aria-label="Featured products"
-      >
-        {slides.map((slide, index) => (
-          <button
-            key={slide.id}
-            type="button"
-            role="tab"
-            aria-selected={current === index}
-            aria-label={`Show ${slide.title}`}
-            onClick={() => onSelect(index)}
-            className="w-8 h-1.5 md:w-1.5 md:h-8 rounded-full transition-colors duration-300"
-            style={{ backgroundColor: current === index ? COLORS.accent : "rgba(0,0,0,0.15)" }}
-          />
-        ))}
-      </div>
-    </>
-  );
-}
-
-/** Bottom brand bar: logo, social links, copyright. */
-function BrandFooterBar({ year }) {
-  return (
-    <footer className="relative z-10 w-full">
-      <div
-        className="mx-auto max-w-3xl rounded-t-[2.5rem] px-6 sm:px-12 py-4 flex items-center justify-between gap-4"
-        style={{ backgroundColor: COLORS.accent }}
-      >
-        <Link to="/" className="shrink-0" aria-label="EverGrill home">
-          <img src={green} alt="EverGrill" className="w-24 sm:w-28" />
-        </Link>
-
-        <div className="hidden sm:block bg-white h-8 w-px rounded-full" aria-hidden="true" />
-
-        <nav aria-label="Social media" className="flex items-center gap-3">
-          <a
-            href="#"
-            aria-label="EverGrill on Twitter"
-            className="h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center hover:scale-110 transition-transform"
-          >
-            <Twitter size={18} aria-hidden="true" />
-          </a>
-          <a
-            href="#"
-            aria-label="EverGrill on Facebook"
-            className="h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center hover:scale-110 transition-transform"
-          >
-            <Facebook size={18} aria-hidden="true" />
-          </a>
-          <a
-            href="#"
-            aria-label="EverGrill on TikTok"
-            className="h-10 w-10 rounded-full bg-yellow-100 flex items-center justify-center hover:scale-110 transition-transform"
-          >
-            <FaTiktok size={18} aria-hidden="true" />
-          </a>
-        </nav>
-
-        <div className="hidden sm:block bg-white h-8 w-px rounded-full" aria-hidden="true" />
-
-        <p className="text-stone-900/80 font-semibold text-xs sm:text-sm whitespace-nowrap">
-          &copy; {year} EverGrill
-        </p>
-      </div>
-    </footer>
-  );
-}
-
-// ─── Main component ─────────────────────────────────────────────────────
-export default function Hero() {
-  const year = useMemo(() => new Date().getFullYear(), []);
+// ─── Shared hook: carousel state ────────────────────
+function useSlideCarousel() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState("right");
   const [isPaused, setIsPaused] = useState(false);
 
-  const goTo = useCallback(
-    (index) => {
-      setDirection(index > current ? "right" : "left");
-      setCurrent(index);
-    },
-    [current]
-  );
+  const goTo = useCallback((index) => {
+    setDirection(index > current ? "right" : "left");
+    setCurrent(index);
+  }, [current]);
 
   const next = useCallback(() => {
     setDirection("right");
@@ -371,11 +113,8 @@ export default function Hero() {
     setCurrent((prevIndex) => (prevIndex === 0 ? SLIDES.length - 1 : prevIndex - 1));
   }, []);
 
-  // Respect reduced-motion preference: skip autoplay entirely if requested.
   const prefersReducedMotion = useMemo(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
+    () => typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches,
     []
   );
 
@@ -385,37 +124,387 @@ export default function Hero() {
     return () => clearInterval(interval);
   }, [isPaused, prefersReducedMotion, next]);
 
-  const slide = SLIDES[current];
+  const nextSlide = SLIDES[(current + 1) % SLIDES.length];
+
+  return { current, direction, isPaused, setIsPaused, goTo, next, prev, slide: SLIDES[current], nextSlide };
+}
+
+// ─── Subcomponents ────────────────────────────────────────────────
+
+function SpicePills({ active }) {
+  return (
+    <div className="flex items-center gap-2 mt-4" role="group" aria-label="Spice level">
+      {SPICE_LEVELS.map((level) => {
+        const isActive = level === active;
+        return (
+          <span
+            key={level}
+            aria-current={isActive}
+            className={`px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide border transition-colors duration-200 ${isActive
+              ? "bg-red-600 border-red-600 text-white"
+              : "bg-white border-stone-200 text-stone-500"
+              }`}
+          >
+            {level}
+          </span>
+        );
+      })}
+    </div>
+  );
+}
+
+function DesktopThumbnails({ slides, current, onSelect, onPrev, onNext }) {
+  return (
+    <div className="flex items-center gap-3">
+      {slides.map((s, index) => (
+        <button
+          key={s.id}
+          type="button"
+          aria-label={`Show ${s.category}`}
+          aria-current={current === index}
+          onClick={() => onSelect(index)}
+          className={`h-12 w-12 rounded-full overflow-hidden border-2 transition-all duration-200 ${current === index ? "border-orange-500 scale-105" : "border-stone-100 opacity-70 hover:opacity-100"
+            }`}
+        >
+          <img src={s.image} alt="" aria-hidden="true" className="h-full w-full object-cover bg-stone-50" />
+        </button>
+      ))}
+
+      <button
+        type="button"
+        onClick={onPrev}
+        aria-label="Previous product"
+        className="h-10 w-10 rounded-full border border-stone-200 flex items-center justify-center hover:bg-stone-50 transition-colors ml-2"
+      >
+        <ChevronLeft size={16} aria-hidden="true" />
+      </button>
+      <button
+        type="button"
+        onClick={onNext}
+        aria-label="Next product"
+        className="h-10 w-10 rounded-full bg-stone-900 text-white flex items-center justify-center hover:bg-stone-800 transition-colors"
+      >
+        <ChevronRight size={16} aria-hidden="true" />
+      </button>
+    </div>
+  );
+}
+
+/** Desktop hero — diagonal white/yellow split. */
+function DesktopHero({ carousel }) {
+  const BRAND_NAME = "GreenPork";
+  const year = useMemo(() => new Date().getFullYear(), []);
+  const { current, direction, slide, nextSlide, goTo, next, prev, setIsPaused } = carousel;
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: slide.id,
+      name: slide.category,
+      category: slide.category,
+      price: slide.price,
+      image: slide.image,
+    });
+  };
 
   return (
     <section
       aria-label="Featured products"
-      className="relative w-full min-h-screen bg-white overflow-hidden"
+      className="hidden lg:block w-full h-[100vh] overflow-hidden bg-white"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <Navbar />
-
-      <div className="relative flex flex-col md:flex-row items-center justify-center md:justify-between max-w-6xl mx-auto px-6 md:px-12 pt-28 md:pt-32 pb-40 gap-8">
-        <div className="order-2 md:order-1">
-          <SlideContent slide={slide} />
-        </div>
-        <div className="order-1 md:order-2 flex-1 flex justify-center">
-          <SlideVisual slide={slide} direction={direction} />
-        </div>
-      </div>
-
-      <CarouselControls
-        slides={SLIDES}
-        current={current}
-        onSelect={goTo}
-        onPrev={prev}
-        onNext={next}
+      {/* Diagonal yellow panel */}
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 bg-yellow-400"
+        style={{ clipPath: "polygon(58% 0, 100% 0, 100% 100%, 38% 100%)" }}
       />
 
-      <div className="absolute bottom-0 left-0 right-0">
-        <BrandFooterBar year={year} />
+      <div className="relative grid grid-cols-2 min-h-[38rem]">
+        {/* Left: copy */}
+        <div className="flex flex-col justify-center px-16 py-16 max-w-xl">
+          <AnimatePresence mode="wait">
+            <motion.h1
+              key={`title-${slide.id}`}
+              {...fadeUp(0.05)}
+              exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
+              className="text-4xl xl:text-5xl font-black leading-[1.15] text-stone-900 max-w-md"
+            >
+              {slide.title}
+            </motion.h1>
+          </AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={`desc-${slide.id}`}
+              {...fadeUp(0.1)}
+              exit={{ opacity: 0, transition: { duration: 0.2 } }}
+              className="text-stone-400 leading-relaxed mt-4 max-w-sm text-sm"
+            >
+              {slide.description}
+            </motion.p>
+          </AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            <motion.div key={`spice-${slide.id}`} {...fadeUp(0.14)} exit={{ opacity: 0, transition: { duration: 0.2 } }}>
+              <SpicePills active={slide.spiceLevel} />
+            </motion.div>
+          </AnimatePresence>
+
+          <div className="flex items-center gap-5 mt-7">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              aria-label={`Add ${slide.category} to cart`}
+              className="inline-flex items-center gap-2 bg-stone-900 hover:bg-stone-800 text-white font-bold text-sm px-6 py-3.5 rounded-full transition-colors uppercase tracking-wide"
+            >
+              Add to cart
+            </button>
+
+            <AnimatePresence mode="wait">
+              <motion.div key={`price-${slide.id}`} {...fadeUp(0.18)} exit={{ opacity: 0, transition: { duration: 0.2 } }}>
+                <span className="text-2xl font-black text-stone-900">UGX {fmt(slide.price)}</span>
+                <span className="text-xs text-red-500 line-through ml-2">UGX {fmt(slide.oldPrice)}</span>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Socials */}
+          <div className="flex items-center gap-4 mt-10">
+            <a href="#" aria-label="EverGrill on Twitter" className="text-stone-400 hover:text-stone-900 transition-colors">
+              <Twitter size={17} aria-hidden="true" />
+            </a>
+            <a href="#" aria-label="EverGrill on Facebook" className="text-stone-400 hover:text-stone-900 transition-colors">
+              <Facebook size={17} aria-hidden="true" />
+            </a>
+          </div>
+
+          <div className="mt-8">
+            <DesktopThumbnails slides={SLIDES} current={current} onSelect={goTo} onPrev={prev} onNext={next} />
+          </div>
+        </div>
+
+        {/* Right: image + peeking next image + counter */}
+        <div className="flex items-center justify-center overflow-hidden">
+          <img
+            src={nextSlide.image}
+            alt=""
+            aria-hidden="true"
+            className="absolute right-[4rem] top-1/2 -translate-y-1/2 w-54 h-54 object-contain opacity-90"
+            style={{ filter: "drop-shadow(0 15px 25px rgba(0,0,0,0.2))" }}
+          />
+
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.img
+              key={slide.id}
+              src={slide.image}
+              alt={slide.category}
+              custom={direction}
+              variants={imageVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              style={{ filter: "drop-shadow(0 25px 35px rgba(0,0,0,0.25))" }}
+              className="w-[28rem] h-[28rem] object-contain absolute -translate-x-80 z-10"
+            />
+          </AnimatePresence>
+          <motion.div className="absolute inset-0 pointer-events-none" animate={floatAnimation} aria-hidden="true" />
+
+          <div className="absolute bottom-10 right-12 flex items-center gap-2 text-stone-900 font-black text-sm z-10">
+            <span>{String(current + 1).padStart(2, "0")}</span>
+            <span className="text-stone-900/30">/ {String(SLIDES.length).padStart(2, "0")}</span>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <footer className="absolute bottom-10 left-10 px-6">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-gray-500 tracking-leading text-sm font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
+            <Link
+              to="/returnPolicy"
+              className="text-sm font-bold text-orange-600 hover:text-orange-700 transition-colors"
+            >
+              Return Policy
+            </Link>
+          </div>
+        </footer>
       </div>
     </section>
+  );
+}
+
+/** Mobile/Tablet Hero - Full stack responsive layout. */
+function MobileHero({ carousel }) {
+  const BRAND_NAME = "GreenPork";
+  const year = useMemo(() => new Date().getFullYear(), []);
+  const { current, direction, slide, goTo, next, prev, setIsPaused } = carousel;
+  const { addToCart } = useCart();
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: slide.id,
+      name: slide.category,
+      category: slide.category,
+      price: slide.price,
+      image: slide.image,
+    });
+  };
+
+  return (
+    <section
+      aria-label="Featured products"
+      className="block lg:hidden w-full bg-white relative pt-24 pb-12 px-6 overflow-hidden min-h-screen flex flex-col justify-between"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      {/* Soft background yellow blob for visual accent */}
+      <div
+        aria-hidden="true"
+        className="absolute -top-12 -right-12 w-64 h-64 bg-yellow-400 rounded-full blur-3xl opacity-30 pointer-events-none"
+      />
+      <div
+        aria-hidden="true"
+        className="absolute bottom-24 -left-12 w-48 h-48 bg-yellow-400 rounded-full blur-2xl opacity-20 pointer-events-none"
+      />
+
+      <div className="relative flex flex-col flex-grow z-10">
+        {/* Copy Header Block */}
+        <div className="text-left">
+          <AnimatePresence mode="wait">
+            <motion.h1
+              key={`m-title-${slide.id}`}
+              {...fadeUp(0.05)}
+              exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
+              className="text-3xl sm:text-4xl font-black leading-[1.2] text-stone-900 max-w-sm"
+            >
+              {slide.title}
+            </motion.h1>
+          </AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            <motion.p
+              key={`m-desc-${slide.id}`}
+              {...fadeUp(0.1)}
+              exit={{ opacity: 0, transition: { duration: 0.2 } }}
+              className="text-stone-500 leading-relaxed mt-2 max-w-md text-xs sm:text-sm"
+            >
+              {slide.description}
+            </motion.p>
+          </AnimatePresence>
+
+          <AnimatePresence mode="wait">
+            <motion.div key={`m-spice-${slide.id}`} {...fadeUp(0.14)} exit={{ opacity: 0, transition: { duration: 0.2 } }}>
+              <SpicePills active={slide.spiceLevel} />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Center: Image Frame with soft flat contrast backing */}
+        <div className="relative my-8 flex items-center justify-center w-full h-64 sm:h-80 select-none">
+          <div aria-hidden="true" className="absolute w-44 h-44 sm:w-56 sm:h-56 bg-yellow-400 rounded-full opacity-90" />
+          
+          <AnimatePresence mode="wait" custom={direction}>
+            <motion.img
+              key={slide.id}
+              src={slide.image}
+              alt={slide.category}
+              custom={direction}
+              variants={imageVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              style={{ filter: "drop-shadow(0 15px 25px rgba(0,0,0,0.15))" }}
+              className="w-56 h-56 sm:w-64 sm:h-64 object-contain z-10"
+            />
+          </AnimatePresence>
+          <motion.div className="absolute inset-0 pointer-events-none" animate={floatAnimation} aria-hidden="true" />
+        </div>
+
+        {/* Bottom Block: Pricing, Cart Trigger, & Controls */}
+        <div className="mt-auto space-y-6">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <AnimatePresence mode="wait">
+              <motion.div key={`m-price-${slide.id}`} {...fadeUp(0.18)} exit={{ opacity: 0, transition: { duration: 0.2 } }} className="text-left">
+                <span className="text-2xl font-black text-stone-900 block leading-none">UGX {fmt(slide.price)}</span>
+                <span className="text-xs text-red-500 line-through mt-1 block">UGX {fmt(slide.oldPrice)}</span>
+              </motion.div>
+            </AnimatePresence>
+
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              aria-label={`Add ${slide.category} to cart`}
+              className="w-full sm:w-auto text-center justify-center inline-flex items-center gap-2 bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs sm:text-sm px-6 py-4 rounded-full transition-colors uppercase tracking-wide focus:outline-none"
+            >
+              Add to cart
+            </button>
+          </div>
+
+          {/* Pagination & Navigation controls */}
+          <div className="flex items-center justify-between pt-4 border-t border-stone-100">
+            {/* Slide Dots Indicator */}
+            <div className="flex gap-1.5" role="group" aria-label="Slide indicators">
+              {SLIDES.map((_, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => goTo(idx)}
+                  className={`h-2 rounded-full transition-all duration-300 focus:outline-none ${
+                    current === idx ? "w-6 bg-orange-500" : "w-2 bg-stone-200 hover:bg-stone-300"
+                  }`}
+                  aria-label={`Go to product ${idx + 1}`}
+                />
+              ))}
+            </div>
+
+            {/* Tactical arrows */}
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={prev}
+                aria-label="Previous product"
+                className="h-10 w-10 rounded-full border border-stone-200 flex items-center justify-center bg-white text-stone-900 hover:bg-stone-50 transition-colors focus:outline-none"
+              >
+                <ChevronLeft size={16} aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                onClick={next}
+                aria-label="Next product"
+                className="h-10 w-10 rounded-full bg-stone-900 text-white flex items-center justify-center hover:bg-stone-800 transition-colors focus:outline-none"
+              >
+                <ChevronRight size={16} aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer block */}
+      <footer className="mt-12 pt-6 border-t border-stone-100 z-10">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left">
+          <p className="text-stone-400 text-xs font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
+          <Link
+            to="/returnPolicy"
+            className="text-xs font-bold text-orange-600 hover:text-orange-700 transition-colors"
+          >
+            Return Policy
+          </Link>
+        </div>
+      </footer>
+    </section>
+  );
+}
+
+// ─── Main component ─────────────────────────────────────────────────────
+export default function Hero() {
+  const carousel = useSlideCarousel();
+
+  return (
+    <div className="w-full min-h-screen">
+      <DesktopHero carousel={carousel} />
+      <MobileHero carousel={carousel} />
+    </div>
   );
 }

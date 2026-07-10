@@ -2,17 +2,16 @@ import React, { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import {
-  MapPin, Mail, ArrowLeft, Phone,
+  MapPin, Mail, Phone,
   Send, Clock3, Facebook, Instagram,
-  MessageCircle, ArrowRight, Flame,
+  MessageCircle, ArrowRight,
 } from "lucide-react";
 
-// ─── Config — kept in sync with Hero.jsx / About.jsx ──────────────────────────
+// ─── Config — kept in sync with Hero.jsx / Navbar.jsx / About.jsx ────────────
 const WHATSAPP_NUMBER = "256776464823";
 const PHONE_DISPLAY = "+256 776-464-823";
 const EMAIL = "greenporkie@gmail.com";
 const BRAND_NAME = "EverGrill";
-const BRAND_GRADIENT = "linear-gradient(145deg, #1c1917 0%, #7c2d12 40%, #c2410c 75%, #f59e0b 100%)";
 
 // ─── Eyebrow label (matches About page pattern) ───────────────────────────────
 const Eyebrow = ({ children }) => (
@@ -73,61 +72,20 @@ const Contact = () => {
   return (
     <div className="min-h-screen bg-white overflow-hidden">
 
-      {/* ── Ambient blobs ── */}
-      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-40 -left-40 w-[500px] h-[500px] rounded-full bg-orange-100/50 blur-[120px]" />
-        <div className="absolute -bottom-40 -right-40 w-[480px] h-[480px] rounded-full bg-yellow-100/50 blur-[120px]" />
-      </div>
-
       {/* ──────────────────────────────────────────────────────────────────────────
-          PAGE HERO — brand gradient header, keeps visual consistency with About/Hero
+          INTRO — flat white section, no dark gradient banner. Headline + a thin
+          yellow rule, same restrained energy as About's intro.
       ────────────────────────────────────────────────────────────────────────── */}
-      <div
-        className="relative overflow-hidden pt-6 pb-16 px-6"
-        style={{ background: BRAND_GRADIENT }}
-      >
-        {/* Glow */}
-        <div
-          className="absolute inset-0 pointer-events-none"
-          aria-hidden="true"
-          style={{ background: "radial-gradient(ellipse 50% 70% at 80% 50%, rgba(250,204,21,0.18) 0%, transparent 70%)" }}
-        />
-        {/* Rings */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-          {[280, 440, 600].map((s) => (
-            <div key={s} className="absolute rounded-full border border-white/5"
-              style={{ width: s, height: s, top: "50%", right: "-100px", transform: "translateY(-50%)" }} />
-          ))}
-        </div>
-
-        {/* Back link */}
-        <div className="relative z-10 max-w-7xl mx-auto mb-10">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all">
-              <ArrowLeft size={17} aria-hidden="true" />
-            </div>
-            <span className="text-xs font-bold uppercase tracking-widest hidden sm:inline">Back to home</span>
-          </Link>
-        </div>
-
-        {/* Header copy */}
-        <div className="relative z-10 max-w-7xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/70 text-xs font-bold uppercase tracking-[2px] px-4 py-2 rounded-full mb-5">
-            <Flame size={13} className="text-yellow-400" aria-hidden="true" />
-            Contact Us
-          </div>
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight mb-4">
-            We'd Love to Hear{" "}
-            <span className="text-yellow-400">From You</span>
-          </h1>
-          <p className="text-white/55 text-lg max-w-xl mx-auto leading-relaxed">
-            Questions, feedback, or a quick order — reach out and
-            we'll get back to you fast.
-          </p>
-        </div>
+      <div className="max-w-7xl mx-auto px-6 pt-12 pb-4 text-center">
+        <Eyebrow>Contact Us</Eyebrow>
+        <h1 className="text-4xl hidden sm:text-5xl md:text-6xl font-black text-stone-900 leading-tight mb-4">
+          We'd Love to Hear{" "}
+          <span className="text-orange-600">From You</span>
+        </h1>
+        <p className="text-stone-500 text-lg max-w-xl mx-auto leading-relaxed">
+          Questions, feedback, or a quick order — reach out and
+          we'll get back to you fast.
+        </p>
       </div>
 
       {/* ──────────────────────────────────────────────────────────────────────────
@@ -220,7 +178,7 @@ const Contact = () => {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="group inline-flex items-center gap-3 bg-orange-600 hover:bg-orange-700 disabled:opacity-60 disabled:cursor-not-allowed text-white font-black px-8 py-4 rounded-2xl shadow-xl shadow-orange-600/25 hover:shadow-orange-600/35 hover:scale-[1.02] transition-all duration-200"
+                className="group inline-flex items-center gap-3 bg-stone-900 hover:bg-stone-800 disabled:opacity-60 disabled:cursor-not-allowed text-white font-black px-8 py-4 rounded-2xl shadow-xl hover:scale-[1.02] transition-all duration-200"
               >
                 {isSubmitting ? "Sending…" : "Send Message"}
                 <Send size={16} className="group-hover:translate-x-1 transition-transform duration-200" aria-hidden="true" />
@@ -266,7 +224,7 @@ const Contact = () => {
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-between bg-orange-600 hover:bg-orange-700 text-white rounded-3xl px-7 py-5 shadow-xl shadow-orange-600/25 hover:scale-[1.01] transition-all duration-200"
+              className="flex items-center justify-between bg-stone-900 hover:bg-stone-800 text-white rounded-3xl px-7 py-5 shadow-xl hover:scale-[1.01] transition-all duration-200"
             >
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-white/60 mb-0.5">Fastest way to order</p>
@@ -304,12 +262,7 @@ const Contact = () => {
       {/* ── Footer ── */}
       <footer className="border-t border-gray-100 py-7 px-6">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-orange-600 flex items-center justify-center shadow-sm">
-              <Flame size={14} className="text-white" aria-hidden="true" />
-            </div>
-            <p className="text-gray-400 text-sm font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
-          </div>
+          <p className="text-gray-400 text-sm font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
           <Link to="/returnPolicy" className="text-sm font-bold text-orange-600 hover:text-orange-700 transition-colors">
             Return Policy
           </Link>

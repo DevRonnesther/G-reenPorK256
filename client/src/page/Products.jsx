@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Heart, Star, Clock, Truck, ShieldCheck, Flame,
@@ -7,15 +7,19 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
+// ─── Import Cart Context ──────────────────────────────────────────────────────
+// Adjust this path if your CartContext file is located elsewhere
+import { useCart } from "../components/cart/CartContext.jsx";
+
 // ASSETS
 import Pizza from "../assets/pizza(17).png";
 import FreshPork from "../assets/freshporke.png";
 import Porkies from "../assets/PremiumPlate.png";
+import PorkStake from "../assets/ChatGPT Image Jun 18, 2026, 03_34_25 PM.png";
 import Burger from "../assets/Burger.png";
 import Chicken from "../assets/pngwing.com (25).png";
 
 // ─── Config ───────────────────────────────────────────────────────────────────
-// Kept in sync with Hero.jsx — single source of truth for ordering contact.
 const WHATSAPP_NUMBER = "256776464823";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -38,14 +42,14 @@ const CATEGORIES = [
 
 const ITEMS = [
   { id: 1, image: Burger, category: "burgers", anchoring: "8000", name: "Beef Burger", price: 6000, description: "Juicy grilled beef patty with fresh lettuce, cheese and creamy sauce.", rating: 4.8, cookTime: "15–20 min", tag: "Popular" },
-  { id: 2, image: Porkies, category: "pork", anchoring: "15000", name: "Roasted Pork", price: 10000, description: "Roasted crispy premium pork with fried cassava, salad and chapati.", rating: 4.9, cookTime: "30–35 min", tag: "Best Seller" },
+  { id: 2, image: Porkies, category: "pork", anchoring: "18000", name: "Roasted Pork", price: 15000, description: "Roasted pork with fried cassava, salad, chapati, and bananas.", rating: 4.4, cookTime: "30–35 min", tag: "Best Seller" },
+  { id: 2, image: PorkStake, category: "pork-skewer", anchoring: "9000", name: "Roasted Pork", price: 6000, description: "Roasted crispy premium pork with fried cassava, salad and chapati.", rating: 4.9, cookTime: "30–35 min", tag: "Best Seller" },
   { id: 3, image: Chicken, category: "chicken", anchoring: "78000", name: "Crispy Chicken", price: 55000, description: "Golden crispy chicken with a fiery spice blend.", rating: 4.6, cookTime: "20–25 min", tag: "Spicy" },
   { id: 4, image: Pizza, category: "pizza", anchoring: "18000", name: "Chicken Pizza", price: 15000, description: "Hand-tossed dough with premium chicken and mozzarella.", rating: 4.7, cookTime: "40–45 min", tag: "New" },
   { id: 5, image: Chicken, category: "chicken", anchoring: "55000", name: "Whole Chicken", price: 45000, description: "Farm-fresh whole chicken, marinated and roasted.", rating: 4.7, cookTime: "35–40 min", tag: null },
   { id: 6, image: FreshPork, category: "pork", anchoring: "20000", name: "Fresh Pork Cuts", price: 16000, description: "Premium farm-fresh pork, hygienically prepared.", rating: 4.5, cookTime: "—", tag: "Organic" },
 ];
 
-// ─── Tag badge — recolored to the EverGrill orange/yellow/red system ─────────
 const TAG_STYLES = {
   Popular: "bg-yellow-100 text-yellow-800",
   "Best Seller": "bg-orange-100 text-orange-700",
@@ -61,7 +65,6 @@ const Tag = ({ label }) =>
     </span>
   ) : null;
 
-// ─── Star row ─────────────────────────────────────────────────────────────────
 const Stars = ({ rating }) => (
   <div className="flex items-center gap-1" role="img" aria-label={`Rated ${rating} out of 5`}>
     {Array.from({ length: 5 }, (_, i) => (
@@ -80,7 +83,6 @@ const Stars = ({ rating }) => (
   </div>
 );
 
-// ─── Framer variants ──────────────────────────────────────────────────────────
 const cardVariants = {
   hidden: { opacity: 0, y: 24 },
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } },
@@ -98,61 +100,66 @@ const modalVariants = {
   exit: { opacity: 0, y: 20, transition: { duration: 0.2 } },
 };
 
-// ─── Component ────────────────────────────────────────────────────────────────
-const OrderingComponent = () => {
-  const [cart, setCart] = useState([]);
+const Products = () => {
+  // Consume Cart Context
+  const {
+    cartItems,
+    addToCart,
+    decreaseQuantity,
+    totalItems,
+    subtotal,
+    shipping,
+    tax,
+    total
+  } = useCart();
+
   const [activeCategory, setActiveCategory] = useState("all");
   const [liked, setLiked] = useState(new Set());
   const [cartOpen, setCartOpen] = useState(false);
-  const [modal, setModal] = useState(null); // item | null
+  const [modal, setModal] = useState(null);
 
   const filtered = useMemo(
     () => (activeCategory === "all" ? ITEMS : ITEMS.filter((i) => i.category === activeCategory)),
     [activeCategory]
   );
 
-  // Cart helpers — memoized so child re-renders don't recreate handlers every pass.
-  const addToCart = useCallback(
-    (item) => setCart((prev) => [...prev, { ...item, cartId: `${item.id}-${Date.now()}-${Math.random()}` }]),
-    []
-  );
-  const removeFromCart = useCallback(
-    (cartId) => setCart((prev) => prev.filter((i) => i.cartId !== cartId)),
-    []
-  );
-  const toggleLike = useCallback(
-    (id) =>
-      setLiked((prev) => {
-        const next = new Set(prev);
-        next.has(id) ? next.delete(id) : next.add(id);
-        return next;
-      }),
-    []
-  );
+  const toggleLike = (id) => {
+    setLiked((prev) => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  };
 
-  const total = useMemo(() => cart.reduce((sum, i) => sum + i.price, 0), [cart]);
-
+  // Convert cartItems array to a map of product.id -> quantity
   const cartCountMap = useMemo(
     () =>
-      cart.reduce((acc, i) => {
-        acc[i.id] = (acc[i.id] || 0) + 1;
+      cartItems.reduce((acc, item) => {
+        acc[item.id] = item.quantity;
         return acc;
       }, {}),
-    [cart]
+    [cartItems]
   );
 
+  // Generate checkout text with quantities, subtotal, tax, and delivery charges
   const checkoutHref = useMemo(() => {
-    if (cart.length === 0) return null;
-    const lines = cart.map((i) => `• ${i.name} — UGX ${fmt(i.price)}`).join("\n");
-    const message = `Hello EverGrill! I'd like to order:\n\n${lines}\n\nTotal: UGX ${fmt(total)}`;
+    if (cartItems.length === 0) return null;
+
+    const lines = cartItems
+      .map((i) => `• ${i.name} (x${i.quantity}) — UGX ${fmt(i.price * i.quantity)}`)
+      .join("\n");
+
+    const deliveryText = shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`;
+    const message = `Hello EverGrill! I'd like to order:\n\n${lines}\n\nSubtotal: UGX ${fmt(subtotal)}\nTax (18%): UGX ${fmt(tax)}\nDelivery: ${deliveryText}\n\nTotal: UGX ${fmt(total)}`;
+
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-  }, [cart, total]);
+  }, [cartItems, subtotal, tax, shipping, total]);
 
   return (
     <div className="min-h-screen bg-white text-stone-900">
 
       {/* ── Back link ── */}
-      <div className="px-5 pt-5">
+      <div className="px-5 hidden pt-5">
         <Link
           to="/"
           className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-900 transition-colors duration-200 group"
@@ -164,7 +171,6 @@ const OrderingComponent = () => {
 
       {/* ── Sticky header ── */}
       <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-2xl border-b border-stone-100/85 shadow-[0_1px_20px_rgba(0,0,0,0.05)]">
-        {/* Top bar */}
         <div className="max-w-7xl mx-auto px-5 pt-4 pb-3 flex items-center justify-between gap-4">
 
           {/* Brand mark */}
@@ -180,7 +186,6 @@ const OrderingComponent = () => {
 
           {/* Right cluster */}
           <div className="flex items-center gap-2 shrink-0">
-            {/* Item count chip */}
             {filtered.length > 0 && (
               <span className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-stone-100 text-stone-500 text-xs font-bold">
                 {filtered.length} item{filtered.length !== 1 ? "s" : ""}
@@ -191,13 +196,13 @@ const OrderingComponent = () => {
             <button
               onClick={() => setCartOpen(true)}
               className="relative flex items-center gap-2 h-11 pl-3 pr-4 rounded-2xl bg-yellow-400 hover:bg-yellow-500 text-stone-950 font-black text-sm transition-all duration-200 shadow-lg shadow-yellow-400/30 hover:scale-[1.02] group"
-              aria-label={`Open cart, ${cart.length} item${cart.length !== 1 ? "s" : ""}`}
+              aria-label={`Open cart, ${totalItems} item${totalItems !== 1 ? "s" : ""}`}
             >
               <ShoppingBag size={17} className="group-hover:scale-110 transition-transform duration-200" aria-hidden="true" />
               <span className="hidden sm:inline">Cart</span>
-              {cart.length > 0 && (
+              {totalItems > 0 && (
                 <span className="flex items-center justify-center w-5 h-5 rounded-full bg-stone-900 text-yellow-400 text-[10px] font-black leading-none" aria-hidden="true">
-                  {cart.length}
+                  {totalItems}
                 </span>
               )}
             </button>
@@ -214,11 +219,10 @@ const OrderingComponent = () => {
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`relative px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 ${
-                  isActive
+                className={`relative px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 ${isActive
                     ? "bg-stone-900 text-white shadow-md"
                     : "bg-stone-100/80 text-stone-500 hover:bg-stone-200/80 hover:text-stone-800"
-                }`}
+                  }`}
               >
                 {cat.label}
                 {isActive && (
@@ -268,9 +272,8 @@ const OrderingComponent = () => {
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleLike(item.id); }}
                   aria-label={liked.has(item.id) ? `Unlike ${item.name}` : `Like ${item.name}`}
-                  className={`absolute top-3 right-3 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${
-                    liked.has(item.id) ? "bg-yellow-400 shadow-md" : "bg-white shadow border border-stone-100"
-                  }`}
+                  className={`absolute top-3 right-3 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${liked.has(item.id) ? "bg-yellow-400 shadow-md" : "bg-white shadow border border-stone-100"
+                    }`}
                 >
                   <Heart size={16} aria-hidden="true" className={liked.has(item.id) ? "fill-stone-950 text-stone-950" : "text-stone-500"} />
                 </button>
@@ -286,7 +289,6 @@ const OrderingComponent = () => {
                 </div>
 
                 <h2 className="font-black text-lg leading-tight mb-1 text-stone-900">{item.name}</h2>
-
                 <p className="text-stone-400 hidden md:block sm:block text-xs leading-relaxed mb-3 line-clamp-2">{item.description}</p>
 
                 <div className="flex items-center justify-between">
@@ -319,7 +321,7 @@ const OrderingComponent = () => {
                   </div>
                   <div className="flex items-center gap-1.5">
                     <Truck size={12} className="text-green-600" aria-hidden="true" />
-                    Free delivery
+                    Free delivery over 50k
                   </div>
                 </div>
               </div>
@@ -341,7 +343,6 @@ const OrderingComponent = () => {
       <AnimatePresence>
         {modal && (
           <>
-            {/* Backdrop */}
             <motion.div
               key="backdrop"
               initial={{ opacity: 0 }}
@@ -351,7 +352,6 @@ const OrderingComponent = () => {
               className="fixed inset-0 bg-stone-950/60 backdrop-blur-md z-50"
             />
 
-            {/* Full-screen sheet — slides up from bottom */}
             <motion.div
               key="modal"
               variants={modalVariants}
@@ -363,7 +363,7 @@ const OrderingComponent = () => {
               aria-label={modal.name}
               className="fixed inset-0 z-[60] flex flex-col md:flex-row bg-white overflow-hidden"
             >
-              {/* ── Hero zone: brand gradient with food image ── */}
+              {/* Hero zone */}
               <div
                 className="relative h-[38vh] min-h-[260px] md:h-auto flex-shrink-0 md:flex-1 items-end justify-between overflow-hidden"
                 style={{
@@ -378,7 +378,6 @@ const OrderingComponent = () => {
                   `,
                 }}
               >
-                {/* Radial glow behind image */}
                 <div
                   className="absolute inset-0 pointer-events-none"
                   aria-hidden="true"
@@ -387,7 +386,6 @@ const OrderingComponent = () => {
                   }}
                 />
 
-                {/* Subtle texture rings */}
                 <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
                   {[280, 420, 560].map((s, i) => (
                     <div
@@ -398,7 +396,6 @@ const OrderingComponent = () => {
                   ))}
                 </div>
 
-                {/* Top bar: back + like */}
                 <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 pt-5 z-10">
                   <button
                     onClick={() => setModal(null)}
@@ -416,18 +413,16 @@ const OrderingComponent = () => {
                     <button
                       onClick={() => toggleLike(modal.id)}
                       aria-label={liked.has(modal.id) ? `Unlike ${modal.name}` : `Like ${modal.name}`}
-                      className={`w-10 h-10 rounded-2xl backdrop-blur-sm flex items-center justify-center transition-all duration-200 ${
-                        liked.has(modal.id)
+                      className={`w-10 h-10 rounded-2xl backdrop-blur-sm flex items-center justify-center transition-all duration-200 ${liked.has(modal.id)
                           ? "bg-yellow-400 shadow-lg shadow-yellow-400/40"
                           : "bg-white/10 hover:bg-white/20"
-                      }`}
+                        }`}
                     >
                       <Heart size={17} aria-hidden="true" className={liked.has(modal.id) ? "fill-stone-950 text-stone-950" : "text-white/80"} />
                     </button>
                   </div>
                 </div>
 
-                {/* Food image — responsive sizing */}
                 <div className="absolute inset-0 w-full flex items-center justify-center p-4 md:pr-10">
                   <motion.img
                     key={modal.id}
@@ -442,13 +437,11 @@ const OrderingComponent = () => {
                 </div>
               </div>
 
-              {/* ── Detail zone: scrollable white panel ── */}
+              {/* Detail zone */}
               <div className="flex-1 flex flex-col overflow-hidden">
-                {/* Scrollable details */}
                 <div className="flex-1 overflow-y-auto px-6 py-4 md:py-6">
                   <div className="max-w-2xl mx-auto flex flex-col gap-6">
 
-                    {/* Text/Price details */}
                     <div className="relative z-10 pt-2 pb-4">
                       <motion.div
                         initial={{ opacity: 0, y: 16 }}
@@ -471,13 +464,11 @@ const OrderingComponent = () => {
                       </motion.div>
                     </div>
 
-                    {/* Description */}
                     <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
                       <p className="text-xs font-black uppercase tracking-widest text-orange-600 mb-2">About this dish</p>
                       <p className="text-stone-600 leading-relaxed text-sm md:text-base">{modal.description}</p>
                     </motion.div>
 
-                    {/* Feature chips */}
                     <motion.div
                       initial={{ opacity: 0, y: 12 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -486,7 +477,7 @@ const OrderingComponent = () => {
                     >
                       {[
                         { Icon: Clock, label: "Prep time", value: modal.cookTime, color: "text-orange-600", bg: "bg-orange-50" },
-                        { Icon: Truck, label: "Delivery", value: "Free", color: "text-green-600", bg: "bg-green-50" },
+                        { Icon: Truck, label: "Delivery", value: shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`, color: "text-green-600", bg: "bg-green-50" },
                         { Icon: ShieldCheck, label: "Quality", value: "Premium", color: "text-orange-600", bg: "bg-orange-50" },
                       ].map(({ Icon, label, value, color, bg }) => (
                         <div key={label} className={`flex flex-col items-center gap-1.5 rounded-2xl ${bg} py-3 px-2 sm:py-4 sm:px-3 text-center`}>
@@ -499,7 +490,6 @@ const OrderingComponent = () => {
                       ))}
                     </motion.div>
 
-                    {/* Savings callout */}
                     {pct(modal.price, modal.anchoring) > 0 && (
                       <motion.div
                         initial={{ opacity: 0, y: 12 }}
@@ -521,7 +511,7 @@ const OrderingComponent = () => {
                   </div>
                 </div>
 
-                {/* ── Fixed CTA bar at bottom ── */}
+                {/* Fixed CTA bar */}
                 <div className="flex-shrink-0 border-t border-stone-100 bg-white px-6 py-5 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
                   <div className="max-w-2xl mx-auto">
                     <motion.div
@@ -541,11 +531,10 @@ const OrderingComponent = () => {
                       <button
                         onClick={() => toggleLike(modal.id)}
                         aria-label={liked.has(modal.id) ? `Unlike ${modal.name}` : `Save ${modal.name}`}
-                        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${
-                          liked.has(modal.id)
+                        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${liked.has(modal.id)
                             ? "bg-yellow-400 border-yellow-400 shadow-lg shadow-yellow-400/40"
                             : "bg-white border-stone-200 hover:border-yellow-300"
-                        }`}
+                          }`}
                       >
                         <Heart size={19} aria-hidden="true" className={liked.has(modal.id) ? "fill-stone-950 text-stone-950" : "text-stone-500"} />
                       </button>
@@ -587,7 +576,7 @@ const OrderingComponent = () => {
               <div className="px-6 py-5 border-b border-stone-100 flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-black text-stone-900">Your cart</h2>
-                  <p className="text-stone-400 text-sm mt-0.5">{cart.length} item{cart.length !== 1 ? "s" : ""}</p>
+                  <p className="text-stone-400 text-sm mt-0.5">{totalItems} item{totalItems !== 1 ? "s" : ""}</p>
                 </div>
                 <button
                   onClick={() => setCartOpen(false)}
@@ -600,15 +589,15 @@ const OrderingComponent = () => {
 
               {/* Cart items */}
               <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
-                {cart.length === 0 ? (
+                {cartItems.length === 0 ? (
                   <div className="flex flex-col items-center justify-center h-full text-stone-400 pb-20">
                     <ShoppingBag size={48} className="mb-4 opacity-30" aria-hidden="true" />
                     <p className="font-bold">Your cart is empty</p>
                     <p className="text-sm mt-1">Add something delicious</p>
                   </div>
                 ) : (
-                  cart.map((item) => (
-                    <div key={item.cartId} className="flex items-center gap-4 bg-stone-50 border border-stone-100 rounded-2xl p-3">
+                  cartItems.map((item) => (
+                    <div key={item.id} className="flex items-center gap-4 bg-stone-50 border border-stone-100 rounded-2xl p-3">
                       <div className="w-16 h-16 rounded-xl bg-white border border-stone-100 flex items-center justify-center shrink-0">
                         <img src={item.image} alt="" aria-hidden="true" className="w-12 h-12 object-contain" />
                       </div>
@@ -616,29 +605,47 @@ const OrderingComponent = () => {
                         <p className="font-bold text-sm truncate text-stone-900">{item.name}</p>
                         <p className="text-orange-600 font-black text-sm mt-0.5">UGX {fmt(item.price)}</p>
                       </div>
-                      <button
-                        onClick={() => removeFromCart(item.cartId)}
-                        aria-label={`Remove ${item.name} from cart`}
-                        className="w-9 h-9 rounded-xl bg-yellow-50 hover:bg-yellow-100 flex items-center justify-center transition-colors shrink-0"
-                      >
-                        <Minus size={14} className="text-orange-600" aria-hidden="true" />
-                      </button>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs text-stone-500 font-bold bg-stone-100 px-2 py-1 rounded-lg" aria-label={`Quantity: ${item.quantity}`}>
+                          x{item.quantity}
+                        </span>
+                        <button
+                          onClick={() => decreaseQuantity(item.id)}
+                          aria-label={`Decrease quantity of ${item.name}`}
+                          className="w-9 h-9 rounded-xl bg-yellow-50 hover:bg-yellow-100 flex items-center justify-center transition-colors shrink-0"
+                        >
+                          <Minus size={14} className="text-orange-600" aria-hidden="true" />
+                        </button>
+                      </div>
                     </div>
                   ))
                 )}
               </div>
 
               {/* Drawer footer */}
-              {cart.length > 0 && (
-                <div className="px-5 py-5 border-t border-stone-100">
-                  <div className="bg-stone-50 border border-stone-100 rounded-2xl px-5 py-4 mb-4 flex items-center justify-between">
-                    <div>
-                      <p className="text-stone-500 text-sm">Total</p>
-                      <p className="text-2xl font-black text-orange-600 mt-0.5">UGX {fmt(total)}</p>
+              {cartItems.length > 0 && (
+                <div className="px-5 py-5 border-t border-stone-100 bg-stone-50/50">
+                  <div className="space-y-2 mb-4 text-sm text-stone-600">
+                    <div className="flex justify-between">
+                      <span>Subtotal</span>
+                      <span className="font-bold text-stone-900">UGX {fmt(subtotal)}</span>
                     </div>
-                    <div className="flex items-center gap-1.5 text-green-600 text-xs font-bold">
-                      <Truck size={14} aria-hidden="true" />
-                      Free delivery
+                    <div className="flex justify-between">
+                      <span>Tax (18%)</span>
+                      <span className="font-bold text-stone-900">UGX {fmt(tax)}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span>Delivery</span>
+                      <span className={`font-bold ${shipping === 0 ? "text-green-600" : "text-stone-900"}`}>
+                        {shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`}
+                      </span>
+                    </div>
+
+                    <div className="border-t border-stone-200/80 my-3" />
+
+                    <div className="flex justify-between items-end">
+                      <p className="text-stone-900 font-bold text-base">Grand Total</p>
+                      <p className="text-2xl font-black text-orange-600">UGX {fmt(total)}</p>
                     </div>
                   </div>
 
@@ -661,4 +668,4 @@ const OrderingComponent = () => {
   );
 };
 
-export default OrderingComponent;
+export default Products;

@@ -6,10 +6,8 @@ import {
   Users,
   Award,
   Leaf,
-  ArrowLeft,
   ShieldCheck,
   ArrowRight,
-  Flame,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { Testimonials } from "../components/Testimonials";
@@ -19,21 +17,16 @@ import { Gallery } from "../components/Gallery";
 import BannerBg from "../assets/pngwing.com (21).png";
 import Bike from "../assets/DeliveryBike.png";
 
-// ─── Config — kept in sync with Hero.jsx / OrderingComponent.jsx ─────────────
+// ─── Config — kept in sync with Hero.jsx / Navbar.jsx / Contact.jsx ──────────
 const WHATSAPP_NUMBER = "256776464823";
 const PHONE_DISPLAY = "+(256) 776-464-823";
 const BRAND_NAME = "EverGrill";
 
-// Signature brand gradient, reused everywhere a dark hero panel is needed —
-// matches the radial orange/yellow treatment from the product modal in
-// OrderingComponent.jsx, replacing the old unrelated dark-red scheme.
-const BRAND_GRADIENT = "linear-gradient(145deg, #1c1917 0%, #7c2d12 35%, #c2410c 70%, #f59e0b 100%)";
-
-// ─── Stat chip used in hero ────────────────────────────────────────────────────
+// ─── Stat chip used in intro section — light card, matches Hero's stat cards ──
 const StatChip = ({ value, label }) => (
-  <div className="flex flex-col items-center bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl px-5 py-3 min-w-[80px]">
-    <span className="text-2xl font-black text-white leading-tight">{value}</span>
-    <span className="text-[10px] font-bold uppercase tracking-widest text-white/60 mt-0.5 text-center">{label}</span>
+  <div className="flex flex-col items-center bg-white border border-stone-100 shadow-sm rounded-2xl px-5 py-3 min-w-[80px]">
+    <span className="text-2xl font-black text-stone-900 leading-tight">{value}</span>
+    <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mt-0.5 text-center">{label}</span>
   </div>
 );
 
@@ -52,68 +45,35 @@ const About = () => {
   return (
     <div className="w-full bg-white overflow-hidden text-gray-900">
 
-      {/* ── Ambient blobs ── */}
-      <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden="true">
-        <div className="absolute -top-40 -left-40 w-[560px] h-[560px] rounded-full bg-orange-100/50 blur-[130px]" />
-        <div className="absolute -bottom-40 -right-40 w-[480px] h-[480px] rounded-full bg-yellow-100/50 blur-[130px]" />
-      </div>
-
       {/* ──────────────────────────────────────────────────────────────────────────
-          HERO SECTION
-          Brand gradient, food image, stats strip — sets the tone immediately
+          INTRO — flat white/yellow split, matching Hero's diagonal panel language
+          instead of a dark gradient banner.
       ────────────────────────────────────────────────────────────────────────── */}
-      <section
-        className="relative overflow-hidden"
-        style={{ background: BRAND_GRADIENT, minHeight: "92vh" }}
-      >
-        {/* Radial glow */}
+      <section className="relative overflow-hidden">
+        {/* Diagonal yellow accent, same treatment as Hero's split panel */}
         <div
-          className="absolute inset-0 pointer-events-none"
           aria-hidden="true"
-          style={{ background: "radial-gradient(ellipse 55% 65% at 75% 55%, rgba(250,204,21,0.18) 0%, transparent 70%)" }}
+          className="hidden lg:block absolute inset-0 bg-yellow-400"
+          style={{ clipPath: "polygon(68% 0, 100% 0, 100% 100%, 48% 100%)" }}
         />
-        {/* Texture rings */}
-        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-          {[320, 520, 720].map((s) => (
-            <div key={s} className="absolute rounded-full border border-white/5"
-              style={{ width: s, height: s, top: "50%", right: "-80px", transform: "translateY(-50%)" }} />
-          ))}
-        </div>
 
-        {/* Back link */}
-        <div className="relative z-10 px-6 pt-6">
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors duration-200 group"
-          >
-            <div className="w-9 h-9 rounded-xl bg-white/10 hover:bg-white/20 flex items-center justify-center transition-all">
-              <ArrowLeft size={17} aria-hidden="true" />
-            </div>
-            <span className="text-xs font-bold uppercase tracking-widest hidden sm:inline">Back to home</span>
-          </Link>
-        </div>
-
-        {/* Hero grid */}
-        <div className="relative z-10 max-w-7xl mx-auto px-6 md:px-12 pt-10 pb-20 grid lg:grid-cols-2 gap-12 items-center">
+        <div className="relative max-w-7xl mx-auto px-6 md:px-12 pt-12 pb-20 grid lg:grid-cols-2 gap-12 items-center">
 
           {/* Left — copy */}
           <div>
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm border border-white/20 text-white/80 text-xs font-bold uppercase tracking-[2px] px-4 py-2 rounded-full mb-6">
-              <Flame size={13} className="text-yellow-400" aria-hidden="true" />
-              About {BRAND_NAME}
-            </div>
+            <Eyebrow>About {BRAND_NAME}</Eyebrow>
 
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-[1.05] mb-6">
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black text-stone-900 leading-[1.05] mb-6">
               Crafted with Passion,{" "}
-              <span className="text-yellow-400">Served with Excellence</span>
+              <span className="text-orange-600">Served with Excellence</span>
             </h1>
 
-            <p className="text-white/65 text-lg leading-relaxed mb-4 max-w-lg">
+            <p className="text-stone-500 text-lg leading-relaxed mb-4 max-w-lg">
               {BRAND_NAME} delivers premium grilled meals crafted with freshness, bold flavor,
               and modern culinary creativity — using carefully selected ingredients for
               unforgettable dining experiences.
             </p>
-            <p className="text-white/50 leading-relaxed mb-10 max-w-lg">
+            <p className="text-stone-400 leading-relaxed mb-10 max-w-lg">
               What started as a passion for quality food has grown into a destination
               where families and food lovers enjoy rich flavors, fast delivery, and
               premium service every day.
@@ -130,10 +90,7 @@ const About = () => {
 
           {/* Right — image card */}
           <div className="relative flex justify-center lg:justify-end">
-            {/* Glow behind card */}
-            <div className="absolute inset-0 bg-gradient-to-br from-yellow-400/20 to-orange-600/20 blur-3xl rounded-full scale-90" aria-hidden="true" />
-
-            <div className="relative bg-white/10 backdrop-blur-md border border-white/20 rounded-[40px] p-5 shadow-2xl max-w-md w-full">
+            <div className="relative bg-white border border-stone-100 rounded-[40px] p-5 shadow-xl max-w-md w-full">
               <img
                 src={BannerBg}
                 alt={`${BRAND_NAME} signature dish`}
@@ -141,12 +98,9 @@ const About = () => {
               />
 
               {/* Floating badge */}
-              <div className="absolute -bottom-5 -right-4 bg-orange-600 text-white px-5 py-3.5 rounded-2xl shadow-xl shadow-orange-900/40">
-                <p className="text-[10px] uppercase tracking-[3px] text-white/70">Premium</p>
-                <h4 className="font-black text-base leading-tight flex items-center gap-1.5">
-                  <Flame size={14} className="text-yellow-300" aria-hidden="true" />
-                  Quality, Grilled Right
-                </h4>
+              <div className="absolute -bottom-5 -right-4 bg-stone-900 text-white px-5 py-3.5 rounded-2xl shadow-xl">
+                <p className="text-[10px] uppercase tracking-[3px] text-white/60">Premium</p>
+                <h4 className="font-black text-base leading-tight">Quality, Grilled Right</h4>
               </div>
             </div>
           </div>
@@ -253,8 +207,8 @@ const About = () => {
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
-          DELIVERY BANNER
-          Signature element: full-bleed brand-gradient half with large bike image
+          DELIVERY BANNER — yellow panel + bike image, replacing the old dark
+          gradient half with the same flat brand color as Hero's split panel.
       ────────────────────────────────────────────────────────────────────────── */}
       <section className="py-12 px-6">
         <div className="max-w-7xl mx-auto">
@@ -264,24 +218,17 @@ const About = () => {
           </div>
           <div className="rounded-[48px] overflow-hidden shadow-2xl grid lg:grid-cols-2">
 
-            {/* Left — brand gradient, bike image */}
-            <div
-              className="relative min-h-[420px] flex items-center justify-center overflow-hidden"
-              style={{ background: BRAND_GRADIENT }}
-            >
-              {/* Decorative ring */}
-              <div className="absolute inset-0 flex items-center justify-center pointer-events-none" aria-hidden="true">
-                <div className="w-[500px] h-[500px] rounded-full border-[40px] border-white/5" />
-              </div>
+            {/* Left — yellow panel, bike image */}
+            <div className="relative min-h-[420px] flex items-center justify-center overflow-hidden bg-yellow-400">
               <img
                 src={Bike}
                 alt="EverGrill delivery rider"
                 className="relative z-10 w-full max-w-md object-contain px-6"
-                style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.5))" }}
+                style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.25))" }}
               />
               {/* Time badge */}
-              <div className="absolute bottom-8 left-8 bg-white/10 backdrop-blur-sm border border-white/20 text-white rounded-2xl px-5 py-3">
-                <p className="text-[10px] uppercase tracking-widest text-white/60">Average time</p>
+              <div className="absolute bottom-8 left-8 bg-white shadow-md text-stone-900 rounded-2xl px-5 py-3">
+                <p className="text-[10px] uppercase tracking-widest text-stone-400">Average time</p>
                 <p className="text-2xl font-black">30 min</p>
               </div>
             </div>
@@ -302,7 +249,7 @@ const About = () => {
                   href={`https://wa.me/${WHATSAPP_NUMBER}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 bg-orange-600 hover:bg-orange-700 text-white px-7 py-4 rounded-2xl font-black text-base transition-all shadow-xl shadow-orange-600/25 hover:scale-[1.02]"
+                  className="inline-flex items-center gap-2.5 bg-stone-900 hover:bg-stone-800 text-white px-7 py-4 rounded-2xl font-black text-base transition-all shadow-xl hover:scale-[1.02]"
                 >
                   Order Now
                   <ArrowRight size={18} aria-hidden="true" />
@@ -396,7 +343,7 @@ const About = () => {
                 href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between bg-orange-600 hover:bg-orange-700 text-white rounded-2xl px-6 py-5 shadow-xl shadow-orange-600/25 hover:scale-[1.01] transition-all duration-200"
+                className="flex items-center justify-between bg-stone-900 hover:bg-stone-800 text-white rounded-2xl px-6 py-5 shadow-xl hover:scale-[1.01] transition-all duration-200"
               >
                 <div>
                   <p className="text-[10px] uppercase tracking-widest text-white/60 mb-0.5">Order via</p>
@@ -425,12 +372,7 @@ const About = () => {
       {/* ── Footer ── */}
       <footer className="border-t border-gray-100 py-8 px-6">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2.5">
-            <div className="w-7 h-7 rounded-lg bg-orange-600 flex items-center justify-center shadow-sm">
-              <Flame size={14} className="text-white" aria-hidden="true" />
-            </div>
-            <p className="text-gray-400 text-sm font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
-          </div>
+          <p className="text-gray-400 text-sm font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
           <Link
             to="/returnPolicy"
             className="text-sm font-bold text-orange-600 hover:text-orange-700 transition-colors"
