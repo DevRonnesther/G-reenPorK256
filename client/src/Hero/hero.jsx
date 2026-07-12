@@ -565,7 +565,7 @@ function MobileHero({ carousel }) {
             aria-label="Next product"
             className="h-14 w-14 flex-shrink-0 rounded-full bg-yellow-400 text-stone-900 flex items-center justify-center"
           >
-            <ArrowUpRight size={20} aria-hidden="true" />
+            <ChevronRight size={20} aria-hidden="true" />
           </button>
         </div>
       </div>
