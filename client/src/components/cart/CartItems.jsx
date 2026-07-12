@@ -155,7 +155,6 @@ export default function Cart() {
               </div>
 
               {/* Items List */}
-              {/* Items List */}
               <div className="space-y-4 max-h-[380px] overflow-y-auto scrollbar-none pr-1">
                 {cartItems.map((item) => (
                   <div

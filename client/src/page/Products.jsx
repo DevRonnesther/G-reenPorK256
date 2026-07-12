@@ -5,6 +5,7 @@ import {
   Minus, X, ShoppingBasket, ShoppingBag,
   ArrowRight, ArrowLeft,
   PanelLeftClose,
+  ChevronDown,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
@@ -34,6 +35,9 @@ const pct = (price, anchoring) => {
 const fmt = (n) => Number(n).toLocaleString();
 
 // ─── BRAND PALETTE CONSTANTS ──────────────────────────────────────────────────
+// White      #FFFFFF  — backgrounds
+// Grill Orange #F97316 — primary brand color, buttons, highlights
+// Golden Yellow #FFC107 — offers, badges, special items
 const CATEGORIES = [
   { key: "all", label: "All Items" },
   { key: "pork", label: "Premium Pork" },
@@ -53,9 +57,9 @@ const ITEMS = [
 ];
 
 const TAG_STYLES = {
-  Popular: "bg-amber-100 text-amber-800",
-  "Best Seller": "bg-red-50 text-red-600",
-  Spicy: "bg-orange-50 text-orange-600",
+  Popular: "bg-[#FFC107]/20 text-stone-800",
+  "Best Seller": "bg-[#F97316]/10 text-[#F97316]",
+  Spicy: "bg-[#F97316]/10 text-[#F97316]",
   New: "bg-stone-100 text-stone-700",
   Organic: "bg-stone-50 text-stone-600",
 };
@@ -70,7 +74,7 @@ const Tag = ({ label }) =>
 
 const Stars = ({ rating }) => (
   <div className="flex items-center gap-1" role="img" aria-label={`Rated ${rating} out of 5`}>
-    <Star size={11} className="text-yellow-400 fill-yellow-400" />
+    <Star size={11} className="text-[#FFC107] fill-[#FFC107]" />
     <span className="text-xs font-bold text-stone-700">{rating}</span>
   </div>
 );
@@ -107,6 +111,7 @@ const Products = () => {
   } = useCart();
 
   const [activeCategory, setActiveCategory] = useState("all");
+  const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [liked, setLiked] = useState(new Set());
   const [cartOpen, setCartOpen] = useState(false);
   const [modal, setModal] = useState(null);
@@ -159,11 +164,11 @@ const Products = () => {
 
           {/* Brand & Page Mark */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-red-600 flex items-center justify-center shrink-0 shadow-lg shadow-red-600/15">
+            <div className="w-10 h-10 rounded-2xl bg-[#F97316] flex items-center justify-center shrink-0 shadow-lg shadow-[#F97316]/15">
               <Leaf size={18} className="text-white" aria-hidden="true" />
             </div>
             <div>
-              <p className="text-[10px] font-extrabold tracking-[0.25em] uppercase text-red-600 leading-none mb-1">
+              <p className="text-[10px] font-extrabold tracking-[0.25em] uppercase text-[#F97316] leading-none mb-1">
                 {BRAND_NAME}
               </p>
               <h1 className="text-xl md:text-2xl font-black leading-tight text-stone-900">
@@ -178,10 +183,10 @@ const Products = () => {
               onClick={() => setCartOpen(true)}
               aria-label="Open your cart"
               className="relative w-11 h-11 rounded-none bg-none hover:bg-stone-100 flex items-center justify-center text-stone-900 transition-colors"
-            > 
-              <PanelLeftClose  size={18}  />
+            >
+              <PanelLeftClose size={18} />
               {totalItems > 0 && (
-                <span className="absolute  -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center">
+                <span className="absolute hidden  -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#F97316] text-white text-[10px] font-bold flex items-center justify-center">
                   {totalItems}
                 </span>
               )}
@@ -190,24 +195,65 @@ const Products = () => {
         </div>
 
         {/* Minimalist Borderless Category Track */}
-        <div className="max-w-7xl mx-auto px-6 pb-6 flex gap-2.5 overflow-x-auto scrollbar-none" role="tablist">
-          {CATEGORIES.map((cat) => {
-            const isActive = activeCategory === cat.key;
-            return (
-              <button
-                key={cat.key}
-                role="tab"
-                aria-selected={isActive}
-                onClick={() => setActiveCategory(cat.key)}
-                className={`px-5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 ${isActive
-                  ? "bg-stone-900 text-white shadow-lg shadow-stone-900/10"
-                  : "bg-stone-50 text-stone-500 hover:text-stone-900 hover:bg-stone-100/80"
-                  }`}
-              >
-                {cat.label}
-              </button>
-            );
-          })}
+        {/* Categories Dropdown Menu */}
+        <div className="max-w-7xl mx-auto px-6 pb-6 relative">
+          <div className="relative inline-block text-left">
+
+            {/* Dropdown Trigger Button */}
+            <button
+              type="button"
+              onClick={() => setCategoriesOpen((prev) => !prev)}
+              className="inline-flex items-center justify-between gap-3 px-5 py-3 rounded-xl bg-stone-900 text-white text-xs font-bold uppercase tracking-widest hover:bg-stone-800 shadow-xl shadow-stone-900/10 transition-all duration-200 min-w-[180px] z-10"
+              aria-haspopup="listbox"
+              aria-expanded={categoriesOpen}
+            >
+              <span>
+                {CATEGORIES.find((cat) => cat.key === activeCategory)?.label || "Select Category"}
+              </span>
+              {/* ChevronDown icon rotates dynamically when the dropdown is open */}
+              <ChevronDown
+                size={14}
+                className={`transition-transform duration-300 ${categoriesOpen ? "rotate-180" : ""}`}
+              />
+            </button>
+
+            {/* Dropdown Options List */}
+            {categoriesOpen && (
+              <>
+                {/* Invisible Click-away Backdrop (Closes dropdown when clicking outside) */}
+                <div
+                  className="fixed inset-0 z-40 bg-transparent"
+                  onClick={() => setCategoriesOpen(false)}
+                />
+
+                <div className="absolute left-0 mt-3 w-64 bg-white rounded-2xl shadow-2xl shadow-stone-200/80 p-3 z-50 flex flex-col gap-1">
+                  {CATEGORIES.map((cat) => {
+                    const isActive = activeCategory === cat.key;
+                    return (
+                      <button
+                        key={cat.key}
+                        type="button"
+                        onClick={() => {
+                          setActiveCategory(cat.key);
+                          setCategoriesOpen(false);
+                        }}
+                        className={`w-full text-left px-4 py-3 rounded-xl text-xs font-bold transition-all duration-150 flex items-center justify-between ${isActive
+                          ? "bg-[#F97316]/10 text-[#F97316] font-extrabold"
+                          : "text-stone-500 hover:text-stone-900 hover:bg-stone-50"
+                          }`}
+                      >
+                        <span>{cat.label}</span>
+                        {/* Subtle orange indicator dot for the active selection */}
+                        {isActive && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-[#F97316]" aria-hidden="true" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+          </div>
         </div>
       </div>
 
@@ -221,11 +267,11 @@ const Products = () => {
             className="group relative bg-stone-900 text-white rounded-[2.5rem] p-8 md:p-12 mb-8 grid md:grid-cols-2 gap-8 items-center cursor-pointer overflow-hidden shadow-2xl shadow-stone-900/10 hover:-translate-y-1 transition-all duration-500"
           >
             {/* Soft Ambient Blurs */}
-            <div className="absolute -top-16 -right-16 w-80 h-80 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-12 w-80 h-80 bg-yellow-400/5 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -top-16 -right-16 w-80 h-80 bg-[#F97316]/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-12 w-80 h-80 bg-[#FFC107]/5 rounded-full blur-3xl pointer-events-none" />
 
             <div className="space-y-4 md:space-y-6 relative z-10">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-600 text-white rounded-full text-[9px] font-bold uppercase tracking-widest">
+              <span className="inline-flex// hidden items-center gap-1.5 px-3 py-1 bg-[#F97316] text-white rounded-full text-[9px] font-bold uppercase tracking-widest">
                 Chef's Spotlight
               </span>
               <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
@@ -238,11 +284,11 @@ const Products = () => {
               <div className="flex flex-wrap items-center gap-6 pt-2">
                 <div>
                   <p className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">Starting From</p>
-                  <p className="text-2xl font-black text-yellow-400 mt-1">UGX {fmt(spotlightItem.price)}</p>
+                  <p className="text-2xl font-black text-[#FFC107] mt-1">UGX {fmt(spotlightItem.price)}</p>
                 </div>
                 <button
                   onClick={(e) => { e.stopPropagation(); addToCart(spotlightItem); }}
-                  className="bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-7 py-3.5 rounded-2xl shadow-xl shadow-red-600/25 transition-colors"
+                  className="bg-[#F97316] hover:bg-[#EA580C] text-white font-bold text-sm px-7 py-3.5 rounded-2xl shadow-xl shadow-[#F97316]/25 transition-colors"
                 >
                   Add to Order
                 </button>
@@ -287,7 +333,7 @@ const Products = () => {
 
                 {/* Savings tag */}
                 {pct(item.price, item.anchoring) > 0 && (
-                  <div className="absolute top-4 left-4 bg-stone-900 text-yellow-400 px-2.5 py-1 rounded-full text-[10px] font-black">
+                  <div className="absolute top-4 left-4 bg-stone-900 text-[#FFC107] px-2.5 py-1 rounded-full text-[10px] font-black">
                     -{pct(item.price, item.anchoring)}%
                   </div>
                 )}
@@ -295,7 +341,7 @@ const Products = () => {
                 {/* Like Trigger */}
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleLike(item.id); }}
-                  className={`absolute top-4 right-4 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${liked.has(item.id) ? "bg-red-600 text-white shadow-md" : "bg-white/80 backdrop-blur-sm text-stone-400 hover:text-red-600"
+                  className={`absolute top-4 right-4 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${liked.has(item.id) ? "bg-[#F97316] text-white shadow-md" : "bg-white/80 backdrop-blur-sm text-stone-400 hover:text-[#F97316]"
                     }`}
                 >
                   <Heart size={15} className={liked.has(item.id) ? "fill-white" : ""} />
@@ -317,7 +363,7 @@ const Products = () => {
                     {pct(item.price, item.anchoring) > 0 && (
                       <p className="text-stone-400 line-through text-[10px]">UGX {fmt(item.anchoring)}</p>
                     )}
-                    <p className="text-red-600 font-extrabold text-sm md:text-base">UGX {fmt(item.price)}</p>
+                    <p className="text-[#F97316] font-extrabold text-sm md:text-base">UGX {fmt(item.price)}</p>
                   </div>
 
                   <button
@@ -326,7 +372,7 @@ const Products = () => {
                   >
                     <ShoppingBasket size={16} />
                     {cartCountMap[item.id] > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold flex items-center justify-center">
+                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-[#F97316] text-white text-[9px] font-bold flex items-center justify-center">
                         {cartCountMap[item.id]}
                       </span>
                     )}
@@ -369,8 +415,8 @@ const Products = () => {
               role="dialog"
               className="fixed inset-0 z-[60] flex flex-col md:flex-row bg-white overflow-hidden"
             >
-              {/* Left Column: Visual Canvas with Yellow and Red Gradient */}
-              <div className="relative h-[38vh] min-h-[260px] md:h-auto flex-shrink-0 md:flex-1 flex items-center justify-center bg-gradient-to-br from-yellow-400 to-red-600 overflow-hidden">
+              {/* Left Column: Visual Canvas with Golden Yellow → Grill Orange Gradient */}
+              <div className="relative h-[38vh] min-h-[260px] md:h-auto flex-shrink-0 md:flex-1 flex items-center justify-center bg-gradient-to-br from-[#FFC107] to-[#F97316] overflow-hidden">
 
                 {/* Ambient Overlay Blobs for Depth */}
                 <div className="absolute top-0 right-0 w-80 h-80 bg-white/20 rounded-full blur-3xl pointer-events-none" />
@@ -388,7 +434,7 @@ const Products = () => {
                     {modal.tag && <Tag label={modal.tag} />}
                     <button
                       onClick={() => toggleLike(modal.id)}
-                      className={`w-10 h-10 rounded-xl backdrop-blur-sm flex items-center justify-center transition-colors duration-200 ${liked.has(modal.id) ? "bg-red-600 text-white shadow-lg" : "bg-white/10 hover:bg-white/20 text-white"
+                      className={`w-10 h-10 rounded-xl backdrop-blur-sm flex items-center justify-center transition-colors duration-200 ${liked.has(modal.id) ? "bg-[#F97316] text-white shadow-lg" : "bg-white/10 hover:bg-white/20 text-white"
                         }`}
                     >
                       <Heart size={16} className={liked.has(modal.id) ? "fill-white" : ""} />
@@ -420,11 +466,11 @@ const Products = () => {
                       <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 tracking-tight mt-3 mb-2">{modal.name}</h2>
 
                       <div className="flex items-center gap-3">
-                        <span className="text-2xl font-black text-red-600">UGX {fmt(modal.price)}</span>
+                        <span className="text-2xl font-black text-[#F97316]">UGX {fmt(modal.price)}</span>
                         {pct(modal.price, modal.anchoring) > 0 && (
                           <>
                             <span className="text-xs text-stone-400 line-through font-semibold">UGX {fmt(modal.anchoring)}</span>
-                            <span className="bg-red-50 text-red-600 text-[10px] font-bold px-2.5 py-1 rounded-full">
+                            <span className="bg-[#F97316]/10 text-[#F97316] text-[10px] font-bold px-2.5 py-1 rounded-full">
                               -{pct(modal.price, modal.anchoring)}% Off
                             </span>
                           </>
@@ -439,9 +485,9 @@ const Products = () => {
 
                     <div className="grid grid-cols-3 gap-3 pt-2">
                       {[
-                        { Icon: Clock, label: "Prep time", value: modal.cookTime, color: "text-red-600", bg: "bg-red-50/50" },
-                        { Icon: Truck, label: "Delivery", value: shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`, color: "text-orange-600", bg: "bg-orange-50/50" },
-                        { Icon: ShieldCheck, label: "Quality", value: "Premium", color: "text-red-600", bg: "bg-red-50/50" },
+                        { Icon: Clock, label: "Prep time", value: modal.cookTime, color: "text-[#F97316]", bg: "bg-[#F97316]/5" },
+                        { Icon: Truck, label: "Delivery", value: shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`, color: "text-[#F97316]", bg: "bg-[#F97316]/5" },
+                        { Icon: ShieldCheck, label: "Quality", value: "Premium", color: "text-[#F97316]", bg: "bg-[#F97316]/5" },
                       ].map(({ Icon, label, value, color, bg }) => (
                         <div key={label} className={`flex flex-col items-center gap-1.5 rounded-[1.25rem] ${bg} py-3.5 px-3 text-center`}>
                           <Icon size={16} className={color} aria-hidden="true" />
@@ -457,7 +503,7 @@ const Products = () => {
                       <div className="bg-stone-50/70 rounded-2xl p-5 flex items-center justify-between">
                         <div>
                           <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-0.5">Total Savings</p>
-                          <p className="text-2xl font-black text-red-600">UGX {fmt(parseInt(modal.anchoring, 10) - modal.price)}</p>
+                          <p className="text-2xl font-black text-[#F97316]">UGX {fmt(parseInt(modal.anchoring, 10) - modal.price)}</p>
                         </div>
                         <div className="text-right">
                           <p className="text-xs text-stone-400 line-through">UGX {fmt(modal.anchoring)}</p>
@@ -474,7 +520,7 @@ const Products = () => {
                   <div className="max-w-xl mx-auto flex gap-4">
                     <button
                       onClick={() => { addToCart(modal); setModal(null); setCartOpen(true); }}
-                      className="flex-1 h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition-all shadow-xl shadow-red-600/20 hover:scale-[1.01]"
+                      className="flex-1 h-14 rounded-2xl bg-[#F97316] hover:bg-[#EA580C] text-white font-extrabold text-sm flex items-center justify-center gap-2 transition-all shadow-xl shadow-[#F97316]/20 hover:scale-[1.01]"
                     >
                       <ShoppingBasket size={18} />
                       Add to order · UGX {fmt(modal.price)}
@@ -540,7 +586,7 @@ const Products = () => {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-extrabold text-sm truncate text-stone-900">{item.name}</p>
-                        <p className="text-red-600 font-extrabold text-sm mt-0.5">UGX {fmt(item.price)}</p>
+                        <p className="text-[#F97316] font-extrabold text-sm mt-0.5">UGX {fmt(item.price)}</p>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="text-[11px] text-stone-500 font-bold bg-white px-2.5 py-1 rounded-lg">
@@ -548,9 +594,9 @@ const Products = () => {
                         </span>
                         <button
                           onClick={() => decreaseQuantity(item.id)}
-                          className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors"
+                          className="w-8 h-8 rounded-lg bg-[#F97316]/10 hover:bg-[#F97316]/20 flex items-center justify-center transition-colors"
                         >
-                          <Minus size={12} className="text-red-600" />
+                          <Minus size={12} className="text-[#F97316]" />
                         </button>
                       </div>
                     </div>
@@ -581,7 +627,7 @@ const Products = () => {
 
                     <div className="flex justify-between items-end">
                       <p className="text-stone-900 font-bold text-sm">Grand Total</p>
-                      <p className="text-2xl font-black text-red-600">UGX {fmt(total)}</p>
+                      <p className="text-2xl font-black text-[#F97316]">UGX {fmt(total)}</p>
                     </div>
                   </div>
 
@@ -589,7 +635,7 @@ const Products = () => {
                     href={checkoutHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold flex items-center justify-center gap-2 transition-all shadow-xl shadow-red-600/20"
+                    className="w-full h-14 rounded-2xl bg-[#F97316] hover:bg-[#EA580C] text-white font-extrabold flex items-center justify-center gap-2 transition-all shadow-xl shadow-[#F97316]/20"
                   >
                     Checkout via WhatsApp
                     <ArrowRight size={18} />

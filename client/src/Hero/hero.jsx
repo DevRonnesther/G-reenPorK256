@@ -21,6 +21,11 @@ const AUTOPLAY_INTERVAL_MS = 5500;
 const SPICE_LEVELS = ["Mild", "Spicy", "Hot"];
 const SPICE_SHORT = { Mild: "M", Spicy: "S", Hot: "H" };
 
+// Brand palette
+// White      #FFFFFF  — backgrounds
+// Grill Orange #F97316 — primary brand color, buttons, highlights
+// Golden Yellow #FFC107 — offers, badges, special items
+
 const FEATURES = [
   { icon: Leaf, label: "100% Fresh", sub: "Ingredients" },
   { icon: Truck, label: "Fast Delivery", sub: "30 Min" },
@@ -159,7 +164,7 @@ function SpicePills({ active }) {
             key={level}
             aria-current={isActive}
             className={`px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide transition-colors duration-200 ${isActive
-              ? "bg-red-600 text-white"
+              ? "bg-[#F97316] text-white"
               : "bg-stone-50 text-stone-500"
               }`}
           >
@@ -193,7 +198,7 @@ function DesktopThumbnailRail({ slides, current, onSelect, onPrev, onNext }) {
               aria-label={`Show ${s.category}`}
               aria-current={isActive}
               onClick={() => onSelect(index)}
-              className={`h-14 w-14 rounded-2xl overflow-hidden bg-stone-50 transition-all duration-200 ${isActive ? "ring-2 ring-yellow-400 scale-105 shadow-md" : "opacity-70 hover:opacity-100"
+              className={`h-14 w-14 rounded-2xl overflow-hidden bg-stone-50 transition-all duration-200 ${isActive ? "ring-2 ring-[#FFC107] scale-105 shadow-md" : "opacity-70 hover:opacity-100"
                 }`}
             >
               <img src={s.image} alt="" aria-hidden="true" className="h-full w-full object-cover" />
@@ -238,10 +243,10 @@ function DesktopHero({ carousel }) {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Diagonal yellow panel */}
+      {/* Diagonal golden-yellow panel */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-yellow-400"
+        className="absolute inset-0 bg-[#FFC107]"
         style={{ clipPath: "polygon(58% 0, 100% 0, 100% 100%, 38% 100%)" }}
       />
 
@@ -257,7 +262,7 @@ function DesktopHero({ carousel }) {
               exit={{ opacity: 0, transition: { duration: 0.2 } }}
               className="flex items-center gap-2 mb-4"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-orange-600" aria-hidden="true" />
+              <span className="h-1.5 w-1.5 rounded-full bg-[#F97316]" aria-hidden="true" />
               <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">
                 {slide.eyebrow}
               </span>
@@ -274,7 +279,7 @@ function DesktopHero({ carousel }) {
             >
               <span className="block text-lg font-semibold text-stone-500">{slide.title[0]}</span>
               <span className="block text-5xl xl:text-6xl font-black text-stone-900 tracking-tight">{slide.title[1]}</span>
-              <span className="block text-3xl xl:text-4xl font-black text-orange-600 tracking-tight">{slide.title[2]}</span>
+              <span className="block text-3xl xl:text-4xl font-black text-[#F97316] tracking-tight">{slide.title[2]}</span>
             </motion.h1>
           </AnimatePresence>
 
@@ -301,9 +306,9 @@ function DesktopHero({ carousel }) {
               type="button"
               onClick={handleAddToCart}
               aria-label={`Add ${slide.category} to cart`}
-              className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-2.5 py-2.5 rounded-full transition-colors uppercase tracking-wide"
+              className="inline-flex items-center gap-2 bg-[#F97316] hover:bg-[#EA580C] text-white font-bold text-sm px-2.5 py-2.5 rounded-full transition-colors uppercase tracking-wide"
             >
-              <div className="bg-white rounded-full mr-2 p-2 text-red-600">
+              <div className="bg-white rounded-full mr-2 p-2 text-[#F97316]">
                 <ShoppingBasket size={18} />
               </div>
               Order Now
@@ -318,8 +323,8 @@ function DesktopHero({ carousel }) {
               >
                 <span className="text-[10px] font-bold uppercase tracking-wide text-stone-400">Only</span>
                 <span className="text-[10px] font-bold uppercase tracking-wide text-stone-400 -mt-0.5">UGX</span>
-                <span className="text-md font-black text-orange-600 leading-tight mt-0.5">{fmt(slide.price)}</span>
-                <span className="text-[10px] text-red-500 line-through">{fmt(slide.oldPrice)}</span>
+                <span className="text-md font-black text-[#F97316] leading-tight mt-0.5">{fmt(slide.price)}</span>
+                <span className="text-[10px] text-stone-400 line-through">{fmt(slide.oldPrice)}</span>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -328,7 +333,7 @@ function DesktopHero({ carousel }) {
           <div className="flex items-center gap-6 mt-9">
             {FEATURES.map(({ icon: Icon, label, sub }) => (
               <div key={label} className="flex items-center gap-2">
-                <span className="h-9 w-9 rounded-full bg-stone-50 flex items-center justify-center text-orange-600 flex-shrink-0">
+                <span className="h-9 w-9 rounded-full bg-stone-50 flex items-center justify-center text-[#F97316] flex-shrink-0">
                   <Icon size={16} aria-hidden="true" />
                 </span>
                 <div className="leading-tight">
@@ -383,7 +388,7 @@ function DesktopHero({ carousel }) {
             <p className="text-black text-xs font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
             <Link
               to="/returnPolicy"
-              className="text-xs font-bold text-orange-600 hover:text-orange-700 transition-colors"
+              className="text-xs font-bold text-[#F97316] hover:text-[#EA580C] transition-colors"
             >
               Return Policy
             </Link>
@@ -399,7 +404,7 @@ function DesktopHero({ carousel }) {
 // backdrop circle with a floating info pill, quantity pill, detail card,
 // delivery/rating row, related-item thumbnails, sticky checkout bar) but
 // re-skinned entirely in the EverGrill brand palette: white surfaces,
-// yellow-400 backdrop, orange-600 / red-600 accents.
+// golden-yellow backdrop, grill-orange accents.
 function MobileHero({ carousel }) {
   const { current, direction, slide, goTo, next, prev, setIsPaused } = carousel;
   const { addToCart } = useCart();
@@ -431,13 +436,13 @@ function MobileHero({ carousel }) {
     >
       <div className="relative z-10 flex flex-col h-full px-5 pt-5 pb-5">
 
-    
+
 
         {/* Product image showcase */}
         <div className="relative flex-1 flex items-center justify-center min-h-0">
           <div className="relative w-full h-full flex items-center justify-center select-none">
             {/* Backdrop circle */}
-            <div aria-hidden="true" className="absolute w-56 h-56 sm:w-64 sm:h-64 bg-yellow-400 rounded-full" />
+            <div aria-hidden="true" className="absolute w-56 h-56 sm:w-64 sm:h-64 bg-[#FFC107] rounded-full" />
 
             {/* Floating info pill */}
             <AnimatePresence mode="wait">
@@ -447,7 +452,7 @@ function MobileHero({ carousel }) {
                 exit={{ opacity: 0, transition: { duration: 0.2 } }}
                 className="absolute top-2 right-2 flex items-center gap-1.5 bg-stone-900 text-white text-xs font-bold px-3.5 py-2 rounded-full z-20"
               >
-                <Flame size={13} className="text-orange-500" aria-hidden="true" />
+                <Flame size={13} className="text-[#F97316]" aria-hidden="true" />
                 {slide.prepTime} Prep
               </motion.div>
             </AnimatePresence>
@@ -486,7 +491,7 @@ function MobileHero({ carousel }) {
               type="button"
               onClick={() => setQuantity((q) => q + 1)}
               aria-label="Increase quantity"
-              className="text-orange-600"
+              className="text-[#F97316]"
             >
               <Plus size={15} aria-hidden="true" />
             </button>
@@ -516,7 +521,7 @@ function MobileHero({ carousel }) {
               </div>
               <div className="text-right">
                 <div className="flex items-center justify-end gap-1.5 text-sm font-bold text-stone-900">
-                  <Star size={14} className="text-yellow-500 fill-yellow-400" aria-hidden="true" />
+                  <Star size={14} className="text-[#FFC107] fill-[#FFC107]" aria-hidden="true" />
                   {slide.rating}
                 </div>
               </div>
@@ -533,27 +538,27 @@ function MobileHero({ carousel }) {
               onClick={() => goTo(idx)}
               aria-label={`Show ${s.category}`}
               aria-current={current === idx}
-              className={`h-11 w-11 rounded-full overflow-hidden bg-stone-50 flex-shrink-0 transition-all duration-200 ${current === idx ? "ring-2 ring-orange-600 scale-105" : "opacity-70"
+              className={`h-11 w-11 rounded-full overflow-hidden bg-stone-50 flex-shrink-0 transition-all duration-200 ${current === idx ? "ring-2 ring-[#F97316] scale-105" : "opacity-70"
                 }`}
             >
               <img src={s.image} alt="" aria-hidden="true" className="h-full w-full object-cover" />
             </button>
           ))}
         </div>
-        
+
 
         {/* Sticky checkout bar */}
         <div className="flex items-center gap-3 mt-4 flex-shrink-0">
           <div className="flex-shrink-0">
             <span className="block text-lg font-black text-stone-900">UGX {fmt(slide.price)}</span>
-  
+
           </div>
 
           <button
             type="button"
             onClick={handleAddToCart}
             aria-label={`Add ${quantity} ${slide.category} to cart`}
-            className="flex-1 inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm py-4 rounded-full transition-colors uppercase tracking-wide"
+            className="flex-1 inline-flex items-center justify-center gap-2 bg-[#F97316] hover:bg-[#EA580C] text-white font-extrabold text-sm py-4 rounded-full transition-colors uppercase tracking-wide"
           >
             <ShoppingBasket size={16} aria-hidden="true" />
             Add to cart
@@ -563,7 +568,7 @@ function MobileHero({ carousel }) {
             type="button"
             onClick={next}
             aria-label="Next product"
-            className="h-14 w-14 flex-shrink-0 rounded-full bg-yellow-400 text-stone-900 flex items-center justify-center"
+            className="h-14 w-14 flex-shrink-0 rounded-full bg-[#FFC107] text-stone-900 flex items-center justify-center"
           >
             <ChevronRight size={20} aria-hidden="true" />
           </button>

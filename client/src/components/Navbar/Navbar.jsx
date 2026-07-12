@@ -61,7 +61,7 @@ const Navbar = () => {
             <div className="flex items-center justify-between h-16 sm:h-20">
 
               {/* Logo (Seamless margin block adjustment) */}
-              <Link to="/" className="flex items-center gap-2 group shrink-0" aria-label={`${BRAND_NAME} home`}>
+              <Link to="/" className="flex  items-center gap-2 group shrink-0" aria-label={`${BRAND_NAME} home`}>
                 <img src={green} alt={BRAND_NAME} className="w-auto h-38 md:h-40" />
               </Link>
 
