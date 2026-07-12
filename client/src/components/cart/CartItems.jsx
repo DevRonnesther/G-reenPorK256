@@ -155,58 +155,76 @@ export default function Cart() {
               </div>
 
               {/* Items List */}
-              <div className="space-y-4 max-h-[340px] overflow-y-auto scrollbar-none pr-1">
+              {/* Items List */}
+              <div className="space-y-4 max-h-[380px] overflow-y-auto scrollbar-none pr-1">
                 {cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className="flex items-center gap-4 bg-white rounded-2xl p-4 shadow-sm"
+                    className="relative flex items-start gap-4 bg-white rounded-[1.5rem] p-4 hover:shadow-lg hover:shadow-stone-100/60 transition-all duration-300"
                   >
                     {/* Product Image Frame */}
-                    <div className="w-14 h-14 rounded-xl bg-stone-50 flex items-center justify-center shrink-0 p-1">
+                    <div className="w-20 h-20 rounded-2xl bg-stone-50 flex items-center justify-center shrink-0 p-2">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-10 h-10 object-contain"
+                        className="w-full h-full object-contain drop-shadow-sm"
                       />
                     </div>
 
-                    {/* Product Metadata */}
-                    <div className="flex-1 min-w-0">
-                      <h3 className="font-extrabold text-stone-900 text-sm truncate">{item.name}</h3>
-                      <p className="text-stone-400 text-xs mt-0.5">UGX {fmt(item.price)} each</p>
+                    {/* Product Details & Actions */}
+                    <div className="flex-1 min-w-0 flex flex-col h-full justify-between">
 
-                      {/* Quantity Controls */}
-                      <div className="flex items-center gap-2.5 mt-2.5 bg-stone-50 rounded-lg px-2 py-1 w-fit">
+                      {/* Top Row: Title, Base Price & Remove Action */}
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="min-w-0">
+                          <h3 className="font-extrabold text-stone-900 text-sm sm:text-base truncate">
+                            {item.name}
+                          </h3>
+                          <p className="text-stone-400 text-xs mt-0.5 font-medium">
+                            UGX {fmt(item.price)} / unit
+                          </p>
+                        </div>
+
                         <button
-                          onClick={() => decreaseQuantity(item.id)}
-                          aria-label={`Decrease quantity of ${item.name}`}
-                          className="h-5 w-5 rounded bg-white text-stone-700 shadow-sm flex items-center justify-center hover:bg-stone-100 transition-colors"
+                          onClick={() => removeFromCart(item.id)}
+                          aria-label={`Remove ${item.name} from cart`}
+                          className="w-8 h-8 rounded-xl bg-stone-50 hover:bg-red-50 text-stone-400 hover:text-red-600 flex items-center justify-center shrink-0 transition-colors"
                         >
-                          <Minus size={10} aria-hidden="true" />
-                        </button>
-                        <span className="w-4 text-center text-[11px] font-extrabold text-stone-800">
-                          {item.quantity}
-                        </span>
-                        <button
-                          onClick={() => increaseQuantity(item.id)}
-                          aria-label={`Increase quantity of ${item.name}`}
-                          className="h-5 w-5 rounded bg-white text-stone-700 shadow-sm flex items-center justify-center hover:bg-stone-100 transition-colors"
-                        >
-                          <Plus size={10} aria-hidden="true" />
+                          <Trash2 size={14} strokeWidth={2.5} aria-hidden="true" />
                         </button>
                       </div>
-                    </div>
 
-                    {/* Total Price & Delete button */}
-                    <div className="text-right flex flex-col items-end justify-between self-stretch py-0.5">
-                      <p className="font-extrabold text-stone-900 text-sm">UGX {fmt(item.price * item.quantity)}</p>
-                      <button
-                        onClick={() => removeFromCart(item.id)}
-                        aria-label={`Remove ${item.name} from cart`}
-                        className="p-1.5 rounded-xl text-stone-400 hover:text-red-600 hover:bg-red-50/50 transition-colors"
-                      >
-                        <Trash2 size={14} aria-hidden="true" />
-                      </button>
+                      {/* Bottom Row: Quantity Controls & Subtotal */}
+                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-stone-50">
+
+                        {/* Modern Quantity Pill */}
+                        <div className="flex items-center gap-1 bg-stone-50 rounded-xl p-1">
+                          <button
+                            onClick={() => decreaseQuantity(item.id)}
+                            aria-label={`Decrease quantity of ${item.name}`}
+                            className="h-7 w-7 rounded-lg bg-white text-stone-700 shadow-sm flex items-center justify-center hover:bg-stone-100 transition-colors"
+                          >
+                            <Minus size={12} strokeWidth={2.5} aria-hidden="true" />
+                          </button>
+                          <span className="w-7 text-center text-xs font-black text-stone-900 select-none">
+                            {item.quantity}
+                          </span>
+                          <button
+                            onClick={() => increaseQuantity(item.id)}
+                            aria-label={`Increase quantity of ${item.name}`}
+                            className="h-7 w-7 rounded-lg bg-white text-stone-700 shadow-sm flex items-center justify-center hover:bg-stone-100 transition-colors"
+                          >
+                            <Plus size={12} strokeWidth={2.5} aria-hidden="true" />
+                          </button>
+                        </div>
+
+                        {/* Final Item Total */}
+                        <p className="font-black text-red-600 text-sm sm:text-base">
+                          UGX {fmt(item.price * item.quantity)}
+                        </p>
+
+                      </div>
+
                     </div>
                   </div>
                 ))}
