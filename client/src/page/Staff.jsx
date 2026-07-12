@@ -1,5 +1,5 @@
 import React from "react";
-import { Linkedin, Instagram, ArrowUpRight } from "lucide-react";
+import { Linkedin, Instagram } from "lucide-react";
 
 export function Staff() {
     const team = [
@@ -34,30 +34,13 @@ export function Staff() {
     ];
 
     return (
-        <section className="relative py-24 px-4 overflow-hidden bg-white">
+        <section className="relative py-24 px-6 overflow-hidden bg-white">
 
             {/* BACKGROUND EFFECTS */}
-            <div className="absolute top-0 left-0 w-72 h-72 bg-red-100 rounded-full blur-3xl opacity-40" />
-            <div className="absolute bottom-0 right-0 w-80 h-80 bg-yellow-100 rounded-full blur-3xl opacity-50" />
+            <div className="absolute top-0 left-0 w-80 h-80 bg-red-50/50 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-50/40 rounded-full blur-3xl pointer-events-none" />
 
             <div className="max-w-7xl mx-auto relative z-10">
-
-                {/* HEADER */}
-                <div className="text-center hidden mb-16">
-                    <span className="inline-flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 px-5 py-2 rounded-full text-sm font-semibold">
-                        ✨ Meet Our Team
-                    </span>
-
-                    <h2 className="mt-6 text-4xl md:text-5xl font-black text-gray-900">
-                        The People Behind
-                        <span className="text-red-600"> GreenPork</span>
-                    </h2>
-
-                    <p className="max-w-2xl mx-auto mt-5 text-gray-500 text-lg leading-relaxed">
-                        Passionate professionals committed to delivering premium food,
-                        excellent service, and unforgettable customer experiences.
-                    </p>
-                </div>
 
                 {/* TEAM GRID */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -65,65 +48,57 @@ export function Staff() {
                     {team.map((member, index) => (
                         <div
                             key={index}
-                            className="group relative bg-white border border-gray-100 rounded-[2rem] overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
+                            className="group bg-white rounded-[2rem] overflow-hidden shadow-xl shadow-stone-100/40 hover:shadow-2xl hover:shadow-stone-200/50 hover:-translate-y-1.5 transition-all duration-500"
                         >
 
                             {/* IMAGE */}
-                            <div className="relative overflow-hidden">
+                            <div className="relative overflow-hidden aspect-[4/5]">
                                 <img
                                     src={member.image}
                                     alt={member.name}
-                                    className="w-full h-[340px] object-cover group-hover:scale-105 transition-transform duration-700"
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
                                 />
-
-                                {/* OVERLAY */}
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
-
-                                {/* SOCIAL ICONS */}
-                                <div className="absolute top-5 right-5 flex flex-col gap-3 opacity-0 group-hover:opacity-100 transition-all duration-500">
-                                    <button className="w-11 h-11 rounded-2xl bg-white/90 backdrop-blur-md flex items-center justify-center hover:bg-red-600 hover:text-white transition-all">
-                                        <Instagram size={18} />
-                                    </button>
-
-                                    <button className="w-11 h-11 rounded-2xl bg-white/90 backdrop-blur-md flex items-center justify-center hover:bg-red-600 hover:text-white transition-all">
-                                        <Linkedin size={18} />
-                                    </button>
-                                </div>
-
-                                {/* ROLE */}
-                                <div className="absolute bottom-5 left-5">
-                                    <span className="bg-yellow-400 text-black px-4 py-2 rounded-full text-xs font-bold shadow-lg">
-                                        {member.role}
-                                    </span>
-                                </div>
                             </div>
 
                             {/* CONTENT */}
                             <div className="p-6">
 
-                                <div className="flex items-start justify-between mb-4">
+                                <div className="flex items-start justify-between gap-4">
                                     <div>
-                                        <h3 className="text-2xl font-bold text-gray-900">
+                                        <h3 className="text-xl font-extrabold text-stone-900 tracking-tight">
                                             {member.name}
                                         </h3>
 
-                                        <p className="text-red-600 font-medium text-sm mt-1">
+                                        <p className="text-red-600 font-semibold text-sm mt-1">
                                             {member.role}
                                         </p>
                                     </div>
 
-                                    <button className="w-11 h-11 rounded-2xl bg-gray-100 flex items-center justify-center group-hover:bg-red-600 group-hover:text-white transition-all duration-300">
-                                        <ArrowUpRight size={18} />
-                                    </button>
+                                    {/* SOCIAL LINKS */}
+                                    <div className="flex items-center gap-3 pt-1">
+                                        <a 
+                                            href="#" 
+                                            className="text-stone-400 hover:text-red-600 transition-colors"
+                                            aria-label={`${member.name} Instagram`}
+                                        >
+                                            <Instagram size={18} />
+                                        </a>
+
+                                        <a 
+                                            href="#" 
+                                            className="text-stone-400 hover:text-red-600 transition-colors"
+                                            aria-label={`${member.name} LinkedIn`}
+                                        >
+                                            <Linkedin size={18} />
+                                        </a>
+                                    </div>
                                 </div>
 
-                                <p className="text-gray-500 leading-relaxed text-sm">
+                                <p className="text-stone-500 leading-relaxed text-sm mt-4">
                                     {member.bio}
                                 </p>
                             </div>
 
-                            {/* HOVER BORDER */}
-                            <div className="absolute inset-0 rounded-[2rem] border-2 border-transparent group-hover:border-red-100 transition-all duration-500 pointer-events-none" />
                         </div>
                     ))}
                 </div>

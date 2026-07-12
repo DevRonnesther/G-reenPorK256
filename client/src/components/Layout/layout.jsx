@@ -6,7 +6,7 @@ import { Outlet } from 'react-router-dom'
 
 const layout = () => {
   return (
-    <div className="h-screen">
+    <div className="h-[100vh]">
       <div>
         <Navbar />
         <main>

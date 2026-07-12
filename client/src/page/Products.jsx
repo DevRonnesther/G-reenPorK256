@@ -1,14 +1,14 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Heart, Star, Clock, Truck, ShieldCheck, Flame,
+  Heart, Star, Clock, Truck, ShieldCheck, Flame, Leaf,
   Minus, X, ShoppingBasket, ShoppingBag,
   ArrowRight, ArrowLeft,
+  PanelLeftClose,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 
 // ─── Import Cart Context ──────────────────────────────────────────────────────
-// Adjust this path if your CartContext file is located elsewhere
 import { useCart } from "../components/cart/CartContext.jsx";
 
 // ASSETS
@@ -19,72 +19,65 @@ import PorkStake from "../assets/ChatGPT Image Jun 18, 2026, 03_34_25 PM.png";
 import Burger from "../assets/Burger.png";
 import Chicken from "../assets/pngwing.com (25).png";
 
-// ─── Config ───────────────────────────────────────────────────────────────────
+// ─── CONFIGURATION ───────────────────────────────────────────────────────────
 const WHATSAPP_NUMBER = "256776464823";
+const BRAND_NAME = "GreenPork";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-const pct = (price, anchor) => {
-  const anchorNum = parseInt(anchor, 10);
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+const pct = (price, anchoring) => {
+  const anchorNum = parseInt(anchoring, 10);
   if (!anchorNum || anchorNum <= price) return 0;
   return Math.round((1 - price / anchorNum) * 100);
 };
 
 const fmt = (n) => Number(n).toLocaleString();
 
-// ─── Data ─────────────────────────────────────────────────────────────────────
+// ─── BRAND PALETTE CONSTANTS ──────────────────────────────────────────────────
 const CATEGORIES = [
-  { key: "all", label: "All" },
-  { key: "pork", label: "Pork" },
-  { key: "chicken", label: "Chicken" },
-  { key: "burgers", label: "Burgers" },
-  { key: "pizza", label: "Pizza" },
+  { key: "all", label: "All Items" },
+  { key: "pork", label: "Premium Pork" },
+  { key: "chicken", label: "Crispy Chicken" },
+  { key: "burgers", label: "Gourmet Burgers" },
+  { key: "pizza", label: "Classic Pizza" },
 ];
 
 const ITEMS = [
   { id: 1, image: Burger, category: "burgers", anchoring: "8000", name: "Beef Burger", price: 6000, description: "Juicy grilled beef patty with fresh lettuce, cheese and creamy sauce.", rating: 4.8, cookTime: "15–20 min", tag: "Popular" },
-  { id: 2, image: Porkies, category: "pork", anchoring: "18000", name: "Roasted Pork", price: 15000, description: "Roasted pork with fried cassava, salad, chapati, and bananas.", rating: 4.4, cookTime: "30–35 min", tag: "Best Seller" },
-  { id: 2, image: PorkStake, category: "pork-skewer", anchoring: "9000", name: "Roasted Pork", price: 6000, description: "Roasted crispy premium pork with fried cassava, salad and chapati.", rating: 4.9, cookTime: "30–35 min", tag: "Best Seller" },
-  { id: 3, image: Chicken, category: "chicken", anchoring: "78000", name: "Crispy Chicken", price: 55000, description: "Golden crispy chicken with a fiery spice blend.", rating: 4.6, cookTime: "20–25 min", tag: "Spicy" },
-  { id: 4, image: Pizza, category: "pizza", anchoring: "18000", name: "Chicken Pizza", price: 15000, description: "Hand-tossed dough with premium chicken and mozzarella.", rating: 4.7, cookTime: "40–45 min", tag: "New" },
-  { id: 5, image: Chicken, category: "chicken", anchoring: "55000", name: "Whole Chicken", price: 45000, description: "Farm-fresh whole chicken, marinated and roasted.", rating: 4.7, cookTime: "35–40 min", tag: null },
-  { id: 6, image: FreshPork, category: "pork", anchoring: "20000", name: "Fresh Pork Cuts", price: 16000, description: "Premium farm-fresh pork, hygienically prepared.", rating: 4.5, cookTime: "—", tag: "Organic" },
+  { id: 2, image: Porkies, category: "pork", anchoring: "18000", name: "Premium Pork skewer", price: 15000, description: "Roasted pork with fried cassava, salad, chapati, and bananas.", rating: 4.4, cookTime: "30–35 min", tag: "Best Seller" },
+  { id: 3, image: PorkStake, category: "pork-skewer", anchoring: "9000", name: "Roasted Pork", price: 6000, description: "Roasted crispy premium pork with fried cassava, salad and chapati.", rating: 4.9, cookTime: "30–35 min", tag: "Best Seller" },
+  { id: 4, image: Chicken, category: "chicken", anchoring: "78000", name: "Crispy Chicken", price: 55000, description: "Golden crispy chicken with a fiery spice blend.", rating: 4.6, cookTime: "20–25 min", tag: "Spicy" },
+  { id: 5, image: Pizza, category: "pizza", anchoring: "18000", name: "Chicken Pizza", price: 15000, description: "Hand-tossed dough with premium chicken and mozzarella.", rating: 4.7, cookTime: "40–45 min", tag: "New" },
+  { id: 6, image: Chicken, category: "chicken", anchoring: "55000", name: "Whole Chicken", price: 45000, description: "Farm-fresh whole chicken, marinated and roasted.", rating: 4.7, cookTime: "35–40 min", tag: null },
+  { id: 7, image: FreshPork, category: "pork", anchoring: "20000", name: "Fresh Pork Cuts", price: 16000, description: "Premium farm-fresh pork, hygienically prepared.", rating: 4.5, cookTime: "—", tag: "Organic" },
 ];
 
 const TAG_STYLES = {
-  Popular: "bg-yellow-100 text-yellow-800",
-  "Best Seller": "bg-orange-100 text-orange-700",
-  Spicy: "bg-red-100 text-red-700",
+  Popular: "bg-amber-100 text-amber-800",
+  "Best Seller": "bg-red-50 text-red-600",
+  Spicy: "bg-orange-50 text-orange-600",
   New: "bg-stone-100 text-stone-700",
-  Organic: "bg-green-100 text-green-700",
+  Organic: "bg-stone-50 text-stone-600",
 };
 
+// ─── ATOMIC SUB-COMPONENTS ────────────────────────────────────────────────────
 const Tag = ({ label }) =>
   label ? (
-    <span className={`px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide ${TAG_STYLES[label]}`}>
+    <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider ${TAG_STYLES[label]}`}>
       {label}
     </span>
   ) : null;
 
 const Stars = ({ rating }) => (
   <div className="flex items-center gap-1" role="img" aria-label={`Rated ${rating} out of 5`}>
-    {Array.from({ length: 5 }, (_, i) => (
-      <Star
-        key={i}
-        size={12}
-        aria-hidden="true"
-        className={
-          i < Math.floor(rating)
-            ? "text-yellow-400 fill-yellow-400"
-            : "text-stone-300 fill-stone-200"
-        }
-      />
-    ))}
-    <span className="text-xs font-bold text-stone-600 ml-1">{rating}</span>
+    <Star size={11} className="text-yellow-400 fill-yellow-400" />
+    <span className="text-xs font-bold text-stone-700">{rating}</span>
   </div>
 );
 
+// ─── MOTION ANIMATIONS ───────────────────────────────────────────────────────
 const cardVariants = {
-  hidden: { opacity: 0, y: 24 },
+  hidden: { opacity: 0, y: 16 },
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 260, damping: 22 } },
 };
 
@@ -100,8 +93,8 @@ const modalVariants = {
   exit: { opacity: 0, y: 20, transition: { duration: 0.2 } },
 };
 
+// ─── MAIN PRODUCTS COMPONENT ─────────────────────────────────────────────────
 const Products = () => {
-  // Consume Cart Context
   const {
     cartItems,
     addToCart,
@@ -123,6 +116,10 @@ const Products = () => {
     [activeCategory]
   );
 
+  // Spotlight Item - First product of the current active selection
+  const spotlightItem = useMemo(() => filtered[0], [filtered]);
+  const standardItems = useMemo(() => filtered.slice(1), [filtered]);
+
   const toggleLike = (id) => {
     setLiked((prev) => {
       const next = new Set(prev);
@@ -131,7 +128,6 @@ const Products = () => {
     });
   };
 
-  // Convert cartItems array to a map of product.id -> quantity
   const cartCountMap = useMemo(
     () =>
       cartItems.reduce((acc, item) => {
@@ -141,7 +137,6 @@ const Products = () => {
     [cartItems]
   );
 
-  // Generate checkout text with quantities, subtotal, tax, and delivery charges
   const checkoutHref = useMemo(() => {
     if (cartItems.length === 0) return null;
 
@@ -150,58 +145,43 @@ const Products = () => {
       .join("\n");
 
     const deliveryText = shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`;
-    const message = `Hello EverGrill! I'd like to order:\n\n${lines}\n\nSubtotal: UGX ${fmt(subtotal)}\nTax (18%): UGX ${fmt(tax)}\nDelivery: ${deliveryText}\n\nTotal: UGX ${fmt(total)}`;
+    const message = `Hello GreenPork! I'd like to order:\n\n${lines}\n\nSubtotal: UGX ${fmt(subtotal)}\nTax (18%): UGX ${fmt(tax)}\nDelivery: ${deliveryText}\n\nTotal: UGX ${fmt(total)}`;
 
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
   }, [cartItems, subtotal, tax, shipping, total]);
 
   return (
-    <div className="min-h-screen bg-white text-stone-900">
+    <div className="min-h-screen bg-white text-stone-900 pb-20">
 
-      {/* ── Back link ── */}
-      <div className="px-5 hidden pt-5">
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-stone-400 hover:text-stone-900 transition-colors duration-200 group"
-        >
-          <ArrowLeft size={18} className="group-hover:-translate-x-0.5 transition-transform duration-200" aria-hidden="true" />
-          <span className="text-xs uppercase tracking-widest font-bold">Back to home</span>
-        </Link>
-      </div>
+      {/* ── STICKY CONTROL DOCK (Header & Category Dock) ── */}
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md">
+        <div className="max-w-7xl mx-auto px-6 pt-6 pb-4 flex items-center justify-between gap-6">
 
-      {/* ── Sticky header ── */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-2xl border-b border-stone-100/85 shadow-[0_1px_20px_rgba(0,0,0,0.05)]">
-        <div className="max-w-7xl mx-auto px-5 pt-4 pb-3 flex items-center justify-between gap-4">
-
-          {/* Brand mark */}
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="w-9 h-9 rounded-xl bg-orange-600 flex items-center justify-center shrink-0 shadow-md shadow-orange-500/25">
-              <Flame size={18} className="text-white" aria-hidden="true" />
+          {/* Brand & Page Mark */}
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-red-600 flex items-center justify-center shrink-0 shadow-lg shadow-red-600/15">
+              <Leaf size={18} className="text-white" aria-hidden="true" />
             </div>
-            <div className="min-w-0">
-              <p className="text-[10px] font-black tracking-[3px] uppercase text-orange-600 leading-none mb-0.5">EverGrill</p>
-              <h1 className="text-lg md:text-2xl font-black leading-tight text-stone-900 truncate">Food Collection</h1>
+            <div>
+              <p className="text-[10px] font-extrabold tracking-[0.25em] uppercase text-red-600 leading-none mb-1">
+                {BRAND_NAME}
+              </p>
+              <h1 className="text-xl md:text-2xl font-black leading-tight text-stone-900">
+                Menu Collection
+              </h1>
             </div>
           </div>
 
-          {/* Right cluster */}
-          <div className="flex items-center gap-2 shrink-0">
-            {filtered.length > 0 && (
-              <span className="hidden sm:inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-stone-100 text-stone-500 text-xs font-bold">
-                {filtered.length} item{filtered.length !== 1 ? "s" : ""}
-              </span>
-            )}
-
-            {/* Cart button */}
+          {/* Cart Icon & Item Count */}
+          <div className="flex items-center gap-4">
             <button
               onClick={() => setCartOpen(true)}
-              className="relative flex items-center gap-2 h-11 pl-3 pr-4 rounded-2xl bg-yellow-400 hover:bg-yellow-500 text-stone-950 font-black text-sm transition-all duration-200 shadow-lg shadow-yellow-400/30 hover:scale-[1.02] group"
-              aria-label={`Open cart, ${totalItems} item${totalItems !== 1 ? "s" : ""}`}
-            >
-              <ShoppingBag size={17} className="group-hover:scale-110 transition-transform duration-200" aria-hidden="true" />
-              <span className="hidden sm:inline">Cart</span>
+              aria-label="Open your cart"
+              className="relative w-11 h-11 rounded-none bg-none hover:bg-stone-100 flex items-center justify-center text-stone-900 transition-colors"
+            > 
+              <PanelLeftClose  size={18}  />
               {totalItems > 0 && (
-                <span className="flex items-center justify-center w-5 h-5 rounded-full bg-stone-900 text-yellow-400 text-[10px] font-black leading-none" aria-hidden="true">
+                <span className="absolute  -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center">
                   {totalItems}
                 </span>
               )}
@@ -209,8 +189,8 @@ const Products = () => {
           </div>
         </div>
 
-        {/* Category strip */}
-        <div className="max-w-7xl mx-auto px-5 pb-3 flex gap-2 overflow-x-auto scrollbar-none" role="tablist" aria-label="Menu categories">
+        {/* Minimalist Borderless Category Track */}
+        <div className="max-w-7xl mx-auto px-6 pb-6 flex gap-2.5 overflow-x-auto scrollbar-none" role="tablist">
           {CATEGORIES.map((cat) => {
             const isActive = activeCategory === cat.key;
             return (
@@ -219,30 +199,75 @@ const Products = () => {
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`relative px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap transition-all duration-200 ${isActive
-                    ? "bg-stone-900 text-white shadow-md"
-                    : "bg-stone-100/80 text-stone-500 hover:bg-stone-200/80 hover:text-stone-800"
+                className={`px-5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 ${isActive
+                  ? "bg-stone-900 text-white shadow-lg shadow-stone-900/10"
+                  : "bg-stone-50 text-stone-500 hover:text-stone-900 hover:bg-stone-100/80"
                   }`}
               >
                 {cat.label}
-                {isActive && (
-                  <span className="absolute -bottom-3 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-orange-600" aria-hidden="true" />
-                )}
               </button>
             );
           })}
         </div>
       </div>
 
-      {/* ── Product grid ── */}
-      <div className="max-w-7xl mx-auto px-5 py-8">
+      {/* ── GRID SYSTEM (Spotlight + Standard Grid) ── */}
+      <div className="max-w-7xl mx-auto px-6 py-6">
+
+        {/* SpotLight Block: Prominent Unique Card Layout */}
+        {spotlightItem && (
+          <div
+            onClick={() => setModal(spotlightItem)}
+            className="group relative bg-stone-900 text-white rounded-[2.5rem] p-8 md:p-12 mb-8 grid md:grid-cols-2 gap-8 items-center cursor-pointer overflow-hidden shadow-2xl shadow-stone-900/10 hover:-translate-y-1 transition-all duration-500"
+          >
+            {/* Soft Ambient Blurs */}
+            <div className="absolute -top-16 -right-16 w-80 h-80 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 left-12 w-80 h-80 bg-yellow-400/5 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="space-y-4 md:space-y-6 relative z-10">
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-600 text-white rounded-full text-[9px] font-bold uppercase tracking-widest">
+                Chef's Spotlight
+              </span>
+              <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+                {spotlightItem.name}
+              </h2>
+              <p className="text-stone-300 text-sm md:text-base leading-relaxed max-w-md">
+                {spotlightItem.description}
+              </p>
+
+              <div className="flex flex-wrap items-center gap-6 pt-2">
+                <div>
+                  <p className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">Starting From</p>
+                  <p className="text-2xl font-black text-yellow-400 mt-1">UGX {fmt(spotlightItem.price)}</p>
+                </div>
+                <button
+                  onClick={(e) => { e.stopPropagation(); addToCart(spotlightItem); }}
+                  className="bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-7 py-3.5 rounded-2xl shadow-xl shadow-red-600/25 transition-colors"
+                >
+                  Add to Order
+                </button>
+              </div>
+            </div>
+
+            <div className="relative flex justify-center items-center h-56 sm:h-72">
+              <img
+                src={spotlightItem.image}
+                alt={spotlightItem.name}
+                className="w-full max-w-[240px] sm:max-w-[280px] h-auto object-contain z-10 group-hover:scale-105 transition-transform duration-700 ease-out"
+                style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.5))" }}
+              />
+            </div>
+          </div>
+        )}
+
+        {/* Standard Grid of remaining items */}
         <motion.div
-          className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 sm:gap-5 md:gap-5"
+          className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
           initial="hidden"
           animate="show"
-          variants={{ show: { transition: { staggerChildren: 0.07 } } }}
+          variants={{ show: { transition: { staggerChildren: 0.05 } } }}
         >
-          {filtered.map((item) => (
+          {standardItems.map((item) => (
             <motion.div
               key={item.id}
               variants={cardVariants}
@@ -250,96 +275,79 @@ const Products = () => {
               role="button"
               tabIndex={0}
               onKeyDown={(e) => e.key === "Enter" && setModal(item)}
-              aria-label={`View ${item.name}`}
-              className="group relative rounded-3xl overflow-hidden bg-white border border-stone-100 hover:border-orange-200 hover:-translate-y-1 hover:shadow-xl hover:shadow-orange-500/10 transition-all duration-300 cursor-pointer"
+              className="group bg-white rounded-[2rem] overflow-hidden shadow-xl shadow-stone-100/50 hover:-translate-y-1 hover:shadow-2xl hover:shadow-stone-200/40 transition-all duration-300 cursor-pointer"
             >
-              {/* Image zone */}
-              <div className="relative h-52 flex items-center justify-center bg-gradient-to-b from-stone-50 to-white overflow-hidden">
+              {/* Product Image Frame */}
+              <div className="relative h-48 flex items-center justify-center bg-stone-50/40 overflow-hidden">
                 <img
                   src={item.image}
                   alt={item.name}
-                  className="w-44 h-44 object-contain group-hover:scale-105 transition-transform duration-500"
+                  className="w-36 h-36 object-contain group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
 
-                {/* Discount pill */}
+                {/* Savings tag */}
                 {pct(item.price, item.anchoring) > 0 && (
-                  <div className="absolute top-3 left-3 bg-stone-900 text-yellow-400 px-2.5 py-1 rounded-full text-[11px] font-black shadow">
+                  <div className="absolute top-4 left-4 bg-stone-900 text-yellow-400 px-2.5 py-1 rounded-full text-[10px] font-black">
                     -{pct(item.price, item.anchoring)}%
                   </div>
                 )}
 
-                {/* Like */}
+                {/* Like Trigger */}
                 <button
                   onClick={(e) => { e.stopPropagation(); toggleLike(item.id); }}
-                  aria-label={liked.has(item.id) ? `Unlike ${item.name}` : `Like ${item.name}`}
-                  className={`absolute top-3 right-3 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${liked.has(item.id) ? "bg-yellow-400 shadow-md" : "bg-white shadow border border-stone-100"
+                  className={`absolute top-4 right-4 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${liked.has(item.id) ? "bg-red-600 text-white shadow-md" : "bg-white/80 backdrop-blur-sm text-stone-400 hover:text-red-600"
                     }`}
                 >
-                  <Heart size={16} aria-hidden="true" className={liked.has(item.id) ? "fill-stone-950 text-stone-950" : "text-stone-500"} />
+                  <Heart size={15} className={liked.has(item.id) ? "fill-white" : ""} />
                 </button>
               </div>
 
-              {/* Info */}
-              <div className="p-4">
+              {/* Product Info */}
+              <div className="p-5">
                 <div className="flex items-center justify-between mb-2">
-                  <div className="sm:block md:block hidden">
-                    <Tag label={item.tag} />
-                  </div>
+                  <Tag label={item.tag} />
                   <Stars rating={item.rating} />
                 </div>
 
-                <h2 className="font-black text-lg leading-tight mb-1 text-stone-900">{item.name}</h2>
-                <p className="text-stone-400 hidden md:block sm:block text-xs leading-relaxed mb-3 line-clamp-2">{item.description}</p>
+                <h3 className="font-extrabold text-base tracking-tight mb-1 text-stone-900 line-clamp-1">{item.name}</h3>
+                <p className="text-stone-400 text-xs leading-relaxed mb-4 line-clamp-2">{item.description}</p>
 
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between pt-1">
                   <div>
                     {pct(item.price, item.anchoring) > 0 && (
-                      <p className="text-stone-400 line-through text-xs">UGX {fmt(item.anchoring)}</p>
+                      <p className="text-stone-400 line-through text-[10px]">UGX {fmt(item.anchoring)}</p>
                     )}
-                    <p className="text-orange-600 font-black text-sm md:block sm:text-xl">UGX {fmt(item.price)}</p>
+                    <p className="text-red-600 font-extrabold text-sm md:text-base">UGX {fmt(item.price)}</p>
                   </div>
 
                   <button
                     onClick={(e) => { e.stopPropagation(); addToCart(item); }}
-                    aria-label={`Add ${item.name} to cart`}
-                    className="relative w-12 h-12 rounded-2xl bg-yellow-400 hover:bg-yellow-500 text-stone-950 flex items-center justify-center shadow-lg shadow-yellow-400/30 hover:scale-105 transition-all duration-200"
+                    className="relative w-11 h-11 rounded-xl bg-stone-900 hover:bg-stone-800 text-white flex items-center justify-center shadow-lg transition-colors"
                   >
-                    <ShoppingBasket size={18} aria-hidden="true" />
+                    <ShoppingBasket size={16} />
                     {cartCountMap[item.id] > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-stone-900 text-yellow-400 text-[9px] font-black flex items-center justify-center border border-yellow-100" aria-hidden="true">
+                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold flex items-center justify-center">
                         {cartCountMap[item.id]}
                       </span>
                     )}
                   </button>
-                </div>
-
-                {/* Cook time strip */}
-                <div className="mt-3 hidden pt-3 border-t border-stone-100 flex items-center justify-between text-xs text-stone-400">
-                  <div className="flex items-center gap-1.5">
-                    <Clock size={12} className="text-orange-600" aria-hidden="true" />
-                    {item.cookTime}
-                  </div>
-                  <div className="flex items-center gap-1.5">
-                    <Truck size={12} className="text-green-600" aria-hidden="true" />
-                    Free delivery over 50k
-                  </div>
                 </div>
               </div>
             </motion.div>
           ))}
         </motion.div>
 
-        {/* Empty state */}
+        {/* Empty State */}
         {filtered.length === 0 && (
           <div className="flex flex-col items-center justify-center py-24 text-stone-400">
-            <ShoppingBag size={48} className="mb-4 opacity-30" aria-hidden="true" />
+            <ShoppingBag size={48} className="mb-4 opacity-25" aria-hidden="true" />
             <p className="font-bold text-lg">Nothing here yet</p>
             <p className="text-sm mt-1">Try a different category</p>
           </div>
         )}
       </div>
 
-      {/* ── Full-screen product modal ── */}
+      {/* ── EDITORIAL PRODUCT DETAILS MODAL ── */}
       <AnimatePresence>
         {modal && (
           <>
@@ -349,7 +357,7 @@ const Products = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setModal(null)}
-              className="fixed inset-0 bg-stone-950/60 backdrop-blur-md z-50"
+              className="fixed inset-0 bg-stone-950/40 backdrop-blur-md z-50"
             />
 
             <motion.div
@@ -359,186 +367,118 @@ const Products = () => {
               animate="show"
               exit="exit"
               role="dialog"
-              aria-modal="true"
-              aria-label={modal.name}
               className="fixed inset-0 z-[60] flex flex-col md:flex-row bg-white overflow-hidden"
             >
-              {/* Hero zone */}
-              <div
-                className="relative h-[38vh] min-h-[260px] md:h-auto flex-shrink-0 md:flex-1 items-end justify-between overflow-hidden"
-                style={{
-                  background: `
-                    radial-gradient(
-                      circle 900px at 50% 120px,
-                      #facc15 0%,
-                      #f97316 35%,
-                      #1c1917 70%,
-                      #0c0a09 100%
-                    )
-                  `,
-                }}
-              >
-                <div
-                  className="absolute inset-0 pointer-events-none"
-                  aria-hidden="true"
-                  style={{
-                    background: "radial-gradient(ellipse 60% 60% at 70% 55%, rgba(249,115,22,0.25) 0%, transparent 70%)",
-                  }}
-                />
+              {/* Left Column: Visual Canvas with Yellow and Red Gradient */}
+              <div className="relative h-[38vh] min-h-[260px] md:h-auto flex-shrink-0 md:flex-1 flex items-center justify-center bg-gradient-to-br from-yellow-400 to-red-600 overflow-hidden">
 
-                <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden="true">
-                  {[280, 420, 560].map((s, i) => (
-                    <div
-                      key={s}
-                      className="absolute rounded-full border border-white/10"
-                      style={{ width: s, height: s, top: "50%", right: "-60px", transform: "translateY(-50%)", opacity: 0.6 - i * 0.15 }}
-                    />
-                  ))}
-                </div>
+                {/* Ambient Overlay Blobs for Depth */}
+                <div className="absolute top-0 right-0 w-80 h-80 bg-white/20 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-stone-950/15 rounded-full blur-3xl pointer-events-none" />
 
-                <div className="absolute top-0 left-0 right-0 flex items-center justify-between px-5 pt-5 z-10">
+                <div className="absolute top-5 left-5 flex items-center justify-between w-[90%] z-10">
                   <button
                     onClick={() => setModal(null)}
-                    aria-label="Close details"
-                    className="flex items-center gap-2 text-white/70 hover:text-white transition-colors group"
+                    className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition-all"
                   >
-                    <div className="w-10 h-10 rounded-2xl bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center transition-all">
-                      <ArrowLeft size={18} aria-hidden="true" />
-                    </div>
-                    <span className="text-xs font-bold uppercase tracking-widest hidden sm:inline">Back</span>
+                    <ArrowLeft size={18} />
                   </button>
 
                   <div className="flex items-center gap-2">
                     {modal.tag && <Tag label={modal.tag} />}
                     <button
                       onClick={() => toggleLike(modal.id)}
-                      aria-label={liked.has(modal.id) ? `Unlike ${modal.name}` : `Like ${modal.name}`}
-                      className={`w-10 h-10 rounded-2xl backdrop-blur-sm flex items-center justify-center transition-all duration-200 ${liked.has(modal.id)
-                          ? "bg-yellow-400 shadow-lg shadow-yellow-400/40"
-                          : "bg-white/10 hover:bg-white/20"
+                      className={`w-10 h-10 rounded-xl backdrop-blur-sm flex items-center justify-center transition-colors duration-200 ${liked.has(modal.id) ? "bg-red-600 text-white shadow-lg" : "bg-white/10 hover:bg-white/20 text-white"
                         }`}
                     >
-                      <Heart size={17} aria-hidden="true" className={liked.has(modal.id) ? "fill-stone-950 text-stone-950" : "text-white/80"} />
+                      <Heart size={16} className={liked.has(modal.id) ? "fill-white" : ""} />
                     </button>
                   </div>
                 </div>
 
-                <div className="absolute inset-0 w-full flex items-center justify-center p-4 md:pr-10">
+                <div className="relative flex items-center justify-center p-6 h-full w-full">
                   <motion.img
                     key={modal.id}
-                    initial={{ opacity: 0, scale: 0.8, rotate: -6 }}
+                    initial={{ opacity: 0, scale: 0.85, rotate: -4 }}
                     animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                    transition={{ type: "spring", stiffness: 220, damping: 20, delay: 0.05 }}
+                    transition={{ type: "spring", stiffness: 220, damping: 20 }}
                     src={modal.image}
                     alt={modal.name}
-                    className="w-full max-w-[240px] sm:max-w-[320px] md:max-w-[500px] h-auto max-h-[90%] object-contain"
-                    style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.5))" }}
+                    className="w-full max-w-[200px] sm:max-w-[260px] md:max-w-[400px] h-auto max-h-[85%] object-contain"
+                    style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.35))" }}
                   />
                 </div>
               </div>
 
-              {/* Detail zone */}
+              {/* Right Column: Detailed Info Panel */}
               <div className="flex-1 flex flex-col overflow-hidden">
-                <div className="flex-1 overflow-y-auto px-6 py-4 md:py-6">
-                  <div className="max-w-2xl mx-auto flex flex-col gap-6">
+                <div className="flex-1 overflow-y-auto px-6 py-8">
+                  <div className="max-w-xl mx-auto space-y-6">
 
-                    <div className="relative z-10 pt-2 pb-4">
-                      <motion.div
-                        initial={{ opacity: 0, y: 16 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1, duration: 0.35 }}
-                      >
-                        <Stars rating={modal.rating} />
-                        <h2 className="text-3xl md:text-5xl font-black text-stone-950 leading-tight mt-2 mb-1">{modal.name}</h2>
-                        <div className="flex flex-wrap items-center gap-2 mt-3">
-                          <span className="text-2xl md:text-3xl font-black text-stone-950">UGX {fmt(modal.price)}</span>
-                          {pct(modal.price, modal.anchoring) > 0 && (
-                            <>
-                              <span className="text-sm text-stone-400 line-through font-medium">UGX {fmt(modal.anchoring)}</span>
-                              <span className="bg-stone-900 text-yellow-400 text-xs font-black px-2.5 py-1 rounded-full">
-                                -{pct(modal.price, modal.anchoring)}%
-                              </span>
-                            </>
-                          )}
-                        </div>
-                      </motion.div>
+                    <div>
+                      <Stars rating={modal.rating} />
+                      <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 tracking-tight mt-3 mb-2">{modal.name}</h2>
+
+                      <div className="flex items-center gap-3">
+                        <span className="text-2xl font-black text-red-600">UGX {fmt(modal.price)}</span>
+                        {pct(modal.price, modal.anchoring) > 0 && (
+                          <>
+                            <span className="text-xs text-stone-400 line-through font-semibold">UGX {fmt(modal.anchoring)}</span>
+                            <span className="bg-red-50 text-red-600 text-[10px] font-bold px-2.5 py-1 rounded-full">
+                              -{pct(modal.price, modal.anchoring)}% Off
+                            </span>
+                          </>
+                        )}
+                      </div>
                     </div>
 
-                    <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}>
-                      <p className="text-xs font-black uppercase tracking-widest text-orange-600 mb-2">About this dish</p>
-                      <p className="text-stone-600 leading-relaxed text-sm md:text-base">{modal.description}</p>
-                    </motion.div>
+                    <div className="space-y-2">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">About this selection</p>
+                      <p className="text-stone-500 leading-relaxed text-sm md:text-base">{modal.description}</p>
+                    </div>
 
-                    <motion.div
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.2 }}
-                      className="grid grid-cols-3 gap-2 sm:gap-3"
-                    >
+                    <div className="grid grid-cols-3 gap-3 pt-2">
                       {[
-                        { Icon: Clock, label: "Prep time", value: modal.cookTime, color: "text-orange-600", bg: "bg-orange-50" },
-                        { Icon: Truck, label: "Delivery", value: shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`, color: "text-green-600", bg: "bg-green-50" },
-                        { Icon: ShieldCheck, label: "Quality", value: "Premium", color: "text-orange-600", bg: "bg-orange-50" },
+                        { Icon: Clock, label: "Prep time", value: modal.cookTime, color: "text-red-600", bg: "bg-red-50/50" },
+                        { Icon: Truck, label: "Delivery", value: shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`, color: "text-orange-600", bg: "bg-orange-50/50" },
+                        { Icon: ShieldCheck, label: "Quality", value: "Premium", color: "text-red-600", bg: "bg-red-50/50" },
                       ].map(({ Icon, label, value, color, bg }) => (
-                        <div key={label} className={`flex flex-col items-center gap-1.5 rounded-2xl ${bg} py-3 px-2 sm:py-4 sm:px-3 text-center`}>
-                          <Icon size={18} className={color} aria-hidden="true" />
+                        <div key={label} className={`flex flex-col items-center gap-1.5 rounded-[1.25rem] ${bg} py-3.5 px-3 text-center`}>
+                          <Icon size={16} className={color} aria-hidden="true" />
                           <div>
-                            <p className="text-[9px] sm:text-[10px] font-bold uppercase tracking-wide text-stone-400">{label}</p>
-                            <p className="text-xs sm:text-sm font-black text-stone-800 mt-0.5">{value}</p>
+                            <p className="text-[9px] font-bold uppercase tracking-wide text-stone-400">{label}</p>
+                            <p className="text-xs font-extrabold text-stone-800 mt-0.5">{value}</p>
                           </div>
                         </div>
                       ))}
-                    </motion.div>
+                    </div>
 
                     {pct(modal.price, modal.anchoring) > 0 && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.25 }}
-                        className="flex items-center justify-between bg-gradient-to-r from-yellow-400/15 to-stone-50 border border-yellow-400/30 rounded-2xl p-4 sm:px-5 sm:py-4"
-                      >
+                      <div className="bg-stone-50/70 rounded-2xl p-5 flex items-center justify-between">
                         <div>
-                          <p className="text-[10px] sm:text-xs font-black uppercase tracking-widest text-stone-500 mb-0.5">You save</p>
-                          <p className="text-xl sm:text-2xl font-black text-orange-600">UGX {fmt(parseInt(modal.anchoring, 10) - modal.price)}</p>
+                          <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-0.5">Total Savings</p>
+                          <p className="text-2xl font-black text-red-600">UGX {fmt(parseInt(modal.anchoring, 10) - modal.price)}</p>
                         </div>
                         <div className="text-right">
                           <p className="text-xs text-stone-400 line-through">UGX {fmt(modal.anchoring)}</p>
-                          <p className="text-base sm:text-lg font-black text-stone-800">UGX {fmt(modal.price)}</p>
+                          <p className="text-sm font-extrabold text-stone-800">UGX {fmt(modal.price)}</p>
                         </div>
-                      </motion.div>
+                      </div>
                     )}
 
                   </div>
                 </div>
 
-                {/* Fixed CTA bar */}
-                <div className="flex-shrink-0 border-t border-stone-100 bg-white px-6 py-5 shadow-[0_-4px_20px_rgba(0,0,0,0.06)]">
-                  <div className="max-w-2xl mx-auto">
-                    <motion.div
-                      initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 }}
-                      className="flex flex-row-reverse gap-3"
+                {/* Fixed CTA Footer Bar */}
+                <div className="p-6 bg-white border-t border-stone-50">
+                  <div className="max-w-xl mx-auto flex gap-4">
+                    <button
+                      onClick={() => { addToCart(modal); setModal(null); setCartOpen(true); }}
+                      className="flex-1 h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition-all shadow-xl shadow-red-600/20 hover:scale-[1.01]"
                     >
-                      <button
-                        onClick={() => { addToCart(modal); setModal(null); setCartOpen(true); }}
-                        className="flex-1 h-12 sm:h-14 rounded-full bg-orange-600 hover:bg-orange-700 text-white font-black text-sm sm:text-base flex items-center justify-center gap-2.5 transition-all duration-200 shadow-xl shadow-orange-500/25 hover:scale-[1.01]"
-                      >
-                        <ShoppingBasket size={19} aria-hidden="true" />
-                        Add to cart · UGX {fmt(modal.price)}
-                      </button>
-
-                      <button
-                        onClick={() => toggleLike(modal.id)}
-                        aria-label={liked.has(modal.id) ? `Unlike ${modal.name}` : `Save ${modal.name}`}
-                        className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center border-2 transition-all duration-200 ${liked.has(modal.id)
-                            ? "bg-yellow-400 border-yellow-400 shadow-lg shadow-yellow-400/40"
-                            : "bg-white border-stone-200 hover:border-yellow-300"
-                          }`}
-                      >
-                        <Heart size={19} aria-hidden="true" className={liked.has(modal.id) ? "fill-stone-950 text-stone-950" : "text-stone-500"} />
-                      </button>
-                    </motion.div>
+                      <ShoppingBasket size={18} />
+                      Add to order · UGX {fmt(modal.price)}
+                    </button>
                   </div>
                 </div>
 
@@ -548,7 +488,7 @@ const Products = () => {
         )}
       </AnimatePresence>
 
-      {/* ── Cart drawer ── */}
+      {/* ── CART DRAWER (Modern Floating Capsule Sheet) ── */}
       <AnimatePresence>
         {cartOpen && (
           <>
@@ -558,7 +498,7 @@ const Products = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={() => setCartOpen(false)}
-              className="fixed inset-0 bg-stone-950/30 z-[70]"
+              className="fixed inset-0 bg-stone-950/20 z-[70]"
             />
 
             <motion.div
@@ -568,53 +508,49 @@ const Products = () => {
               animate="show"
               exit="exit"
               role="dialog"
-              aria-modal="true"
-              aria-label="Your cart"
-              className="fixed top-0 right-0 h-full w-full max-w-md bg-white border-l border-stone-100 z-[80] flex flex-col shadow-2xl"
+              className="fixed top-0 right-0 h-full w-full max-w-md bg-white z-[80] flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.15)] rounded-l-[2.5rem]//"
             >
               {/* Drawer header */}
-              <div className="px-6 py-5 border-b border-stone-100 flex items-center justify-between">
+              <div className="px-6 py-6 border-b border-stone-50 flex items-center justify-between">
                 <div>
-                  <h2 className="text-2xl font-black text-stone-900">Your cart</h2>
-                  <p className="text-stone-400 text-sm mt-0.5">{totalItems} item{totalItems !== 1 ? "s" : ""}</p>
+                  <h2 className="text-2xl font-black text-stone-900">Your Order</h2>
+                  <p className="text-stone-400 text-xs mt-1">{totalItems} item{totalItems !== 1 ? "s" : ""} selected</p>
                 </div>
                 <button
                   onClick={() => setCartOpen(false)}
-                  aria-label="Close cart"
-                  className="w-10 h-10 rounded-xl bg-stone-100 flex items-center justify-center hover:bg-stone-200 transition-colors"
+                  className="w-10 h-10 rounded-xl bg-stone-50 flex items-center justify-center hover:bg-stone-100 transition-colors"
                 >
-                  <X size={18} aria-hidden="true" />
+                  <X size={18} />
                 </button>
               </div>
 
-              {/* Cart items */}
-              <div className="flex-1 overflow-y-auto px-5 py-4 space-y-3">
+              {/* Cart Items List */}
+              <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
                 {cartItems.length === 0 ? (
-                  <div className="flex flex-col items-center justify-center h-full text-stone-400 pb-20">
-                    <ShoppingBag size={48} className="mb-4 opacity-30" aria-hidden="true" />
-                    <p className="font-bold">Your cart is empty</p>
-                    <p className="text-sm mt-1">Add something delicious</p>
+                  <div className="flex flex-col items-center justify-center h-full text-stone-400 pb-16">
+                    <ShoppingBag size={44} className="mb-4 opacity-20" />
+                    <p className="font-extrabold text-stone-900">Your cart is empty</p>
+                    <p className="text-xs mt-1">Add items from the menu to start</p>
                   </div>
                 ) : (
                   cartItems.map((item) => (
-                    <div key={item.id} className="flex items-center gap-4 bg-stone-50 border border-stone-100 rounded-2xl p-3">
-                      <div className="w-16 h-16 rounded-xl bg-white border border-stone-100 flex items-center justify-center shrink-0">
-                        <img src={item.image} alt="" aria-hidden="true" className="w-12 h-12 object-contain" />
+                    <div key={item.id} className="flex items-center gap-4 bg-stone-50/70 rounded-2xl p-4">
+                      <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center shrink-0">
+                        <img src={item.image} alt="" className="w-10 h-10 object-contain" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-sm truncate text-stone-900">{item.name}</p>
-                        <p className="text-orange-600 font-black text-sm mt-0.5">UGX {fmt(item.price)}</p>
+                        <p className="font-extrabold text-sm truncate text-stone-900">{item.name}</p>
+                        <p className="text-red-600 font-extrabold text-sm mt-0.5">UGX {fmt(item.price)}</p>
                       </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-stone-500 font-bold bg-stone-100 px-2 py-1 rounded-lg" aria-label={`Quantity: ${item.quantity}`}>
+                      <div className="flex items-center gap-3">
+                        <span className="text-[11px] text-stone-500 font-bold bg-white px-2.5 py-1 rounded-lg">
                           x{item.quantity}
                         </span>
                         <button
                           onClick={() => decreaseQuantity(item.id)}
-                          aria-label={`Decrease quantity of ${item.name}`}
-                          className="w-9 h-9 rounded-xl bg-yellow-50 hover:bg-yellow-100 flex items-center justify-center transition-colors shrink-0"
+                          className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors"
                         >
-                          <Minus size={14} className="text-orange-600" aria-hidden="true" />
+                          <Minus size={12} className="text-red-600" />
                         </button>
                       </div>
                     </div>
@@ -622,10 +558,10 @@ const Products = () => {
                 )}
               </div>
 
-              {/* Drawer footer */}
+              {/* Drawer checkout panel */}
               {cartItems.length > 0 && (
-                <div className="px-5 py-5 border-t border-stone-100 bg-stone-50/50">
-                  <div className="space-y-2 mb-4 text-sm text-stone-600">
+                <div className="px-6 py-6 bg-stone-50/60 rounded-tl-[2rem]">
+                  <div className="space-y-2 mb-6 text-xs text-stone-500">
                     <div className="flex justify-between">
                       <span>Subtotal</span>
                       <span className="font-bold text-stone-900">UGX {fmt(subtotal)}</span>
@@ -635,17 +571,17 @@ const Products = () => {
                       <span className="font-bold text-stone-900">UGX {fmt(tax)}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span>Delivery</span>
+                      <span>Delivery dispatch</span>
                       <span className={`font-bold ${shipping === 0 ? "text-green-600" : "text-stone-900"}`}>
                         {shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`}
                       </span>
                     </div>
 
-                    <div className="border-t border-stone-200/80 my-3" />
+                    <div className="h-px bg-stone-200/60 my-4" />
 
                     <div className="flex justify-between items-end">
-                      <p className="text-stone-900 font-bold text-base">Grand Total</p>
-                      <p className="text-2xl font-black text-orange-600">UGX {fmt(total)}</p>
+                      <p className="text-stone-900 font-bold text-sm">Grand Total</p>
+                      <p className="text-2xl font-black text-red-600">UGX {fmt(total)}</p>
                     </div>
                   </div>
 
@@ -653,10 +589,10 @@ const Products = () => {
                     href={checkoutHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full h-14 rounded-2xl bg-orange-600 hover:bg-orange-700 text-white font-black flex items-center justify-center gap-2 transition-all duration-200 shadow-lg shadow-orange-500/25"
+                    className="w-full h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold flex items-center justify-center gap-2 transition-all shadow-xl shadow-red-600/20"
                   >
                     Checkout via WhatsApp
-                    <ArrowRight size={18} aria-hidden="true" />
+                    <ArrowRight size={18} />
                   </a>
                 </div>
               )}

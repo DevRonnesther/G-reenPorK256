@@ -1,11 +1,7 @@
 import React from "react";
-import {
-    MessageSquareQuote,
-    Star,
-    ArrowUpRight,
-} from "lucide-react";
+import { MessageSquareQuote, Star, Check } from "lucide-react";
 
-export function Testimonials() {
+const Testimonials = () => {
     const testimonials = [
         {
             quote:
@@ -34,102 +30,160 @@ export function Testimonials() {
     ];
 
     return (
-        <section className="relative py-24 overflow-hidden bg-[#fafafa]">
+        <section className="relative py-24 overflow-hidden bg-white">
+            
+            {/* BACKGROUND DECORATIVE EFFECTS */}
+            <div className="absolute top-0 left-0 w-80 h-80 bg-red-50/50 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-50/30 rounded-full blur-3xl pointer-events-none" />
 
-            {/* BACKGROUND EFFECTS */}
-            <div className="absolute top-0 left-0 w-72 h-72 bg-red-100 rounded-full blur-3xl opacity-40" />
-            <div className="absolute bottom-0 right-0 w-80 h-80 bg-yellow-100 rounded-full blur-3xl opacity-50" />
+            <div className="max-w-7xl mx-auto px-6 relative z-10">
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+                    
+                    {/* LEFT COLUMN: STICKY BRAND OVERVIEW & TRUST BADGE */}
+                    <div className="lg:col-span-5 lg:sticky lg:top-12 space-y-6">
+                        <div>
+                            <span className="inline-flex items-center gap-2 text-red-600 text-xs font-bold uppercase tracking-[0.15em] mb-4">
+                                <span className="w-1.5 h-1.5 rounded-full bg-red-600" aria-hidden="true" />
+                                Customer Reviews
+                            </span>
 
-            <div className="max-w-7xl mx-auto px-4 relative z-10">
+                            <h2 className="text-4xl md:text-5xl font-extrabold text-stone-900 tracking-tight leading-[1.1] mt-1">
+                                What Our Clients <span className="text-red-600">Say About Us</span>
+                            </h2>
+                        </div>
 
-                {/* HEADER */}
-                <div className="text-center mb-16">
+                        <p className="text-stone-500 text-base leading-relaxed max-w-md">
+                            Trusted by food lovers, chefs, and families who enjoy premium taste,
+                            quality service, and unforgettable culinary experiences across the country.
+                        </p>
 
-                    <span className="inline-flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 px-5 py-2 rounded-full text-sm font-semibold">
-                        💬 Customer Reviews
-                    </span>
-
-                    <h2 className="mt-6 text-4xl md:text-5xl font-black text-gray-900 leading-tight">
-                        What Our Clients
-                        <span className="text-red-600"> Say About Us</span>
-                    </h2>
-
-                    <p className="max-w-2xl mx-auto mt-5 text-gray-500 text-lg leading-relaxed">
-                        Trusted by food lovers, chefs, and families who enjoy premium taste,
-                        quality service, and unforgettable experiences.
-                    </p>
-                </div>
-
-                {/* TESTIMONIAL GRID */}
-                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-
-                    {testimonials.map((testimonial, index) => (
-                        <div
-                            key={index}
-                            className="group relative overflow-hidden bg-white border border-gray-100 rounded-[2rem] p-8 shadow-sm hover:shadow-2xl transition-all duration-500 hover:-translate-y-2"
-                        >
-
-                            {/* TOP GLOW */}
-                            <div className="absolute top-0  right-0 w-40 h-40 bg-red-100 rounded-full blur-3xl opacity-40 group-hover:opacity-70 transition-all duration-500" />
-
-                            {/* QUOTE ICON */}
-                            <div className="relative z-10 flex items-center justify-between mb-8">
-
-                                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-red-500 to-red-700 flex items-center justify-center shadow-lg">
-                                    <MessageSquareQuote className="text-white" size={28} />
+                        {/* Unique Border-free Trust Metric Card */}
+                        <div className="bg-stone-50/70 rounded-[1.5rem] p-6 max-w-md flex items-center gap-5">
+                            <div className="text-center">
+                                <span className="text-4xl font-extrabold text-stone-900">4.9</span>
+                                <div className="flex items-center gap-0.5 mt-1">
+                                    {[...Array(5)].map((_, i) => (
+                                        <Star key={i} size={11} className="fill-yellow-400 text-yellow-400" />
+                                    ))}
                                 </div>
+                            </div>
+                            <div className="h-10 w-px bg-stone-200" aria-hidden="true" />
+                            <p className="text-xs text-stone-500 leading-normal font-medium">
+                                Based on 1,500+ direct client reviews and local catering experiences.
+                            </p>
+                        </div>
+                    </div>
 
-                                <button className="w-11 h-11 rounded-2xl bg-gray-100 flex items-center justify-center text-gray-500 hover:bg-red-600 hover:text-white transition-all duration-300">
-                                    <ArrowUpRight size={18} />
-                                </button>
+                    {/* RIGHT COLUMN: ASYMMETRIC STAGGERED DECK */}
+                    <div className="lg:col-span-7 space-y-8 pb-6">
+                        
+                        {/* 1. Featured Testimonial (Large Premium Card) */}
+                        <div className="bg-stone-900 text-white rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-stone-900/10 hover:-translate-y-1 transition-all duration-300">
+                            <div className="flex items-center justify-between mb-8">
+                                <div className="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center">
+                                    <MessageSquareQuote className="text-white" size={20} />
+                                </div>
+                                <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 text-stone-200 rounded-full text-[10px] font-bold tracking-wider uppercase backdrop-blur-sm">
+                                    <Check size={12} strokeWidth={3} className="text-yellow-400" /> Featured Review
+                                </span>
                             </div>
 
-                            {/* STARS */}
-                            <div className="flex items-center gap-1 mb-6 relative z-10">
-                                {[...Array(5)].map((_, i) => (
-                                    <Star
-                                        key={i}
-                                        size={18}
-                                        className="fill-yellow-400 text-yellow-400"
-                                    />
-                                ))}
-                            </div>
-
-                            {/* QUOTE */}
-                            <p className="text-gray-600 leading-relaxed text-[15px] mb-8 relative z-10">
-                                “{testimonial.quote}”
+                            <p className="text-stone-200 leading-relaxed text-base md:text-lg mb-8 italic">
+                                “{testimonials[0].quote}”
                             </p>
 
-                            {/* USER */}
-                            <div className="flex items-center gap-4 relative z-10">
-
-                                <div className="relative">
-                                    <img
-                                        src={testimonial.image}
-                                        alt={testimonial.author}
-                                        className="w-16 h-16 rounded-2xl object-cover border-2 border-white shadow-md"
-                                    />
-
-                                    <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-green-500 border-2 border-white rounded-full" />
-                                </div>
-
+                            <div className="flex items-center gap-4">
+                                <img
+                                    src={testimonials[0].image}
+                                    alt={testimonials[0].author}
+                                    className="w-14 h-14 rounded-2xl object-cover"
+                                />
                                 <div>
-                                    <h4 className="text-lg font-bold text-gray-900">
-                                        {testimonial.author}
+                                    <h4 className="text-base font-bold text-white leading-tight">
+                                        {testimonials[0].author}
                                     </h4>
-
-                                    <p className="text-sm text-red-600 font-medium">
-                                        {testimonial.title}
+                                    <p className="text-xs text-yellow-400 font-semibold mt-0.5">
+                                        {testimonials[0].title}
                                     </p>
                                 </div>
                             </div>
-
-                            {/* BORDER EFFECT */}
-                            <div className="absolute inset-0 rounded-[2rem] border-2 border-transparent group-hover:border-red-100 transition-all duration-500 pointer-events-none" />
                         </div>
-                    ))}
+
+                        {/* Staggered Sub-Grid for Reviews 2 & 3 */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            
+                            {/* 2. Secondary Testimonial (Left) */}
+                            <div className="bg-stone-50/70 hover:bg-stone-50 rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+                                        <MessageSquareQuote className="text-red-600" size={16} />
+                                    </div>
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[9px] font-bold tracking-wider uppercase">
+                                        <Check size={10} strokeWidth={3} /> Verified
+                                    </span>
+                                </div>
+
+                                <p className="text-stone-600 leading-relaxed text-sm mb-6">
+                                    “{testimonials[1].quote}”
+                                </p>
+
+                                <div className="flex items-center gap-3">
+                                    <img
+                                        src={testimonials[1].image}
+                                        alt={testimonials[1].author}
+                                        className="w-11 h-11 rounded-xl object-cover"
+                                    />
+                                    <div>
+                                        <h4 className="text-sm font-bold text-stone-900 leading-tight">
+                                            {testimonials[1].author}
+                                        </h4>
+                                        <p className="text-[11px] text-red-600 font-semibold mt-0.5">
+                                            {testimonials[1].title}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* 3. Secondary Testimonial (Right - Staggered Offset) */}
+                            <div className="bg-stone-50/70 hover:bg-stone-50 rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 lg:translate-y-6">
+                                <div className="flex items-center justify-between mb-6">
+                                    <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+                                        <MessageSquareQuote className="text-red-600" size={16} />
+                                    </div>
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[9px] font-bold tracking-wider uppercase">
+                                        <Check size={10} strokeWidth={3} /> Verified
+                                    </span>
+                                </div>
+
+                                <p className="text-stone-600 leading-relaxed text-sm mb-6">
+                                    “{testimonials[2].quote}”
+                                </p>
+
+                                <div className="flex items-center gap-3">
+                                    <img
+                                        src={testimonials[2].image}
+                                        alt={testimonials[2].author}
+                                        className="w-11 h-11 rounded-xl object-cover"
+                                    />
+                                    <div>
+                                        <h4 className="text-sm font-bold text-stone-900 leading-tight">
+                                            {testimonials[2].author}
+                                        </h4>
+                                        <p className="text-[11px] text-red-600 font-semibold mt-0.5">
+                                            {testimonials[2].title}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                    
                 </div>
             </div>
         </section>
     );
-}
+};
+
+export default Testimonials;
