@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from "react";
 import { Link } from "react-router-dom";
-import { 
-  Trash2, Minus, Plus, ArrowLeft, ArrowRight, ShoppingBag, 
-  User, MapPin, CreditCard, ShieldCheck, Truck, Clock 
+import {
+  Trash2, Minus, Plus, ArrowLeft, ArrowRight, ShoppingBag,
+  User, MapPin, CreditCard, ShieldCheck, Truck, Clock
 } from "lucide-react";
 import { useCart } from "../../components/cart/CartContext.jsx";
 
@@ -10,7 +10,7 @@ import { useCart } from "../../components/cart/CartContext.jsx";
 const WHATSAPP_NUMBER = "256776464823";
 const fmt = (n) => Number(n).toLocaleString();
 
-const UGANDA_REGIONS = [
+const UG_REGIONS = [
   "Kampala (Central)",
   "Kira",
   "Entebbe",
@@ -25,10 +25,10 @@ const UGANDA_REGIONS = [
 
 // ─── LOCAL SUB-COMPONENTS ────────────────────────────────────────────────────
 const Eyebrow = ({ children }) => (
-  <p className="inline-flex items-center gap-2 text-red-600 text-xs font-bold uppercase tracking-[0.15em] mb-4">
-    <span className="w-1.5 h-1.5 rounded-full bg-red-600" aria-hidden="true" />
+  <span className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
     {children}
-  </p>
+  </span>
 );
 
 // ─── MAIN CART COMPONENT ─────────────────────────────────────────────────────
@@ -70,7 +70,7 @@ export default function Cart() {
     setTouched((prev) => ({ ...prev, [field]: true }));
   };
 
-  // Simple Form Validation
+  // Form Validation
   const isFormValid = useMemo(() => {
     return (
       formData.fullName.trim().length > 1 &&
@@ -79,7 +79,7 @@ export default function Cart() {
     );
   }, [formData]);
 
-  // Generate checkout text structured like a Jumia invoice
+  // Generate checkout text structured like an invoice
   const checkoutHref = useMemo(() => {
     if (cartItems.length === 0) return null;
 
@@ -88,9 +88,9 @@ export default function Cart() {
       .join("\n");
 
     const deliveryText = shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`;
-    
+
     const message = `Hello GreenPork! I'd like to place an order:\n\n` +
-      `👤 *CUSTOMER INFORMATION*\n` +
+      `👤 *CUSTOMER INFORMATION* \n` +
       `-------------------------\n` +
       `Name: ${formData.fullName}\n` +
       `Phone: ${formData.phone}\n` +
@@ -114,17 +114,17 @@ export default function Cart() {
   // EMPTY STATE VIEW
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-24 text-center">
-        <div className="w-16 h-16 rounded-2xl bg-stone-50 flex items-center justify-center text-stone-400 mb-6">
-          <ShoppingBag size={28} aria-hidden="true" />
+      <div className="min-h-screen bg-[#FAF9F6] flex flex-col items-center justify-center px-6 py-24 text-center">
+        <div className="w-20 h-20 rounded-3xl bg-white shadow-xl shadow-stone-200/50 flex items-center justify-center text-[#0edb0e] mb-8">
+          <ShoppingBag size={32} strokeWidth={1.5} aria-hidden="true" />
         </div>
-        <h2 className="text-2xl font-extrabold text-stone-900 tracking-tight">Your cart is empty</h2>
-        <p className="text-stone-500 text-sm mt-2 max-w-sm leading-relaxed">
-          You haven't added anything delicious yet. Head back to our menu to discover our premium dishes.
+        <h2 className="text-3xl font-extrabold text-stone-900 tracking-tight">Your cart is resting empty</h2>
+        <p className="text-stone-500 text-sm mt-3 max-w-sm leading-relaxed font-medium">
+          You haven't added anything delicious yet. Head back to our farm-to-table menu to discover premium cuts.
         </p>
         <Link
           to="/Products"
-          className="inline-flex items-center gap-2 mt-8 bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-7 py-4 rounded-2xl transition-all shadow-xl shadow-red-600/20"
+          className="inline-flex items-center gap-2 mt-8 bg-[#0edb0e] hover:bg-emerald-700 text-white font-bold text-sm px-8 py-4 rounded-2xl transition-all duration-200 shadow-lg shadow-[#0edb0e]/10 active:scale-[0.98]"
         >
           Browse Menu
           <ArrowRight size={16} aria-hidden="true" />
@@ -135,48 +135,45 @@ export default function Cart() {
 
   // ACTIVE CART VIEW
   return (
-    <div className="min-h-screen bg-white text-stone-900">
-      <div className="max-w-7xl mx-auto px-6 py-12 md:py-20">
+    <div className="min-h-screen bg-[#FAF9F6] text-stone-900">
+      <div className="max-w-7xl mx-auto px-6 py-12 md:py-16">
 
+        {/* MAIN GRID */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
 
-        {/* MAIN UNIQUE GRID: Left is Sticky Order Console, Right is wide Billing console */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
-          
-          {/* ── LEFT COLUMN: STICKY ORDER CONSOLE (Col Span 5) ── */}
-          <div className="lg:col-span-5 lg:sticky lg:top-12 space-y-6">
-            
-            {/* Review Items Panel */}
-            <div className="bg-stone-50/70 rounded-[2.5rem] p-6 md:p-8 space-y-6">
+          {/* ── LEFT COLUMN: CART SUMMARY PANEL (Col Span 5) ── */}
+          <div className="lg:col-span-5 lg:sticky lg:top-8 space-y-6">
+
+            <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-xl shadow-stone-200/40 space-y-6">
               <div className="flex items-center justify-between">
                 <Eyebrow>Step 1 of 2</Eyebrow>
-                <span className="text-xs font-extrabold text-stone-500 bg-white px-2.5 py-1 rounded-lg">
+                <span className="text-xs font-bold text-stone-500 bg-stone-100 px-3 py-1 rounded-full">
                   {cartItems.length} Selection{cartItems.length !== 1 ? "s" : ""}
                 </span>
               </div>
 
               {/* Items List */}
-              <div className="space-y-4 max-h-[380px] overflow-y-auto scrollbar-none pr-1">
+              <div className="space-y-4 max-h-[420px] overflow-y-auto scrollbar-none pr-1">
                 {cartItems.map((item) => (
                   <div
                     key={item.id}
-                    className="relative flex items-start gap-4 bg-white rounded-[1.5rem] p-4 hover:shadow-lg hover:shadow-stone-100/60 transition-all duration-300"
+                    className="relative flex items-center gap-4 bg-stone-50/50 rounded-2xl p-4 transition-all duration-200 hover:bg-stone-50"
                   >
                     {/* Product Image Frame */}
-                    <div className="w-20 h-20 rounded-2xl bg-stone-50 flex items-center justify-center shrink-0 p-2">
+                    <div className="w-16 h-16 rounded-xl bg-white flex items-center justify-center shrink-0 p-1 shadow-sm">
                       <img
                         src={item.image}
                         alt={item.name}
-                        className="w-full h-full object-contain drop-shadow-sm"
+                        className="w-full h-full object-contain rounded-lg"
                       />
                     </div>
 
                     {/* Product Details & Actions */}
                     <div className="flex-1 min-w-0 flex flex-col h-full justify-between">
 
-                      {/* Top Row: Title, Base Price & Remove Action */}
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <h3 className="font-extrabold text-stone-900 text-sm sm:text-base truncate">
+                          <h3 className="font-bold text-stone-900 text-sm sm:text-base truncate">
                             {item.name}
                           </h3>
                           <p className="text-stone-400 text-xs mt-0.5 font-medium">
@@ -187,38 +184,38 @@ export default function Cart() {
                         <button
                           onClick={() => removeFromCart(item.id)}
                           aria-label={`Remove ${item.name} from cart`}
-                          className="w-8 h-8 rounded-xl bg-stone-50 hover:bg-red-50 text-stone-400 hover:text-red-600 flex items-center justify-center shrink-0 transition-colors"
+                          className="w-8 h-8 rounded-lg bg-stone-100 hover:bg-red-50 text-stone-400 hover:text-red-500 flex items-center justify-center shrink-0 transition-all duration-200"
                         >
-                          <Trash2 size={14} strokeWidth={2.5} aria-hidden="true" />
+                          <Trash2 size={13} strokeWidth={2.5} aria-hidden="true" />
                         </button>
                       </div>
 
                       {/* Bottom Row: Quantity Controls & Subtotal */}
-                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-stone-50">
+                      <div className="flex items-center justify-between mt-3 pt-3">
 
-                        {/* Modern Quantity Pill */}
-                        <div className="flex items-center gap-1 bg-stone-50 rounded-xl p-1">
+                        {/* Quantity Control Pill */}
+                        <div className="flex items-center gap-1.5 bg-stone-100/80 rounded-xl p-1">
                           <button
                             onClick={() => decreaseQuantity(item.id)}
                             aria-label={`Decrease quantity of ${item.name}`}
-                            className="h-7 w-7 rounded-lg bg-white text-stone-700 shadow-sm flex items-center justify-center hover:bg-stone-100 transition-colors"
+                            className="h-6 w-6 rounded-lg bg-white text-stone-700 shadow-sm flex items-center justify-center hover:bg-stone-50 transition-colors"
                           >
-                            <Minus size={12} strokeWidth={2.5} aria-hidden="true" />
+                            <Minus size={10} strokeWidth={3} aria-hidden="true" />
                           </button>
-                          <span className="w-7 text-center text-xs font-black text-stone-900 select-none">
+                          <span className="w-6 text-center text-xs font-black text-stone-800 select-none">
                             {item.quantity}
                           </span>
                           <button
                             onClick={() => increaseQuantity(item.id)}
                             aria-label={`Increase quantity of ${item.name}`}
-                            className="h-7 w-7 rounded-lg bg-white text-stone-700 shadow-sm flex items-center justify-center hover:bg-stone-100 transition-colors"
+                            className="h-6 w-6 rounded-lg bg-white text-stone-700 shadow-sm flex items-center justify-center hover:bg-stone-50 transition-colors"
                           >
-                            <Plus size={12} strokeWidth={2.5} aria-hidden="true" />
+                            <Plus size={10} strokeWidth={3} aria-hidden="true" />
                           </button>
                         </div>
 
-                        {/* Final Item Total */}
-                        <p className="font-black text-red-600 text-sm sm:text-base">
+                        {/* Item Total */}
+                        <p className="font-bold text-[#0edb0e] text-sm sm:text-base">
                           UGX {fmt(item.price * item.quantity)}
                         </p>
 
@@ -229,36 +226,34 @@ export default function Cart() {
                 ))}
               </div>
 
-              {/* Integrated Price Summary inside the sticky panel */}
-              <div className="space-y-3 text-xs text-stone-500 pt-4">
+              {/* Subtotal & Totals breakdown */}
+              <div className="space-y-3.5 text-xs text-stone-500 pt-4">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span className="font-bold text-stone-900">UGX {fmt(subtotal)}</span>
+                  <span className="font-semibold text-stone-800">UGX {fmt(subtotal)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Tax (18%)</span>
-                  <span className="font-bold text-stone-900">UGX {fmt(tax)}</span>
+                  <span className="font-semibold text-stone-800">UGX {fmt(tax)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Delivery dispatch</span>
-                  <span className={`font-bold ${shipping === 0 ? "text-emerald-600" : "text-stone-900"}`}>
+                  <span className={`font-semibold ${shipping === 0 ? "text-[#0edb0e]" : "text-stone-800"}`}>
                     {shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`}
                   </span>
                 </div>
 
-                <div className="h-px bg-stone-200/60 my-4" />
-
-                <div className="flex justify-between items-end">
-                  <span className="font-bold text-stone-900 text-sm">Grand Total</span>
-                  <span className="text-2xl font-black text-red-600">UGX {fmt(total)}</span>
+                <div className="flex justify-between items-end pt-4">
+                  <span className="font-bold text-stone-800 text-sm">Grand Total</span>
+                  <span className="text-2xl font-black text-[#0edb0e]">UGX {fmt(total)}</span>
                 </div>
               </div>
             </div>
 
-            {/* Back button link */}
+            {/* Back button */}
             <Link
               to="/Products"
-              className="flex items-center justify-center gap-2 w-full h-12 rounded-2xl bg-stone-50 hover:bg-stone-100 text-stone-600 font-bold text-xs uppercase tracking-widest transition-colors duration-200"
+              className="flex items-center justify-center gap-2 w-full h-12 rounded-2xl bg-white hover:bg-stone-50 text-stone-500 font-bold text-xs uppercase tracking-widest transition-all duration-200 shadow-sm shadow-stone-200/50"
             >
               <ArrowLeft size={14} />
               Continue Shopping
@@ -266,20 +261,20 @@ export default function Cart() {
           </div>
 
           {/* ── RIGHT COLUMN: BILLING & ADDRESS PANEL (Col Span 7) ── */}
-          <div className="lg:col-span-7 bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl shadow-stone-100/50 space-y-8">
+          <div className="lg:col-span-7 bg-white rounded-[2rem] p-8 md:p-10 shadow-xl shadow-stone-200/40 space-y-8">
             <div>
               <Eyebrow>Step 2 of 2</Eyebrow>
-              <h3 className="text-3xl font-extrabold text-stone-900 tracking-tight">Delivery & Address Details</h3>
-              <p className="text-stone-400 mt-2 text-sm">Please provide clear details to facilitate swift, contactless dispatch.</p>
+              <h3 className="text-3xl font-extrabold text-stone-900 tracking-tight mt-3">Delivery details</h3>
+              <p className="text-stone-400 mt-1.5 text-sm font-medium">Please provide details to facilitate swift, contactless dispatch.</p>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-              
+
               {/* Full Name */}
               <div className="space-y-2">
-                <label htmlFor="fullName" className="flex items-center gap-1.5 text-xs font-bold text-stone-500 uppercase tracking-wider">
-                  <User size={13} className="text-red-600" />
-                  Full Name <span className="text-red-500">*</span>
+                <label htmlFor="fullName" className="flex items-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase tracking-wider">
+                  <User size={13} className="text-[#0edb0e]" />
+                  Full Name <span className="text-orange-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -289,22 +284,21 @@ export default function Cart() {
                   onChange={handleInputChange}
                   onBlur={() => handleBlur("fullName")}
                   placeholder="e.g. John Doe"
-                  className={`w-full h-12 px-4 rounded-xl text-sm font-medium bg-stone-50 focus:bg-white transition-all outline-none border-none focus:ring-4 focus:ring-red-600/10 ${
-                    touched.fullName && formData.fullName.trim().length < 2
-                      ? "bg-red-50/50 focus:ring-red-500/20"
-                      : ""
-                  }`}
+                  className={`w-full h-12 px-4 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-500/10 ${touched.fullName && formData.fullName.trim().length < 2
+                    ? "bg-orange-50 focus:ring-orange-500/10"
+                    : ""
+                    }`}
                 />
                 {touched.fullName && formData.fullName.trim().length < 2 && (
-                  <p className="text-[11px] text-red-500 font-medium">Please enter your real full name.</p>
+                  <p className="text-[10px] text-orange-600 font-bold tracking-tight">Please enter your real full name.</p>
                 )}
               </div>
 
               {/* Phone Number */}
               <div className="space-y-2">
-                <label htmlFor="phone" className="flex items-center gap-1.5 text-xs font-bold text-stone-500 uppercase tracking-wider">
-                  <Clock size={13} className="text-orange-600" />
-                  Phone Number <span className="text-red-500">*</span>
+                <label htmlFor="phone" className="flex items-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase tracking-wider">
+                  <Clock size={13} className="text-[#0edb0e]" />
+                  Phone Number <span className="text-orange-500">*</span>
                 </label>
                 <input
                   type="tel"
@@ -314,21 +308,20 @@ export default function Cart() {
                   onChange={handleInputChange}
                   onBlur={() => handleBlur("phone")}
                   placeholder="e.g. 0776464823"
-                  className={`w-full h-12 px-4 rounded-xl text-sm font-medium bg-stone-50 focus:bg-white transition-all outline-none border-none focus:ring-4 focus:ring-red-600/10 ${
-                    touched.phone && formData.phone.trim().length < 9
-                      ? "bg-red-50/50 focus:ring-red-500/20"
-                      : ""
-                  }`}
+                  className={`w-full h-12 px-4 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-500/10 ${touched.phone && formData.phone.trim().length < 9
+                    ? "bg-orange-50 focus:ring-orange-500/10"
+                    : ""
+                    }`}
                 />
                 {touched.phone && formData.phone.trim().length < 9 && (
-                  <p className="text-[11px] text-red-500 font-medium">Please enter a valid phone number.</p>
+                  <p className="text-[10px] text-orange-600 font-bold tracking-tight">Please enter a valid phone number.</p>
                 )}
               </div>
 
-              {/* Delivery Region/City Selection */}
+              {/* Delivery Region Selection */}
               <div className="space-y-2">
-                <label htmlFor="city" className="flex items-center gap-1.5 text-xs font-bold text-stone-500 uppercase tracking-wider">
-                  <MapPin size={13} className="text-amber-600" />
+                <label htmlFor="city" className="flex items-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase tracking-wider">
+                  <MapPin size={13} className="text-[#0edb0e]" />
                   Region / City
                 </label>
                 <select
@@ -336,9 +329,9 @@ export default function Cart() {
                   name="city"
                   value={formData.city}
                   onChange={handleInputChange}
-                  className="w-full h-12 px-3.5 rounded-xl text-sm font-medium bg-stone-50 focus:bg-white transition-all outline-none border-none focus:ring-4 focus:ring-red-600/10"
+                  className="w-full h-12 px-3.5 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-500/10 cursor-pointer appearance-none"
                 >
-                  {UGANDA_REGIONS.map((region) => (
+                  {UG_REGIONS.map((region) => (
                     <option key={region} value={region}>{region}</option>
                   ))}
                 </select>
@@ -346,8 +339,8 @@ export default function Cart() {
 
               {/* Payment Option Selection */}
               <div className="space-y-2">
-                <label htmlFor="paymentMethod" className="flex items-center gap-1.5 text-xs font-bold text-stone-500 uppercase tracking-wider">
-                  <CreditCard size={13} className="text-red-600" />
+                <label htmlFor="paymentMethod" className="flex items-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase tracking-wider">
+                  <CreditCard size={13} className="text-[#0edb0e]" />
                   Payment Method
                 </label>
                 <select
@@ -355,7 +348,7 @@ export default function Cart() {
                   name="paymentMethod"
                   value={formData.paymentMethod}
                   onChange={handleInputChange}
-                  className="w-full h-12 px-3.5 rounded-xl text-sm font-medium bg-stone-50 focus:bg-white transition-all outline-none border-none focus:ring-4 focus:ring-red-600/10"
+                  className="w-full h-12 px-3.5 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-500/10 cursor-pointer appearance-none"
                 >
                   <option value="Cash on Delivery">Cash on Delivery</option>
                   <option value="Mobile Money (MTN/Airtel)">Mobile Money</option>
@@ -364,9 +357,9 @@ export default function Cart() {
 
               {/* Physical Delivery Address */}
               <div className="space-y-2 md:col-span-2">
-                <label htmlFor="address" className="flex items-center gap-1.5 text-xs font-bold text-stone-500 uppercase tracking-wider">
-                  <MapPin size={13} className="text-amber-600" />
-                  Delivery Address <span className="text-red-500">*</span>
+                <label htmlFor="address" className="flex items-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase tracking-wider">
+                  <MapPin size={13} className="text-[#0edb0e]" />
+                  Delivery Address <span className="text-orange-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -376,20 +369,19 @@ export default function Cart() {
                   onChange={handleInputChange}
                   onBlur={() => handleBlur("address")}
                   placeholder="Street name, landmark, gate details, or plot number"
-                  className={`w-full h-12 px-4 rounded-xl text-sm font-medium bg-stone-50 focus:bg-white transition-all outline-none border-none focus:ring-4 focus:ring-red-600/10 ${
-                    touched.address && formData.address.trim().length <= 3
-                      ? "bg-red-50/50 focus:ring-red-500/20"
-                      : ""
-                  }`}
+                  className={`w-full h-12 px-4 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-500/10 ${touched.address && formData.address.trim().length <= 3
+                    ? "bg-orange-50 focus:ring-orange-500/10"
+                    : ""
+                    }`}
                 />
                 {touched.address && formData.address.trim().length <= 3 && (
-                  <p className="text-[11px] text-red-500 font-medium">Please provide a clear physical address.</p>
+                  <p className="text-[10px] text-orange-600 font-bold tracking-tight">Please provide a clear physical address.</p>
                 )}
               </div>
 
               {/* Additional Delivery Notes */}
               <div className="space-y-2 md:col-span-2">
-                <label htmlFor="notes" className="text-xs font-bold text-stone-500 uppercase tracking-wider">
+                <label htmlFor="notes" className="text-[11px] font-bold text-stone-400 uppercase tracking-wider">
                   Delivery Instructions / Custom Notes (Optional)
                 </label>
                 <textarea
@@ -399,42 +391,42 @@ export default function Cart() {
                   value={formData.notes}
                   onChange={handleInputChange}
                   placeholder="e.g. Leave order with guard, make pork extra crispy, spicy request etc."
-                  className="w-full p-4 rounded-xl text-sm font-medium bg-stone-50 focus:bg-white transition-all outline-none border-none focus:ring-4 focus:ring-red-600/10 resize-none"
+                  className="w-full p-4 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-500/10 resize-none"
                 />
               </div>
             </div>
 
-            {/* Form submission / CTA row directly at the bottom of the form */}
+            {/* Submit Bar */}
             <div className="pt-4">
               {isFormValid ? (
                 <a
                   href={checkoutHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm flex items-center justify-center gap-2.5 transition-all duration-200 shadow-xl shadow-red-600/20 hover:scale-[1.01]"
+                  className="w-full h-14 rounded-2xl bg-[#0edb0e] hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition-all duration-200 shadow-xl shadow-[#0edb0e]/15 active:scale-[0.99]"
                 >
                   Checkout via WhatsApp
                   <ArrowRight size={18} aria-hidden="true" />
                 </a>
               ) : (
                 <div
-                  className="w-full h-14 rounded-2xl bg-stone-100 text-stone-400 font-bold text-xs flex flex-col items-center justify-center gap-1 cursor-not-allowed"
+                  className="w-full h-14 rounded-2xl bg-stone-50 text-stone-400 font-bold text-xs flex flex-col items-center justify-center gap-0.5 cursor-not-allowed select-none"
                 >
-                  <p className="uppercase tracking-widest font-extrabold">Checkout Locked</p>
-                  <p className="text-[10px] font-medium text-stone-400 normal-case">Please complete the delivery details first</p>
+                  <p className="uppercase tracking-widest font-black text-[10px]">Checkout Locked</p>
+                  <p className="text-[9px] font-medium text-stone-400 normal-case">Please complete the delivery details above</p>
                 </div>
               )}
             </div>
 
             {/* Platform Guarantees Footer */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-stone-50 text-xs text-stone-500">
-              <div className="flex items-center gap-2.5">
-                <ShieldCheck size={16} className="text-emerald-600" />
-                <span>100% Fresh Farm Quality Guaranteed</span>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 text-xs text-stone-400">
+              <div className="flex items-center gap-2">
+                <ShieldCheck size={16} className="text-[#0edb0e]" />
+                <span className="font-medium">100% Fresh Farm Quality Guaranteed</span>
               </div>
-              <div className="flex items-center gap-2.5">
-                <Truck size={16} className="text-red-600" />
-                <span>Prompt contactless logistics dispatch</span>
+              <div className="flex items-center gap-2">
+                <Truck size={16} className="text-[#0edb0e]" />
+                <span className="font-medium">Prompt contactless logistics dispatch</span>
               </div>
             </div>
 

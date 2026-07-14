@@ -56,7 +56,7 @@ const Login = () => {
   };
 
   return (
-    <div className="relative min-h-screen bg-[#FAFAFA] overflow-hidden flex items-center justify-center px-4 py-10">
+    <div className="relative min-h-screen h-full bg-[#FAFAFA] overflow-hidden flex items-center justify-center lg:px-4 lg:py-10">
 
       {/* PREMIUM BACKGROUND */}
       <div className="absolute inset-0 -z-10">
@@ -67,9 +67,9 @@ const Login = () => {
       </div>
 
       {/* MAIN CARD */}
-      <div className="w-full max-w-7xl bg-white border border-gray-200 rounded-[40px] overflow-hidden shadow-2xl grid grid-cols-1 lg:grid-cols-2">
+      <div className="w-full min-h-screen lg:min-h-0 lg:max-w-7xl bg-white lg:border lg:border-gray-200 rounded-none lg:rounded-[40px] overflow-hidden lg:shadow-2xl grid grid-cols-1 lg:grid-cols-2">
 
-        {/* LEFT SIDE */}
+        {/* LEFT SIDE — desktop only */}
         <div className="relative hidden lg:flex overflow-hidden">
 
           <img
@@ -151,18 +151,29 @@ const Login = () => {
           </div>
         </div>
 
-        {/* RIGHT SIDE */}
-        <div className="flex items-center justify-center p-6 sm:p-10 lg:p-14">
+        {/* RIGHT SIDE / MOBILE FORM SCREEN */}
+        <div className="flex flex-col min-h-screen lg:min-h-0 lg:items-center lg:justify-center px-6 py-8 sm:px-10 lg:p-14">
+
+          {/* MOBILE-ONLY COMPACT BRAND STRIP — fills the identity the hidden left panel carries on desktop */}
+          <div className="flex lg:hidden items-center gap-3 mb-8">
+            <div className="w-11 h-11 rounded-xl bg-red-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-red-200">
+              <PiggyBankIcon className="text-white w-5 h-5" />
+            </div>
+            <div>
+              <p className="text-[11px] font-bold uppercase tracking-[2px] text-red-500">Welcome Back</p>
+              <p className="text-sm font-bold text-gray-900 -mt-0.5">GreenPork</p>
+            </div>
+          </div>
 
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="w-full max-w-md"
+            className="w-full max-w-md mx-auto flex-1 lg:flex-none flex flex-col justify-center"
           >
 
             {/* HEADER */}
-            <div className="mb-10">
+            <div className="mb-8 lg:mb-10">
 
-              <div className="flex justify-center mb-6">
+              <div className="hidden lg:flex justify-center mb-6">
 
                 <div className="w-16 h-16 rounded-2xl bg-red-600 flex items-center justify-center shadow-xl">
 
@@ -170,17 +181,17 @@ const Login = () => {
                 </div>
               </div>
 
-              <h2 className="text-4xl font-black text-gray-900 text-center">
+              <h2 className="text-3xl lg:text-4xl font-black text-gray-900 text-center lg:text-center">
                 Sign In
               </h2>
 
-              <p className="text-center text-gray-500 mt-4 text-lg">
+              <p className="text-center text-gray-500 mt-3 lg:mt-4 text-base lg:text-lg">
                 Welcome back to GreenPork
               </p>
             </div>
 
             {/* EMAIL */}
-            <div className="mb-6">
+            <div className="mb-5 lg:mb-6">
 
               <label className="text-sm font-bold text-gray-700 mb-3 block">
                 Email Address
@@ -249,7 +260,7 @@ const Login = () => {
             </div>
 
             {/* OPTIONS */}
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
 
               <label className="flex items-center gap-3 text-gray-500 text-sm">
 
@@ -299,8 +310,8 @@ const Login = () => {
               </div>
             </div>
 
-            {/* SIGNUP r*/}
-            <p className="text-center text-gray-500 text-sm">
+            {/* SIGNUP */}
+            <p className="text-center text-gray-500 text-sm pb-2 lg:pb-0">
 
               Don’t have an account?{" "}
 
