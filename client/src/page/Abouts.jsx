@@ -1,5 +1,4 @@
 import React, { useMemo } from "react";
-import { Link } from "react-router-dom";
 import {
   Phone,
   Clock3,
@@ -10,48 +9,45 @@ import {
   ShieldCheck,
   ArrowRight,
 } from "lucide-react";
-
-// Semantic Page Components
-import Testimonials from "../components/Testimonials";
+import { Link } from "react-router-dom";
+import  Testimonials  from "../components/Testimonials";
 import { Staff } from "./Staff";
-import Gallery from "../components/Gallery";
+import  Gallery  from "../components/Gallery";
 
-// Assets
 import BannerBg from "../assets/pngwing.com (21).png";
 import Bike from "../assets/DeliveryBike.png";
 
-// ─── CONFIGURATION ───────────────────────────────────────────────────────────
+// ─── Config — kept in sync with Hero.jsx / Navbar.jsx / Contact.jsx ──────────
 const WHATSAPP_NUMBER = "256776464823";
 const PHONE_DISPLAY = "+(256) 776-464-823";
 const BRAND_NAME = "GreenPork";
 
-// ─── LOCAL SUB-COMPONENTS ────────────────────────────────────────────────────
+// ─── Stat chip used in intro section — light card, matches Hero's stat cards ──
 const StatChip = ({ value, label }) => (
-  <div className="flex flex-col items-center justify-center bg-stone-100/70 rounded-2xl px-5 py-4 min-w-[95px] shadow-sm shadow-stone-200/10">
-    <span className="text-3xl font-extrabold text-stone-900 tracking-tight leading-none">
-      {value}
-    </span>
-    <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-stone-500 mt-2.5 text-center">
-      {label}
-    </span>
+  <div className="flex flex-col items-center bg-white border border-stone-100 shadow-sm rounded-2xl px-5 py-3 min-w-[80px]">
+    <span className="text-2xl font-black text-stone-900 leading-tight">{value}</span>
+    <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mt-0.5 text-center">{label}</span>
   </div>
 );
 
+// ─── Section eyebrow label ─────────────────────────────────────────────────────
 const Eyebrow = ({ children }) => (
-  <span className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-3">
-    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+  <p className="inline-flex items-center gap-1.5 text-red-600 text-xs font-black uppercase tracking-[3px] mb-3">
+    <span className="w-4 h-0.5 bg-red-600 rounded-full" aria-hidden="true" />
     {children}
-  </span>
+    <span className="w-4 h-0.5 bg-red-600 rounded-full" aria-hidden="true" />
+  </p>
 );
 
-// ─── MAIN ABOUT PAGE ─────────────────────────────────────────────────────────
 const About = () => {
   const year = useMemo(() => new Date().getFullYear(), []);
 
   return (
-    <div className="w-full bg-[#FAF9F6] overflow-hidden text-stone-900">
+    <div className="w-full bg-white overflow-hidden text-gray-900">
 
-      {/* ── SECTION 1: INTRO (Asymmetric Hero Grid) ── */}
+      {/* ──────────────────────────────────────────────────────────────────────────
+          INTRO — flat white/yellow split, matching Hero's diagonal panel language
+      ────────────────────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden py-16 lg:py-24 bg-[#FAF9F6]">
         <div className="relative max-w-7xl mx-auto px-6 md:px-12 grid lg:grid-cols-2 gap-16 lg:gap-24 items-center">
 
@@ -107,163 +103,155 @@ const About = () => {
         </div>
       </section>
 
-      {/* ── SECTION 2: STORY & FEATURE CARDS (Staggered Layout) ── */}
-      <section className="py-20 px-6 bg-white">
-        <div className="max-w-7xl mx-auto grid sm:grid-cols-2 gap-8 lg:gap-12 pb-12">
+      {/* ──────────────────────────────────────────────────────────────────────────
+          STORY / FEATURE CARDS
+      ────────────────────────────────────────────────────────────────────────── */}
+      <section className="py-20 px-6">
+        <div className="max-w-7xl mx-auto grid sm:grid-cols-2 gap-6">
           {[
             {
-              icon: <Leaf className="w-6 h-6" aria-hidden="true" />,
+              icon: <Leaf className="w-7 h-7" aria-hidden="true" />,
               title: "100% Fresh Selection",
               text: "Carefully curated premium farm cuts and organic ingredients sourced fresh daily. Hygienically packaged with zero shortcuts.",
-              iconColor: "text-emerald-600",
-              iconBg: "bg-emerald-50",
-              classes: "mt-0"
+              bg: "bg-red-50/50",
+              iconColor: "text-red-600",
+              iconBg: "bg-red-100",
             },
             {
-              icon: <Award className="w-6 h-6" aria-hidden="true" />,
+              icon: <Award className="w-7 h-7" aria-hidden="true" />,
               title: "Award-Winning Recipes",
               text: "Our signature spices, double-glazing techniques, and precise wood-smoking methods deliver unforgettable local flavors.",
-              iconColor: "text-orange-500",
-              iconBg: "bg-orange-50",
-              classes: "lg:translate-y-8"
+              bg: "bg-yellow-50/50",
+              iconColor: "text-yellow-600",
+              iconBg: "bg-yellow-100",
             },
           ].map((item) => (
             <div
               key={item.title}
-              className={`bg-[#FAF9F6] rounded-[2.5rem] p-8 md:p-10 shadow-xl shadow-stone-200/30 hover:shadow-2xl hover:shadow-stone-200/40 hover:-translate-y-1 transition-all duration-300 ${item.classes}`}
+              className={`${item.bg} border border-gray-100/80 rounded-3xl p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
             >
-              <div className={`w-12 h-12 rounded-2xl ${item.iconBg} flex items-center justify-center mb-6 ${item.iconColor}`}>
+              <div className={`w-14 h-14 rounded-2xl ${item.iconBg} flex items-center justify-center mb-5 ${item.iconColor}`}>
                 {item.icon}
               </div>
-              <h3 className="font-extrabold text-xl tracking-tight mb-2.5 text-stone-900">
-                {item.title}
-              </h3>
-              <p className="text-stone-500 text-sm leading-relaxed">
-                {item.text}
-              </p>
+              <h3 className="font-black text-xl mb-2 text-stone-900">{item.title}</h3>
+              <p className="text-stone-500 text-sm leading-relaxed">{item.text}</p>
             </div>
           ))}
         </div>
       </section>
 
-      {/* ── SECTION 3: CORE VALUES (Alternating Bento-Style Grid) ── */}
-      <section className="py-24 px-6 bg-[#FAF9F6]">
+      {/* ──────────────────────────────────────────────────────────────────────────
+          CORE VALUES
+      ────────────────────────────────────────────────────────────────────────── */}
+      <section className="py-16 px-6 bg-gray-50/50 border-y border-stone-100">
         <div className="max-w-7xl mx-auto">
-
-          <div className="text-center mb-16">
+          <div className="text-center mb-14">
             <Eyebrow>Our Values</Eyebrow>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-stone-900 tracking-tight mt-3">
-              Why Customers Choose Us
-            </h2>
+            <h2 className="text-4xl md:text-5xl font-black text-stone-900">Why Customers Choose Us</h2>
           </div>
 
-          {/* Staggered Bento Layout with center-contrast card */}
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-10">
+          <div className="grid md:grid-cols-3 gap-6">
             {[
               {
-                icon: <Leaf className="w-6 h-6 text-emerald-600" aria-hidden="true" />,
+                icon: <Leaf className="w-7 h-7" aria-hidden="true" />,
                 title: "Strictly Fresh",
                 text: "Premium organic farm-fresh pork and chicken, handled and prepared with extreme care daily.",
-                bg: "bg-white hover:shadow-stone-300/30",
-                textStyle: "text-stone-900",
-                descStyle: "text-stone-500",
-                iconBg: "bg-emerald-50"
+                bg: "bg-red-600 text-white",
+                accent: "bg-red-700"
               },
               {
-                icon: <ShieldCheck className="w-6 h-6 text-amber-400" aria-hidden="true" />,
+                icon: <ShieldCheck className="w-7 h-7" aria-hidden="true" />,
                 title: "Guaranteed Hygiene",
                 text: "Hygienically vacuum-sealed cuts and sterile kitchen prep areas standard on every batch.",
-                bg: "bg-stone-900 text-white shadow-xl shadow-stone-900/10",
-                textStyle: "text-white",
-                descStyle: "text-stone-300",
-                iconBg: "bg-stone-800"
+                bg: "bg-stone-900 text-white",
+                accent: "bg-stone-800"
               },
               {
-                icon: <Users className="w-6 h-6 text-orange-500" aria-hidden="true" />,
+                icon: <Users className="w-7 h-7" aria-hidden="true" />,
                 title: "Community Focused",
                 text: "Supporting local Ugandan farmers and providing top-tier catering service across Njeru.",
-                bg: "bg-white hover:shadow-stone-300/30",
-                textStyle: "text-stone-900",
-                descStyle: "text-stone-500",
-                iconBg: "bg-orange-50"
+                bg: "bg-yellow-400 text-stone-900",
+                accent: "bg-yellow-500 text-stone-950"
               },
             ].map((item) => (
               <div
                 key={item.title}
-                className={`${item.bg} rounded-[2.5rem] p-8 md:p-10 hover:-translate-y-1.5 transition-all duration-300 ease-out shadow-lg shadow-stone-200/20`}
+                className={`${item.bg} rounded-3xl p-8 hover:-translate-y-1 transition-all duration-300 hover:shadow-xl`}
               >
-                <div className={`w-12 h-12 rounded-xl ${item.iconBg} flex items-center justify-center mb-6`}>
+                <div className={`w-14 h-14 rounded-2xl ${item.accent} flex items-center justify-center mb-6`}>
                   {item.icon}
                 </div>
-                <h3 className={`text-2xl font-extrabold tracking-tight mb-3 ${item.textStyle}`}>
-                  {item.title}
-                </h3>
-                <p className={`leading-relaxed text-sm ${item.descStyle}`}>
-                  {item.text}
-                </p>
+                <h3 className="text-2xl font-black mb-3">{item.title}</h3>
+                <p className="opacity-80 leading-relaxed text-sm">{item.text}</p>
               </div>
             ))}
           </div>
-
         </div>
       </section>
 
-      {/* ── SECTION 4: TEAM ── */}
-      <section className="py-20 px-6 bg-white">
+      {/* ──────────────────────────────────────────────────────────────────────────
+          TEAM
+      ────────────────────────────────────────────────────────────────────────── */}
+      <section className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-14">
             <Eyebrow>The People</Eyebrow>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-stone-900 tracking-tight mt-2">Meet Our Team</h2>
+            <h2 className="text-4xl md:text-5xl font-black text-stone-900">Meet Our Team</h2>
           </div>
           <Staff />
         </div>
       </section>
 
-      {/* ── SECTION 5: TESTIMONIALS (Integrated) ── */}
-      <section className="py-12 bg-[#FAF9F6]">
+      {/* ──────────────────────────────────────────────────────────────────────────
+          TESTIMONIALS
+      ────────────────────────────────────────────────────────────────────────── */}
+      <section className="py-12 bg-gray-50/50">
         <Testimonials />
       </section>
 
-      {/* ── SECTION 6: GALLERY ── */}
-      <section className="py-20 bg-white">
+      {/* ──────────────────────────────────────────────────────────────────────────
+          GALLERY
+      ────────────────────────────────────────────────────────────────────────── */}
+      <section className="py-20">
         <div className="max-w-7xl mx-auto px-6 text-center mb-12">
           <Eyebrow>Gallery</Eyebrow>
-          <h2 className="text-4xl md:text-5xl font-extrabold text-stone-900 tracking-tight mt-2">Our Kitchen & Food</h2>
+          <h2 className="text-4xl md:text-5xl font-black text-stone-900">Our Kitchen & Food</h2>
         </div>
         <Gallery />
       </section>
 
-      {/* ── SECTION 7: DELIVERY BANNER (Split Canvas Layout) ── */}
-      <section className="py-20 px-6 bg-[#FAF9F6]">
+      {/* ──────────────────────────────────────────────────────────────────────────
+          DELIVERY BANNER
+      ────────────────────────────────────────────────────────────────────────── */}
+      <section className="py-12 px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="max-w-7xl mx-auto px-6 text-center mb-12">
             <Eyebrow>Delivery</Eyebrow>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-stone-900 tracking-tight mt-2">Prompt Dispatch</h2>
+            <h2 className="text-4xl md:text-5xl font-black text-stone-900">Prompt Dispatch</h2>
           </div>
+          <div className="rounded-[48px] overflow-hidden shadow-2xl grid lg:grid-cols-2">
 
-          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-
-            {/* Left Side — Aesthetic Yellow Backdrop with Delivery Rider */}
-            <div className="relative min-h-[440px] flex items-center justify-center overflow-hidden bg-amber-400 rounded-[2.5rem] shadow-xl shadow-stone-200/50">
+            {/* Left — yellow panel, bike image */}
+            <div className="relative min-h-[420px] flex items-center justify-center overflow-hidden bg-yellow-400">
               <img
                 src={Bike}
-                alt={`${BRAND_NAME} delivery rider`}
+                alt="GreenPork delivery rider"
                 className="relative z-10 w-full max-w-md object-contain px-6"
-                style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.15))" }}
+                style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.25))" }}
               />
-              {/* Average Time Badge */}
-              <div className="absolute bottom-8 left-8 bg-white text-stone-900 rounded-2xl px-5 py-3 shadow-xl shadow-stone-800/10">
-                <p className="text-[10px] uppercase tracking-widest text-stone-400 font-bold">Average time</p>
-                <p className="text-2xl font-extrabold text-orange-600 mt-0.5">30 min</p>
+              {/* Time badge */}
+              <div className="absolute bottom-8 left-8 bg-white shadow-md text-stone-900 rounded-2xl px-5 py-3">
+                <p className="text-[10px] uppercase tracking-widest text-stone-400">Average time</p>
+                <p className="text-2xl font-black">30 min</p>
               </div>
             </div>
 
-            {/* Right Side — Dynamic Copy & Actions */}
-            <div className="flex flex-col justify-center">
+            {/* Right — white, copy + CTA */}
+            <div className="bg-white px-10 md:px-16 py-16 flex flex-col justify-center border-y border-r border-stone-100 rounded-r-[48px]">
               <Eyebrow>Fast Delivery</Eyebrow>
-              <h2 className="text-4xl md:text-5xl font-extrabold text-stone-900 leading-tight mb-5 tracking-tight mt-2">
+              <h2 className="text-4xl md:text-5xl font-black text-stone-900 leading-tight mb-5">
                 Fresh Cuts,<br />
-                <span className="text-emerald-600">At Your Door</span>
+                <span className="text-red-600">At Your Door</span>
               </h2>
               <p className="text-stone-500 leading-relaxed text-lg mb-8 max-w-sm">
                 We handle our logistical pipelines strictly to guarantee that your cuts arrive vacuum sealed, cold-stored,
@@ -274,135 +262,135 @@ const About = () => {
                   href={`https://wa.me/${WHATSAPP_NUMBER}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 bg-emerald-600 hover:bg-emerald-700 text-white px-8 py-4 rounded-2xl font-bold text-base transition-all duration-200 shadow-xl shadow-emerald-600/10 hover:scale-[1.01]"
+                  className="inline-flex items-center gap-2.5 bg-red-600 hover:bg-red-700 text-white px-7 py-4 rounded-2xl font-black text-base transition-all shadow-xl hover:scale-[1.02] shadow-red-600/25"
                 >
                   Order Now
                   <ArrowRight size={18} aria-hidden="true" />
                 </a>
                 <a
                   href={`tel:${WHATSAPP_NUMBER}`}
-                  className="inline-flex items-center gap-2.5 bg-white hover:bg-stone-50 text-stone-700 px-8 py-4 rounded-2xl font-bold text-base transition-all duration-200 shadow-sm"
+                  className="inline-flex items-center gap-2.5 bg-gray-100 hover:bg-gray-200 text-gray-800 px-7 py-4 rounded-2xl font-black text-base transition-all"
                 >
                   <Phone size={16} aria-hidden="true" />
                   Call Us
                 </a>
               </div>
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* ── SECTION 8: CONTACT & GEO-LOCATION (Unified Panel) ── */}
-      <section className="py-24 px-6 bg-white">
+      {/* ──────────────────────────────────────────────────────────────────────────
+          CONTACT
+      ────────────────────────────────────────────────────────────────────────── */}
+      <section className="py-24 px-6 bg-gray-50/50 border-t border-stone-100">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <Eyebrow>Find Us</Eyebrow>
-            <h2 className="text-4xl md:text-5xl font-extrabold text-stone-900 tracking-tight mt-2">Get in Touch</h2>
+            <h2 className="text-4xl md:text-5xl font-black text-stone-900">Get in Touch</h2>
           </div>
 
-          <div className="grid lg:grid-cols-12 gap-12 items-stretch">
+          <div className="grid lg:grid-cols-2 gap-8 items-start">
 
-            {/* Unified Info Panel (Col Span 5) */}
-            <div className="lg:col-span-5 bg-[#FAF9F6] rounded-[2.5rem] p-8 md:p-10 flex flex-col justify-between gap-8 shadow-xl shadow-stone-200/30">
-              <div className="space-y-8">
-                {[
-                  {
-                    icon: <MapPin className="w-5 h-5" aria-hidden="true" />,
-                    title: "Location",
-                    desc: "Plot 42, Jinja-Kampala Highway, Njeru, Uganda",
-                    iconColor: "text-orange-500",
-                    iconBg: "bg-orange-50",
-                    href: null,
-                  },
-                  {
-                    icon: <Phone className="w-5 h-5" aria-hidden="true" />,
-                    title: "Phone",
-                    desc: PHONE_DISPLAY,
-                    iconColor: "text-emerald-600",
-                    iconBg: "bg-emerald-50",
-                    href: `tel:${WHATSAPP_NUMBER}`,
-                  },
-                  {
-                    icon: <Clock3 className="w-5 h-5" aria-hidden="true" />,
-                    title: "Opening Hours",
-                    desc: "Monday – Sunday · 10 AM – 10 PM",
-                    iconColor: "text-amber-500",
-                    iconBg: "bg-amber-50",
-                    href: null,
-                  },
-                ].map((item) => {
-                  const Inner = (
-                    <div className="flex items-center gap-4">
-                      <div className={`w-12 h-12 rounded-2xl ${item.iconBg} flex items-center justify-center ${item.iconColor} shrink-0`}>
-                        {item.icon}
-                      </div>
-                      <div>
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-0.5">{item.title}</p>
-                        <p className="font-extrabold text-stone-850 text-base leading-tight">{item.desc}</p>
-                      </div>
-                      {item.href && <ArrowRight size={16} className="text-stone-300 ml-auto" aria-hidden="true" />}
+            {/* Contact cards */}
+            <div className="space-y-4">
+              {[
+                {
+                  icon: <MapPin className="w-6 h-6" aria-hidden="true" />,
+                  title: "Location",
+                  desc: "Plot 42, Jinja-Kampala Highway, Njeru, Uganda",
+                  iconColor: "text-red-600",
+                  iconBg: "bg-red-50",
+                  href: null,
+                },
+                {
+                  icon: <Phone className="w-6 h-6" aria-hidden="true" />,
+                  title: "Phone",
+                  desc: PHONE_DISPLAY,
+                  iconColor: "text-emerald-600",
+                  iconBg: "bg-emerald-50",
+                  href: `tel:${WHATSAPP_NUMBER}`,
+                },
+                {
+                  icon: <Clock3 className="w-6 h-6" aria-hidden="true" />,
+                  title: "Opening Hours",
+                  desc: "Monday – Sunday · 10 AM – 10 PM",
+                  iconColor: "text-amber-500",
+                  iconBg: "bg-amber-50",
+                  href: null,
+                },
+              ].map((item) => {
+                const Inner = (
+                  <div className="flex items-center gap-4">
+                    <div className={`w-14 h-14 rounded-2xl ${item.iconBg} flex items-center justify-center ${item.iconColor} shrink-0`}>
+                      {item.icon}
                     </div>
-                  );
-
-                  return item.href ? (
-                    <a
-                      key={item.title}
-                      href={item.href}
-                      className="block p-2 hover:bg-white rounded-2xl transition-all duration-200"
-                    >
-                      {Inner}
-                    </a>
-                  ) : (
-                    <div key={item.title} className="p-2">
-                      {Inner}
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-widest text-stone-400 mb-0.5">{item.title}</p>
+                      <p className="font-bold text-stone-900 text-lg leading-tight">{item.desc}</p>
                     </div>
-                  );
-                })}
-              </div>
+                    {item.href && <ArrowRight size={16} className="text-gray-300 ml-auto" aria-hidden="true" />}
+                  </div>
+                );
 
-              {/* Seamless WhatsApp CTA */}
+                return item.href ? (
+                  <a
+                    key={item.title}
+                    href={item.href}
+                    className="block bg-white border border-stone-100 rounded-2xl px-6 py-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                  >
+                    {Inner}
+                  </a>
+                ) : (
+                  <div
+                    key={item.title}
+                    className="bg-white border border-stone-100 rounded-2xl px-6 py-5 shadow-sm"
+                  >
+                    {Inner}
+                  </div>
+                );
+              })}
+
+              {/* WhatsApp CTA */}
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-between bg-stone-900 hover:bg-stone-800 text-white rounded-2xl px-6 py-5 shadow-xl shadow-stone-900/10 hover:scale-[1.01] transition-all duration-200"
+                className="flex items-center justify-between bg-stone-900 hover:bg-stone-800 text-white rounded-2xl px-6 py-5 shadow-xl hover:scale-[1.01] transition-all duration-200"
               >
                 <div>
-                  <p className="text-[10px] uppercase tracking-widest text-stone-400 mb-0.5">Order via</p>
-                  <p className="font-extrabold text-lg">WhatsApp Chat</p>
+                  <p className="text-[10px] uppercase tracking-widest text-white/60 mb-0.5">Order via</p>
+                  <p className="font-black text-lg">WhatsApp</p>
                 </div>
-                <ArrowRight size={20} className="text-amber-400" aria-hidden="true" />
+                <ArrowRight size={20} aria-hidden="true" />
               </a>
             </div>
 
-            {/* Embedded Location Map (Col Span 7) */}
-            <div className="lg:col-span-7 rounded-[2.5rem] overflow-hidden shadow-xl shadow-stone-200/40 bg-[#FAF9F6] aspect-[4/3] lg:aspect-auto flex items-center justify-center">
+            {/* Map */}
+            <div className="rounded-3xl overflow-hidden border border-stone-100 shadow-xl bg-white aspect-[4/3] lg:aspect-auto lg:h-[460px] flex items-center justify-center text-gray-300 text-sm font-semibold">
               <iframe
                 src="https://www.google.com/maps/embed?pb="
-                className="w-full h-full border-none"
+                className="w-full h-full"
                 loading="lazy"
                 title={`${BRAND_NAME} location`}
               />
             </div>
-
           </div>
         </div>
       </section>
 
-      {/* ── FOOTER ── */}
-      <footer className="py-10 px-6 bg-[#FAF9F6]">
+      {/* ── Footer ── */}
+      <footer className="border-t border-gray-100 py-8 px-6">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-stone-400 text-xs font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
+          <p className="text-gray-400 text-sm font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
           <Link
             to="/returnPolicy"
-            className="text-xs font-bold text-emerald-600 hover:text-emerald-700 transition-colors"
+            className="text-sm font-bold text-red-600 hover:text-red-700 transition-colors"
           >
             Return Policy
           </Link>
         </div>
       </footer>
-
     </div>
   );
 };

@@ -54,7 +54,7 @@ const Gallery = () => {
                         >
                             <X className="h-5 w-5" />
                         </button>
-                        
+
                         <img
                             src={selectedImage}
                             alt="Culinary view enlarged"

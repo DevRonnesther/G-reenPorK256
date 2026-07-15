@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   ChevronLeft, ChevronRight,
-  ShoppingBasket, Leaf, Truck, ShieldCheck,
-  Star, Clock, Flame, Minus, Plus,
+  ShoppingBasket, Play, Leaf, Truck, ShieldCheck,
+  Search, SlidersHorizontal, Star, Clock, Flame, Minus, Plus, User,
 } from "lucide-react";
 import { useCart } from "../components/cart/CartContext";
+//import Navbar from "../components/Navbar/Navbar.jsx"
 
 import FreshPork from "../assets/freshporke.png";
 import PorkStake from "../assets/ChatGPT Image Jun 18, 2026, 03_34_25 PM.png";
@@ -14,19 +15,11 @@ import Burger from "../assets/Burger.png";
 import Pizza from "../assets/pizza(17).png";
 import Chicken from "../assets/pngwing.com (25).png";
 
-// ─── CONFIGURATION ───────────────────────────────────────────────────────────
+// ─── Config ─────────────────────────────────────────────────
 const WHATSAPP_NUMBER = "256776464823";
 const AUTOPLAY_INTERVAL_MS = 5500;
 const SPICE_LEVELS = ["Mild", "Spicy", "Hot"];
-
-// Brand palette
-// Primary Green   : #0edb0e  — brand primary, CTAs, interactive highlights
-// Secondary Orange: #F97316  — spice levels, heat/flame details
-// Accent Yellow   : #FACC15  — slide backdrops, star ratings, thumb borders
-// Background       : #FFFFFF  — primary containers
-// Dark Text        : #1F2937  — key typography
-// Light Gray       : #F8FAFC  — card backgrounds, secondary pills
-// Border Gray      : #E5E7EB  — dividers, structural borders
+const SPICE_SHORT = { Mild: "M", Spicy: "S", Hot: "H" };
 
 const FEATURES = [
   { icon: Leaf, label: "100% Fresh", sub: "Ingredients" },
@@ -104,7 +97,7 @@ const SLIDES = [
 
 const fmt = (n) => Number(n).toLocaleString();
 
-// ─── MOTION VARIANTS ─────────────────────────────────────────────────────────
+// ─── Animation variants ─────────────────────────────────────────────────
 const imageVariants = {
   enter: (direction) => ({ opacity: 0, x: direction === "right" ? 70 : -70, scale: 0.9, rotate: direction === "right" ? 4 : -4 }),
   center: { opacity: 1, x: 0, scale: 1, rotate: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
@@ -118,7 +111,7 @@ const fadeUp = (delay = 0) => ({
   animate: { opacity: 1, y: 0, transition: { duration: 0.4, delay, ease: [0.16, 1, 0.3, 1] } },
 });
 
-// ─── SHARED HOOK: CAROUSEL STATE ─────────────────────────────────────────────
+// ─── Shared hook: carousel state ────────────────────
 function useSlideCarousel() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState("right");
@@ -155,7 +148,8 @@ function useSlideCarousel() {
   return { current, direction, isPaused, setIsPaused, goTo, next, prev, slide: SLIDES[current], nextSlide };
 }
 
-// ─── LOCAL SUB-COMPONENTS ────────────────────────────────────────────────────
+// ─── Subcomponents ────────────────────────────────────────────────
+
 function SpicePills({ active }) {
   return (
     <div className="flex items-center gap-2 mt-4" role="group" aria-label="Spice level">
@@ -165,9 +159,9 @@ function SpicePills({ active }) {
           <span
             key={level}
             aria-current={isActive}
-            className={`px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide transition-colors duration-200 ${isActive
-              ? "bg-[#F97316] text-white"
-              : "bg-[#F8FAFC] text-[#1F2937]/60"
+            className={`px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide border transition-colors duration-200 ${isActive
+              ? "bg-red-600 border-red-600 text-white"
+              : "bg-white border-stone-200 text-stone-500"
               }`}
           >
             {level}
@@ -178,6 +172,7 @@ function SpicePills({ active }) {
   );
 }
 
+/** Bottom thumbnail rail, framed by prev/next arrows — mirrors the reference's carousel strip. */
 function DesktopThumbnailRail({ slides, current, onSelect, onPrev, onNext }) {
   return (
     <div className="flex items-center gap-3">
@@ -185,7 +180,7 @@ function DesktopThumbnailRail({ slides, current, onSelect, onPrev, onNext }) {
         type="button"
         onClick={onPrev}
         aria-label="Previous product"
-        className="h-11 w-11 flex-shrink-0 rounded-full bg-[#F8FAFC] hover:bg-[#E5E7EB] flex items-center justify-center text-[#1F2937] transition-colors"
+        className="h-11 w-11 flex-shrink-0 rounded-full border border-stone-200 bg-white flex items-center justify-center hover:bg-stone-50 transition-colors"
       >
         <ChevronLeft size={16} aria-hidden="true" />
       </button>
@@ -200,7 +195,7 @@ function DesktopThumbnailRail({ slides, current, onSelect, onPrev, onNext }) {
               aria-label={`Show ${s.category}`}
               aria-current={isActive}
               onClick={() => onSelect(index)}
-              className={`h-14 w-14 rounded-2xl overflow-hidden bg-[#F8FAFC] transition-all duration-200 ${isActive ? "ring-2 ring-[#FACC15] scale-105 shadow-md" : "opacity-70 hover:opacity-100"
+              className={`h-14 w-14 rounded-2xl overflow-hidden border-2 bg-stone-50 transition-all duration-200 ${isActive ? "border-yellow-400 scale-105 shadow-md" : "border-stone-100 opacity-70 hover:opacity-100"
                 }`}
             >
               <img src={s.image} alt="" aria-hidden="true" className="h-full w-full object-cover" />
@@ -213,7 +208,7 @@ function DesktopThumbnailRail({ slides, current, onSelect, onPrev, onNext }) {
         type="button"
         onClick={onNext}
         aria-label="Next product"
-        className="h-11 w-11 flex-shrink-0 rounded-full bg-[#1F2937] text-white flex items-center justify-center hover:bg-[#1F2937]/90 transition-colors"
+        className="h-11 w-11 flex-shrink-0 rounded-full bg-stone-900 text-white flex items-center justify-center hover:bg-stone-800 transition-colors"
       >
         <ChevronRight size={16} aria-hidden="true" />
       </button>
@@ -221,7 +216,7 @@ function DesktopThumbnailRail({ slides, current, onSelect, onPrev, onNext }) {
   );
 }
 
-// ─── DESKTOP HERO VIEW ───────────────────────────────────────────────────────
+/** Desktop hero — diagonal white/yellow split, restructured after the reference layout. */
 function DesktopHero({ carousel }) {
   const BRAND_NAME = "GreenPork";
   const year = useMemo(() => new Date().getFullYear(), []);
@@ -241,19 +236,18 @@ function DesktopHero({ carousel }) {
   return (
     <section
       aria-label="Featured products"
-      className="hidden lg:block w-full h-screen overflow-hidden bg-white"
+      className="hidden lg:block w-full h-screen overflow-hidden// bg-white"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Diagonal accent-yellow panel */}
+      {/* Diagonal yellow panel */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-[#FACC15]"
+        className="absolute inset-0 bg-yellow-400"
         style={{ clipPath: "polygon(58% 0, 100% 0, 100% 100%, 38% 100%)" }}
       />
 
-      <div className="relative grid grid-cols-2 min-h-[38rem] h-full">
-
+      <div className="relative// grid grid-cols-2 min-h-[38rem] h-full">
         {/* Left: copy */}
         <div className="flex flex-col justify-center px-16 py-16 max-w-xl">
           {/* Eyebrow tag */}
@@ -264,11 +258,11 @@ function DesktopHero({ carousel }) {
               exit={{ opacity: 0, transition: { duration: 0.2 } }}
               className="flex items-center gap-2 mb-4"
             >
-              <span className="h-1.5 w-1.5 rounded-full bg-[#0edb0e]" aria-hidden="true" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-[#1F2937]/60">
+              <span className="h-2 w-2 rounded-full bg-orange-600" aria-hidden="true" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">
                 {slide.eyebrow}
               </span>
-              <span className="h-px w-10 bg-[#E5E7EB]" aria-hidden="true" />
+              <span className="h-px w-10 bg-stone-300" aria-hidden="true" />
             </motion.div>
           </AnimatePresence>
 
@@ -277,11 +271,11 @@ function DesktopHero({ carousel }) {
               key={`title-${slide.id}`}
               {...fadeUp(0.05)}
               exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
-              className="leading-[1.05] max-w-md animate-none"
+              className="leading-[1.05] max-w-md"
             >
-              <span className="block text-lg font-semibold text-[#1F2937]/60">{slide.title[0]}</span>
-              <span className="block text-5xl xl:text-6xl font-black text-[#1F2937] tracking-tight">{slide.title[1]}</span>
-              <span className="block text-3xl xl:text-4xl font-black text-[#0edb0e] tracking-tight">{slide.title[2]}</span>
+              <span className="block text-lg font-semibold text-stone-500">{slide.title[0]}</span>
+              <span className="block text-5xl xl:text-6xl font-black text-stone-900">{slide.title[1]}</span>
+              <span className="block text-3xl xl:text-4xl font-black text-orange-600">{slide.title[2]}</span>
             </motion.h1>
           </AnimatePresence>
 
@@ -290,7 +284,7 @@ function DesktopHero({ carousel }) {
               key={`desc-${slide.id}`}
               {...fadeUp(0.1)}
               exit={{ opacity: 0, transition: { duration: 0.2 } }}
-              className="text-[#1F2937]/70 leading-relaxed mt-4 max-w-sm text-sm"
+              className="text-stone-400 leading-relaxed mt-4 max-w-sm text-sm"
             >
               {slide.description}
             </motion.p>
@@ -302,31 +296,32 @@ function DesktopHero({ carousel }) {
             </motion.div>
           </AnimatePresence>
 
-          {/* CTA row: Order Now + Circular price badge */}
+          {/* CTA row: Order Now + Watch Video */}
           <div className="flex items-center gap-5 mt-7">
             <button
               type="button"
               onClick={handleAddToCart}
               aria-label={`Add ${slide.category} to cart`}
-              className="inline-flex items-center gap-2 bg-[#0edb0e] hover:bg-[#0edb0e]/90 text-white font-bold text-sm px-2.5 py-2.5 rounded-full transition-colors uppercase tracking-wide"
+              className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-800 text-white font-bold text-sm px-2.5 py-2.5 rounded-full transition-colors uppercase tracking-wide"
             >
-              <div className="bg-white rounded-full mr-2 p-2 text-[#0edb0e]">
-                <ShoppingBasket size={18} />
+              <div className="bg-white rounded-full mr-2 p-2 text-red-600">
+                <ShoppingBasket />
               </div>
               Order Now
             </button>
 
+            {/* Circular price badge, echoing the reference's "ONLY UGX" ring */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={`price-badge-${slide.id}`}
                 {...fadeUp(0.15)}
                 exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                className="z-20 h-28 w-28 rounded-full bg-white flex flex-col items-center justify-center shadow-2xl shadow-[#E5E7EB]/50"
+                className=" z-20 h-28 w-28 rounded-full bg-white border-none border-orange-600 flex flex-col items-center justify-center shadow-lg// shadow-none"
               >
-                <span className="text-[10px] font-bold uppercase tracking-wide text-[#1F2937]/50">Only</span>
-                <span className="text-[10px] font-bold uppercase tracking-wide text-[#1F2937]/50 -mt-0.5">UGX</span>
-                <span className="text-md font-black text-[#0edb0e] leading-tight mt-0.5">{fmt(slide.price)}</span>
-                <span className="text-[10px] text-[#1F2937]/50 line-through">{fmt(slide.oldPrice)}</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide text-stone-400">Only</span>
+                <span className="text-[10px] font-bold uppercase tracking-wide text-stone-400 -mt-0.5">UGX</span>
+                <span className="text-md font-black text-orange-600 leading-tight mt-0.5">{fmt(slide.price)}</span>
+                <span className="text-[10px] text-red-500 line-through">{fmt(slide.oldPrice)}</span>
               </motion.div>
             </AnimatePresence>
           </div>
@@ -335,12 +330,12 @@ function DesktopHero({ carousel }) {
           <div className="flex items-center gap-6 mt-9">
             {FEATURES.map(({ icon: Icon, label, sub }) => (
               <div key={label} className="flex items-center gap-2">
-                <span className="h-9 w-9 rounded-full bg-[#F8FAFC] flex items-center justify-center text-[#0edb0e] flex-shrink-0">
+                <span className="h-9 w-9 rounded-full bg-white border border-stone-200 flex items-center justify-center text-orange-600 flex-shrink-0">
                   <Icon size={16} aria-hidden="true" />
                 </span>
                 <div className="leading-tight">
-                  <p className="text-xs font-bold text-[#1F2937]">{label}</p>
-                  <p className="text-[11px] text-[#1F2937]/60">{sub}</p>
+                  <p className="text-xs font-bold text-stone-900">{label}</p>
+                  <p className="text-[11px] text-stone-400">{sub}</p>
                 </div>
               </div>
             ))}
@@ -352,7 +347,7 @@ function DesktopHero({ carousel }) {
           </div>
         </div>
 
-        {/* Right: image + peeking next image */}
+        {/* Right: image + circular price badge + peeking next image */}
         <div className="flex items-center justify-center overflow-hidden">
           <img
             src={nextSlide.image}
@@ -378,19 +373,21 @@ function DesktopHero({ carousel }) {
           </AnimatePresence>
           <motion.div className="absolute inset-0 pointer-events-none" animate={floatAnimation} aria-hidden="true" />
 
-          <div className="absolute bottom-5 right-12 flex items-center gap-2 text-[#1F2937] font-black text-sm z-10">
+
+
+          <div className="absolute bottom-10 right-12 flex items-center gap-2 text-stone-900 font-black text-sm z-10">
             <span>{String(current + 1).padStart(2, "0")}</span>
-            <span className="text-[#1F2937]/30">/ {String(SLIDES.length).padStart(2, "0")}</span>
+            <span className="text-stone-900/30">/ {String(SLIDES.length).padStart(2, "0")}</span>
           </div>
         </div>
 
         {/* Footer */}
-        <footer className="absolute bottom-5 left-10 px-6">
+        <footer className="absolute  bottom-10 left-10 px-6">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-[#1F2937] text-xs font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
+            <p className="text-black tracking-leading text-xs font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
             <Link
               to="/returnPolicy"
-              className="text-xs font-bold text-[#0edb0e] hover:opacity-90 transition-colors"
+              className="text-sm font-bold text-orange-600 hover:text-orange-700 transition-colors"
             >
               Return Policy
             </Link>
@@ -401,6 +398,7 @@ function DesktopHero({ carousel }) {
   );
 }
 
+/** Mobile Hero — app-style card layout. */
 // ─── MOBILE HERO VIEW ────────────────────────────────────────────────────────
 function MobileHero({ carousel }) {
   const { current, direction, slide, goTo, next, prev, setIsPaused } = carousel;
@@ -484,7 +482,7 @@ function MobileHero({ carousel }) {
               type="button"
               onClick={() => setQuantity((q) => q + 1)}
               aria-label="Increase quantity"
-              className="text-[#0edb0e]"
+              className="text-red-600"
             >
               <Plus size={15} aria-hidden="true" />
             </button>
@@ -531,7 +529,7 @@ function MobileHero({ carousel }) {
               onClick={() => goTo(idx)}
               aria-label={`Show ${s.category}`}
               aria-current={current === idx}
-              className={`h-11 w-11 rounded-full overflow-hidden bg-[#F8FAFC] flex-shrink-0 transition-all duration-200 ${current === idx ? "ring-2 ring-[#0edb0e] scale-105" : "opacity-70"
+              className={`h-11 w-11 rounded-full overflow-hidden bg-[#F8FAFC] flex-shrink-0 transition-all duration-200 ${current === idx ? "ring-2 ring-red-600 scale-105" : "opacity-70"
                 }`}
             >
               <img src={s.image} alt="" aria-hidden="true" className="h-full w-full object-cover" />
@@ -549,7 +547,7 @@ function MobileHero({ carousel }) {
             type="button"
             onClick={handleAddToCart}
             aria-label={`Add ${quantity} ${slide.category} to cart`}
-            className="flex-1 inline-flex items-center justify-center gap-2 bg-[#0edb0e] hover:bg-[#0edb0e]/90 text-white font-extrabold text-sm py-4 rounded-full transition-colors uppercase tracking-wide"
+            className="flex-1 inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-600/90 text-white font-extrabold text-sm py-4 rounded-full transition-colors uppercase tracking-wide"
           >
             <ShoppingBasket size={16} aria-hidden="true" />
             Add to cart
@@ -569,7 +567,7 @@ function MobileHero({ carousel }) {
   );
 }
 
-// ─── MAIN CAROUSEL COMPONENT ─────────────────────────────────────────────────
+// ─── Main component ─────────────────────────────────────────────────────
 export default function Hero() {
   const carousel = useSlideCarousel();
 

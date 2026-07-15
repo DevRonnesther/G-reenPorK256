@@ -25,8 +25,8 @@ const UG_REGIONS = [
 
 // ─── LOCAL SUB-COMPONENTS ────────────────────────────────────────────────────
 const Eyebrow = ({ children }) => (
-  <span className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
-    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+  <span className="inline-flex items-center gap-2 bg-red-50 text-red-700 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider">
+    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" aria-hidden="true" />
     {children}
   </span>
 );
@@ -115,7 +115,7 @@ export default function Cart() {
   if (cartItems.length === 0) {
     return (
       <div className="min-h-screen bg-[#FAF9F6] flex flex-col items-center justify-center px-6 py-24 text-center">
-        <div className="w-20 h-20 rounded-3xl bg-white shadow-xl shadow-stone-200/50 flex items-center justify-center text-[#0edb0e] mb-8">
+        <div className="w-20 h-20 rounded-3xl bg-white shadow-xl shadow-stone-200/50 flex items-center justify-center text-red-600 mb-8">
           <ShoppingBag size={32} strokeWidth={1.5} aria-hidden="true" />
         </div>
         <h2 className="text-3xl font-extrabold text-stone-900 tracking-tight">Your cart is resting empty</h2>
@@ -124,7 +124,7 @@ export default function Cart() {
         </p>
         <Link
           to="/Products"
-          className="inline-flex items-center gap-2 mt-8 bg-[#0edb0e] hover:bg-emerald-700 text-white font-bold text-sm px-8 py-4 rounded-2xl transition-all duration-200 shadow-lg shadow-[#0edb0e]/10 active:scale-[0.98]"
+          className="inline-flex items-center gap-2 mt-8 bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-8 py-4 rounded-2xl transition-all duration-200 shadow-lg shadow-red-600/10 active:scale-[0.98]"
         >
           Browse Menu
           <ArrowRight size={16} aria-hidden="true" />
@@ -215,7 +215,7 @@ export default function Cart() {
                         </div>
 
                         {/* Item Total */}
-                        <p className="font-bold text-[#0edb0e] text-sm sm:text-base">
+                        <p className="font-bold text-red-600 text-sm sm:text-base">
                           UGX {fmt(item.price * item.quantity)}
                         </p>
 
@@ -238,14 +238,14 @@ export default function Cart() {
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Delivery dispatch</span>
-                  <span className={`font-semibold ${shipping === 0 ? "text-[#0edb0e]" : "text-stone-800"}`}>
+                  <span className={`font-semibold ${shipping === 0 ? "text-red-600" : "text-stone-800"}`}>
                     {shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`}
                   </span>
                 </div>
 
                 <div className="flex justify-between items-end pt-4">
                   <span className="font-bold text-stone-800 text-sm">Grand Total</span>
-                  <span className="text-2xl font-black text-[#0edb0e]">UGX {fmt(total)}</span>
+                  <span className="text-2xl font-black text-red-600">UGX {fmt(total)}</span>
                 </div>
               </div>
             </div>
@@ -273,8 +273,8 @@ export default function Cart() {
               {/* Full Name */}
               <div className="space-y-2">
                 <label htmlFor="fullName" className="flex items-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase tracking-wider">
-                  <User size={13} className="text-[#0edb0e]" />
-                  Full Name <span className="text-orange-500">*</span>
+                  <User size={13} className="text-red-600" />
+                  Full Name <span className="text-yellow-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -284,21 +284,21 @@ export default function Cart() {
                   onChange={handleInputChange}
                   onBlur={() => handleBlur("fullName")}
                   placeholder="e.g. John Doe"
-                  className={`w-full h-12 px-4 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-500/10 ${touched.fullName && formData.fullName.trim().length < 2
-                    ? "bg-orange-50 focus:ring-orange-500/10"
-                    : ""
+                  className={`w-full h-12 px-4 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-red-500/10 ${touched.fullName && formData.fullName.trim().length < 2
+                      ? "bg-yellow-50 focus:ring-yellow-500/10"
+                      : ""
                     }`}
                 />
                 {touched.fullName && formData.fullName.trim().length < 2 && (
-                  <p className="text-[10px] text-orange-600 font-bold tracking-tight">Please enter your real full name.</p>
+                  <p className="text-[10px] text-yellow-600 font-bold tracking-tight">Please enter your real full name.</p>
                 )}
               </div>
 
               {/* Phone Number */}
               <div className="space-y-2">
                 <label htmlFor="phone" className="flex items-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase tracking-wider">
-                  <Clock size={13} className="text-[#0edb0e]" />
-                  Phone Number <span className="text-orange-500">*</span>
+                  <Clock size={13} className="text-red-600" />
+                  Phone Number <span className="text-yellow-500">*</span>
                 </label>
                 <input
                   type="tel"
@@ -308,20 +308,20 @@ export default function Cart() {
                   onChange={handleInputChange}
                   onBlur={() => handleBlur("phone")}
                   placeholder="e.g. 0776464823"
-                  className={`w-full h-12 px-4 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-500/10 ${touched.phone && formData.phone.trim().length < 9
-                    ? "bg-orange-50 focus:ring-orange-500/10"
-                    : ""
+                  className={`w-full h-12 px-4 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-red-500/10 ${touched.phone && formData.phone.trim().length < 9
+                      ? "bg-yellow-50 focus:ring-yellow-500/10"
+                      : ""
                     }`}
                 />
                 {touched.phone && formData.phone.trim().length < 9 && (
-                  <p className="text-[10px] text-orange-600 font-bold tracking-tight">Please enter a valid phone number.</p>
+                  <p className="text-[10px] text-yellow-600 font-bold tracking-tight">Please enter a valid phone number.</p>
                 )}
               </div>
 
               {/* Delivery Region Selection */}
               <div className="space-y-2">
                 <label htmlFor="city" className="flex items-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase tracking-wider">
-                  <MapPin size={13} className="text-[#0edb0e]" />
+                  <MapPin size={13} className="text-red-600" />
                   Region / City
                 </label>
                 <select
@@ -329,7 +329,7 @@ export default function Cart() {
                   name="city"
                   value={formData.city}
                   onChange={handleInputChange}
-                  className="w-full h-12 px-3.5 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-500/10 cursor-pointer appearance-none"
+                  className="w-full h-12 px-3.5 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-red-500/10 cursor-pointer appearance-none"
                 >
                   {UG_REGIONS.map((region) => (
                     <option key={region} value={region}>{region}</option>
@@ -340,7 +340,7 @@ export default function Cart() {
               {/* Payment Option Selection */}
               <div className="space-y-2">
                 <label htmlFor="paymentMethod" className="flex items-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase tracking-wider">
-                  <CreditCard size={13} className="text-[#0edb0e]" />
+                  <CreditCard size={13} className="text-red-600" />
                   Payment Method
                 </label>
                 <select
@@ -348,7 +348,7 @@ export default function Cart() {
                   name="paymentMethod"
                   value={formData.paymentMethod}
                   onChange={handleInputChange}
-                  className="w-full h-12 px-3.5 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-500/10 cursor-pointer appearance-none"
+                  className="w-full h-12 px-3.5 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-red-500/10 cursor-pointer appearance-none"
                 >
                   <option value="Cash on Delivery">Cash on Delivery</option>
                   <option value="Mobile Money (MTN/Airtel)">Mobile Money</option>
@@ -358,8 +358,8 @@ export default function Cart() {
               {/* Physical Delivery Address */}
               <div className="space-y-2 md:col-span-2">
                 <label htmlFor="address" className="flex items-center gap-1.5 text-[11px] font-bold text-stone-400 uppercase tracking-wider">
-                  <MapPin size={13} className="text-[#0edb0e]" />
-                  Delivery Address <span className="text-orange-500">*</span>
+                  <MapPin size={13} className="text-red-600" />
+                  Delivery Address <span className="text-yellow-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -369,13 +369,13 @@ export default function Cart() {
                   onChange={handleInputChange}
                   onBlur={() => handleBlur("address")}
                   placeholder="Street name, landmark, gate details, or plot number"
-                  className={`w-full h-12 px-4 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-500/10 ${touched.address && formData.address.trim().length <= 3
-                    ? "bg-orange-50 focus:ring-orange-500/10"
-                    : ""
+                  className={`w-full h-12 px-4 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-red-500/10 ${touched.address && formData.address.trim().length <= 3
+                      ? "bg-yellow-50 focus:ring-yellow-500/10"
+                      : ""
                     }`}
                 />
                 {touched.address && formData.address.trim().length <= 3 && (
-                  <p className="text-[10px] text-orange-600 font-bold tracking-tight">Please provide a clear physical address.</p>
+                  <p className="text-[10px] text-yellow-600 font-bold tracking-tight">Please provide a clear physical address.</p>
                 )}
               </div>
 
@@ -391,7 +391,7 @@ export default function Cart() {
                   value={formData.notes}
                   onChange={handleInputChange}
                   placeholder="e.g. Leave order with guard, make pork extra crispy, spicy request etc."
-                  className="w-full p-4 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-emerald-500/10 resize-none"
+                  className="w-full p-4 rounded-xl text-sm font-semibold bg-stone-100/70 focus:bg-white transition-all outline-none focus:ring-4 focus:ring-red-500/10 resize-none"
                 />
               </div>
             </div>
@@ -403,7 +403,7 @@ export default function Cart() {
                   href={checkoutHref}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="w-full h-14 rounded-2xl bg-[#0edb0e] hover:bg-emerald-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition-all duration-200 shadow-xl shadow-[#0edb0e]/15 active:scale-[0.99]"
+                  className="w-full h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition-all duration-200 shadow-xl shadow-red-600/15 active:scale-[0.99]"
                 >
                   Checkout via WhatsApp
                   <ArrowRight size={18} aria-hidden="true" />
@@ -421,11 +421,11 @@ export default function Cart() {
             {/* Platform Guarantees Footer */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 text-xs text-stone-400">
               <div className="flex items-center gap-2">
-                <ShieldCheck size={16} className="text-[#0edb0e]" />
+                <ShieldCheck size={16} className="text-red-600" />
                 <span className="font-medium">100% Fresh Farm Quality Guaranteed</span>
               </div>
               <div className="flex items-center gap-2">
-                <Truck size={16} className="text-[#0edb0e]" />
+                <Truck size={16} className="text-red-600" />
                 <span className="font-medium">Prompt contactless logistics dispatch</span>
               </div>
             </div>

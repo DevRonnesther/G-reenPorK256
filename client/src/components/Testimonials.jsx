@@ -33,8 +33,8 @@ const Testimonials = () => {
         <section className="relative py-24 overflow-hidden bg-white">
 
             {/* BACKGROUND DECORATIVE EFFECTS */}
-            <div className="absolute top-0 left-0 w-80 h-80 bg-emerald-50/40 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 right-0 w-96 h-96 bg-amber-50/30 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 left-0 w-80 h-80 bg-red-50/50 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-50/30 rounded-full blur-3xl pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-6 relative z-10">
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
@@ -42,13 +42,13 @@ const Testimonials = () => {
                     {/* LEFT COLUMN: STICKY BRAND OVERVIEW & TRUST BADGE */}
                     <div className="lg:col-span-5 lg:sticky lg:top-12 space-y-6">
                         <div>
-                            <span className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-wider mb-4">
-                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />
+                            <span className="inline-flex items-center gap-2 text-red-600 text-xs font-bold uppercase tracking-[0.15em] mb-4">
+                                <span className="w-1.5 h-1.5 rounded-full bg-red-600" aria-hidden="true" />
                                 Customer Reviews
                             </span>
 
                             <h2 className="text-4xl md:text-5xl font-extrabold text-stone-900 tracking-tight leading-[1.1] mt-1">
-                                What Our Clients <span className="text-emerald-600">Say About Us</span>
+                                What Our Clients <span className="text-red-600">Say About Us</span>
                             </h2>
                         </div>
 
@@ -58,16 +58,17 @@ const Testimonials = () => {
                         </p>
 
                         {/* Unique Border-free Trust Metric Card */}
-                        <div className="bg-stone-50/70 rounded-[1.5rem] p-6 max-w-md flex items-center gap-6">
+                        <div className="bg-stone-50/70 rounded-[1.5rem] p-6 max-w-md flex items-center gap-5">
                             <div className="text-center">
                                 <span className="text-4xl font-extrabold text-stone-900">4.9</span>
                                 <div className="flex items-center gap-0.5 mt-1">
                                     {[...Array(5)].map((_, i) => (
-                                        <Star key={i} size={11} className="fill-amber-400 text-amber-400" />
+                                        <Star key={i} size={11} className="fill-yellow-400 text-yellow-400" />
                                     ))}
                                 </div>
                             </div>
-                            <p className="text-xs text-stone-500 leading-normal font-medium max-w-[240px]">
+                            <div className="h-10 w-px bg-stone-200" aria-hidden="true" />
+                            <p className="text-xs text-stone-500 leading-normal font-medium">
                                 Based on 1,500+ direct client reviews and local catering experiences.
                             </p>
                         </div>
@@ -79,11 +80,11 @@ const Testimonials = () => {
                         {/* 1. Featured Testimonial (Large Premium Card) */}
                         <div className="bg-stone-900 text-white rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-stone-900/10 hover:-translate-y-1 transition-all duration-300">
                             <div className="flex items-center justify-between mb-8">
-                                <div className="w-12 h-12 rounded-xl bg-emerald-600 flex items-center justify-center">
+                                <div className="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center">
                                     <MessageSquareQuote className="text-white" size={20} />
                                 </div>
                                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 text-stone-200 rounded-full text-[10px] font-bold tracking-wider uppercase backdrop-blur-sm">
-                                    <Check size={12} strokeWidth={3} className="text-amber-400" /> Featured Review
+                                    <Check size={12} strokeWidth={3} className="text-yellow-400" /> Featured Review
                                 </span>
                             </div>
 
@@ -101,7 +102,7 @@ const Testimonials = () => {
                                     <h4 className="text-base font-bold text-white leading-tight">
                                         {testimonials[0].author}
                                     </h4>
-                                    <p className="text-xs text-amber-400 font-semibold mt-0.5">
+                                    <p className="text-xs text-yellow-400 font-semibold mt-0.5">
                                         {testimonials[0].title}
                                     </p>
                                 </div>
@@ -112,12 +113,12 @@ const Testimonials = () => {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
 
                             {/* 2. Secondary Testimonial (Left) */}
-                            <div className="bg-stone-50/70 hover:bg-stone-50 rounded-[2rem] p-8 shadow-md hover:shadow-xl hover:shadow-stone-200/40 transition-all duration-300 hover:-translate-y-1">
+                            <div className="bg-stone-50/70 hover:bg-stone-50 rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                                 <div className="flex items-center justify-between mb-6">
-                                    <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                                        <MessageSquareQuote className="text-emerald-600" size={16} />
+                                    <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+                                        <MessageSquareQuote className="text-red-600" size={16} />
                                     </div>
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50/80 text-emerald-800 rounded-full text-[9px] font-bold tracking-wider uppercase">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[9px] font-bold tracking-wider uppercase">
                                         <Check size={10} strokeWidth={3} /> Verified
                                     </span>
                                 </div>
@@ -136,7 +137,7 @@ const Testimonials = () => {
                                         <h4 className="text-sm font-bold text-stone-900 leading-tight">
                                             {testimonials[1].author}
                                         </h4>
-                                        <p className="text-[11px] text-emerald-700 font-bold mt-0.5">
+                                        <p className="text-[11px] text-red-600 font-semibold mt-0.5">
                                             {testimonials[1].title}
                                         </p>
                                     </div>
@@ -144,12 +145,12 @@ const Testimonials = () => {
                             </div>
 
                             {/* 3. Secondary Testimonial (Right - Staggered Offset) */}
-                            <div className="bg-stone-50/70 hover:bg-stone-50 rounded-[2rem] p-8 shadow-md hover:shadow-xl hover:shadow-stone-200/40 transition-all duration-300 hover:-translate-y-1 lg:translate-y-6">
+                            <div className="bg-stone-50/70 hover:bg-stone-50 rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 lg:translate-y-6">
                                 <div className="flex items-center justify-between mb-6">
-                                    <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center">
-                                        <MessageSquareQuote className="text-emerald-600" size={16} />
+                                    <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
+                                        <MessageSquareQuote className="text-red-600" size={16} />
                                     </div>
-                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50/80 text-emerald-800 rounded-full text-[9px] font-bold tracking-wider uppercase">
+                                    <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[9px] font-bold tracking-wider uppercase">
                                         <Check size={10} strokeWidth={3} /> Verified
                                     </span>
                                 </div>
@@ -168,7 +169,7 @@ const Testimonials = () => {
                                         <h4 className="text-sm font-bold text-stone-900 leading-tight">
                                             {testimonials[2].author}
                                         </h4>
-                                        <p className="text-[11px] text-emerald-700 font-bold mt-0.5">
+                                        <p className="text-[11px] text-red-600 font-semibold mt-0.5">
                                             {testimonials[2].title}
                                         </p>
                                     </div>

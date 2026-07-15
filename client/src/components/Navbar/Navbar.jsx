@@ -4,8 +4,7 @@ import green from "../../assets/ChatGPT Image Jul 12, 2026, 04_17_26 PM.png";
 import { useCart } from "../cart/CartContext";
 import {
   Menu, X, Home, UserCircle, Store, Info, Phone,
-  ShoppingBasket, Heart,
-  Hamburger,
+  ShoppingBasket, Heart, Clock
 } from "lucide-react";
 
 // ─── CONFIGURATION ───────────────────────────────────────────────────────────
@@ -14,10 +13,10 @@ const PHONE_DISPLAY = "+256 776 464 823";
 const BRAND_NAME = "GreenPork";
 
 const NAV_LINKS = [
-  { icon: <Home size={15} aria-hidden="true" />, label: "Home", to: "/" },
-  { icon: <Store size={15} aria-hidden="true" />, label: "Menu", to: "/Products" },
-  { icon: <Info size={15} aria-hidden="true" />, label: "About", to: "/aboutUs" },
-  { icon: <Phone size={15} aria-hidden="true" />, label: "Contact", to: "/contactUs" },
+  { icon: <Home size={18} aria-hidden="true" />, label: "Home", to: "/", desc: "Go to homepage" },
+  { icon: <Store size={18} aria-hidden="true" />, label: "Menu", to: "/Products", desc: "Browse delicious pork" },
+  { icon: <Info size={18} aria-hidden="true" />, label: "About", to: "/aboutUs", desc: "Our story & history" },
+  { icon: <Phone size={18} aria-hidden="true" />, label: "Contact", to: "/contactUs", desc: "Get in touch with us" },
 ];
 
 // ─── MAIN NAVBAR COMPONENT ───────────────────────────────────────────────────
@@ -51,8 +50,8 @@ const Navbar = () => {
       <header className="sticky top-0 z-50 transition-all duration-300">
         <div
           className={`transition-all duration-300 ${scrolled
-              ? "bg-white/95 backdrop-blur-lg shadow-md shadow-[#E5E7EB]/50 py-1"
-              : "bg-white/0 py-3"
+            ? "bg-white/95 backdrop-blur-lg shadow-sm shadow-[#E5E7EB]/30 py-1"
+            : "bg-white/0 py-3"
             }`}
         >
           <div className="max-w-7xl mx-auto px-6">
@@ -63,15 +62,15 @@ const Navbar = () => {
                 <img src={green} alt={BRAND_NAME} className="w-auto h-34 sm:h-14 md:h-44 object-contain" />
               </Link>
 
-              {/* Desktop Nav Pill — Modern Text Indicator (No borders) */}
+              {/* Desktop Nav Pill */}
               <nav className="hidden lg:flex items-center gap-1.5" aria-label="Primary Nav">
                 {NAV_LINKS.map(({ icon, label, to }) => (
                   <NavLink
                     key={to}
                     to={to}
                     className={({ isActive }) =>
-                      `flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 ${isActive
-                        ? "text-[##F97316] bg-[##F97316]/10"
+                      `flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all duration-200 ${isActive
+                        ? "text-red-600 bg-red-600/10"
                         : "text-[#01060e]/70 hover:text-[#01060e] hover:bg-[#F8FAFC]"
                       }`
                     }
@@ -88,12 +87,12 @@ const Navbar = () => {
                 {/* Cart Button */}
                 <Link
                   to="/cart"
-                  className="relative w-11 h-11 rounded-xl bg-[#F8FAFC] hover:bg-[#E5E7EB] flex items-center justify-center transition-colors"
+                  className="relative w-11 h-11 rounded-2xl bg-[#F8FAFC] hover:bg-[#E5E7EB] flex items-center justify-center transition-colors"
                   aria-label="View cart"
                 >
                   <ShoppingBasket size={18} className="text-[#01060e]" aria-hidden="true" />
                   {totalItems > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-orange-500 border-2 md:border-yellow-400 text-white text-[10px] font-bold flex items-center justify-center">
+                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-600 shadow-sm text-white text-[10px] font-bold flex items-center justify-center">
                       {totalItems}
                     </span>
                   )}
@@ -104,30 +103,30 @@ const Navbar = () => {
                   href={`tel:+${WHATSAPP_NUMBER}`}
                   className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-[#01060e] transition-all duration-200 hover:scale-[1.02]"
                 >
-                  <Phone className="text-orange-500" size={16} aria-hidden="true" />
+                  <Phone className="text-red-600" size={16} aria-hidden="true" />
                   {PHONE_DISPLAY}
                 </a>
 
                 {/* Profile Icon link */}
                 <Link
                   to="/profile"
-                  className="w-11 h-11 rounded-xl flex items-center justify-center text-[#01060e]/60 hover:text-[#01060e] hover:bg-[#F8FAFC] transition-colors"
+                  className="w-11 h-11 rounded-2xl flex items-center justify-center text-[#01060e]/60 hover:text-[#01060e] hover:bg-[#F8FAFC] transition-colors"
                   aria-label="View profile"
                 >
                   <UserCircle size={24} aria-hidden="true" />
                 </Link>
               </div>
 
-              {/* Mobile Trigger Hub (Zero Border Frames) */}
+              {/* Mobile Trigger Hub */}
               <div className="flex lg:hidden items-center gap-2">
                 <Link
                   to="/cart"
-                  className="relative w-11 h-11 rounded-xl bg-[#F8FAFC] flex items-center justify-center"
+                  className="relative w-11 h-11 rounded-2xl bg-[#F8FAFC] flex items-center justify-center"
                   aria-label="View cart"
                 >
                   <ShoppingBasket size={18} className="text-[#01060e]" aria-hidden="true" />
                   {totalItems > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-[#F97316] text-white text-[10px] font-bold flex items-center justify-center">
+                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center">
                       {totalItems}
                     </span>
                   )}
@@ -135,13 +134,13 @@ const Navbar = () => {
 
                 <button
                   onClick={() => setOpen((v) => !v)}
-                  className="w-11 h-11 rounded-xl bg-[#F8FAFC] flex items-center justify-center hover:bg-[#E5E7EB] transition-all duration-200"
+                  className="w-11 h-11 rounded-2xl bg-[#F8FAFC] flex items-center justify-center hover:bg-[#E5E7EB] transition-all duration-200"
                   aria-label={open ? "Close menu" : "Open menu"}
                   aria-expanded={open}
                 >
                   {open
                     ? <X size={18} className="text-[#01060e]" aria-hidden="true" />
-                    : <Hamburger size={24} className="text-[#01060e]" aria-hidden="true" />
+                    : <Menu size={22} className="text-[#01060e]" aria-hidden="true" />
                   }
                 </button>
               </div>
@@ -151,62 +150,101 @@ const Navbar = () => {
         </div>
       </header>
 
-      {/* Mobile full-screen overlay */}
+      {/* Glassmorphic overlay background */}
       <div
-        className={`fixed inset-0 z-50 flex flex-col bg-white backdrop-blur-md transition-all duration-300 ease-in-out ${open
-          ? "translate-x-0 opacity-100 pointer-events-auto"
-          : "translate-x-full opacity-0 pointer-events-none"
+        className={`fixed inset-0 z-40 bg-[#01060e]/50 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+          }`}
+        onClick={closeMenu}
+        aria-hidden="true"
+      />
+
+      {/* Unique Mobile Bottom-Sheet Bento Drawer */}
+      <div
+        className={`fixed bottom-0 left-0 right-0 z-50 flex flex-col bg-white rounded-t-[3rem] shadow-2xl transition-all duration-500 ease-out lg:hidden max-h-[85vh] ${open ? "translate-y-0" : "translate-y-full"
           }`}
         aria-hidden={!open}
       >
-        {/* Mobile Header */}
-        <div className="flex items-center justify-between px-6 pt-6 pb-5 sm:px-8 sm:pt-8">
-          <div>
-            <h2 className="text-2xl font-black text-[#01060e] tracking-tight">Menu</h2>
-            <p className="text-[#01060e]/50 text-xs mt-0.5">Explore {BRAND_NAME}</p>
-          </div>
+        {/* Pull-down indicator bar representing mobile-native sheet styling */}
+        <div className="w-12 h-1.5 bg-[#E5E7EB]/80 rounded-full mx-auto mt-4 mb-2 shrink-0" onClick={closeMenu} />
 
+        {/* Drawer Header */}
+        <div className="flex items-center justify-between px-6 pb-4 pt-2">
+          <div>
+            <h2 className="text-xl font-black text-[#01060e] tracking-tight">Navigation</h2>
+            <p className="text-[#01060e]/50 text-[11px] mt-0.5">Where would you like to go today?</p>
+          </div>
           <button
             onClick={closeMenu}
-            className="w-11 h-11 rounded-xl bg-[#F8FAFC] flex items-center justify-center text-[#01060e] hover:text-[#01060e]/70 hover:bg-[#E5E7EB] transition-colors focus:outline-none focus:ring-2 focus:ring-[#E5E7EB]"
+            className="w-9 h-9 rounded-full bg-[#F8FAFC] flex items-center justify-center text-[#01060e] hover:bg-[#E5E7EB] transition-colors"
             aria-label="Close menu"
           >
-            <X size={20} aria-hidden="true" />
+            <X size={16} aria-hidden="true" />
           </button>
         </div>
 
-        {/* Mobile Link Track */}
-        <nav className="flex-1 px-6 sm:px-8 pt-4 space-y-1.5 overflow-y-auto" aria-label="Mobile Navigation">
-          {NAV_LINKS.map(({ label, to, icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              onClick={closeMenu}
-              className={({ isActive }) =>
-                `flex items-center gap-4 py-3 px-4 rounded-xl text-xl font-extrabold tracking-tight transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-[#0edb0e]/30 ${isActive
-                  ? "text-[##F97316] bg-[##F97316]/10"
-                  : "text-[#01060e]/75 hover:text-[#01060e] hover:bg-[#F8FAFC]"
-                }`
-              }
-            >
-              <span className="shrink-0 text-[#01060e]/40" aria-hidden="true">
-                {icon}
-              </span>
-              {label}
-            </NavLink>
-          ))}
+        {/* Bento Grid Layout Navigation Links */}
+        <nav className="flex-1 px-6 py-2 overflow-y-auto" aria-label="Mobile Navigation">
+          <div className="grid grid-cols-2 gap-3.5">
+            {NAV_LINKS.map(({ label, to, icon, desc }) => (
+              <NavLink
+                key={to}
+                to={to}
+                onClick={closeMenu}
+                className={({ isActive }) =>
+                  `flex flex-col items-start p-5 rounded-3xl transition-all duration-200 text-left relative overflow-hidden group ${isActive
+                    ? "bg-red-600/10 text-red-600 shadow-sm shadow-red-600/5"
+                    : "bg-[#F8FAFC] text-[#01060e]/75 active:bg-[#E5E7EB]/40"
+                  }`
+                }
+              >
+                {/* Decorative corner accent block */}
+                <span className="absolute top-0 right-0 w-8 h-8 rounded-bl-3xl bg-yellow-400/10 group-hover:bg-yellow-400/20 transition-all duration-200" />
+
+                <span className="p-2.5 rounded-2xl bg-white shadow-sm text-red-600 mb-4 inline-block shrink-0">
+                  {icon}
+                </span>
+
+                <span className="font-extrabold text-sm tracking-tight block">
+                  {label}
+                </span>
+
+                <span className="text-[10px] text-[#01060e]/40 mt-1 line-clamp-1">
+                  {desc}
+                </span>
+              </NavLink>
+            ))}
+          </div>
+
+          {/* Quick-reach delivery state block (Border-free style) */}
+          <div className="mt-5 p-5 rounded-3xl bg-yellow-400/10 flex items-center gap-3.5">
+            <div className="p-2.5 rounded-2xl bg-white text-yellow-600 shrink-0 shadow-sm">
+              <Clock size={16} />
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-yellow-700">Service Hours</p>
+              <p className="text-xs font-black text-[#01060e]">Open Daily · 10 AM – 10 PM</p>
+            </div>
+          </div>
         </nav>
 
-        {/* Mobile Footer Actions */}
-        <div className="px-6 sm:px-8 pb-10 pt-4 bg-[#F8FAFC]/50 border-t border-[#E5E7EB]/50">
+        {/* Soft Contrast Bottom Actions Strip (Separated by subtle shadow rather than line) */}
+        <div className="p-6 bg-[#F8FAFC] shadow-[0_-12px_24px_-10px_rgba(0,0,0,0.04)] flex flex-col sm:flex-row gap-3 rounded-t-[2.5rem]">
           <Link
             to="/favorites"
             onClick={closeMenu}
-            className="flex items-center justify-center gap-2.5 py-3.5 w-full rounded-xl bg-[#01060e] text-white font-bold text-sm hover:opacity-90 active:scale-[0.98] transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#01060e]"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-[#01060e] text-white font-extrabold text-xs uppercase tracking-wider hover:opacity-90 active:scale-[0.98] transition-all duration-150"
           >
-            <Heart size={16} className="text-[#F97316] fill-[#F97316]" aria-hidden="true" />
+            <Heart size={14} className="text-red-600 fill-red-600 animate-pulse" aria-hidden="true" />
             Favorites List
           </Link>
+
+          <a
+            href={`tel:+${WHATSAPP_NUMBER}`}
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl text-red-600 font-extrabold text-xs uppercase tracking-wider bg-red-600/10 hover:bg-red-600/15 active:scale-[0.98] transition-all duration-150"
+          >
+            <Phone size={14} aria-hidden="true" />
+            Call Now
+          </a>
         </div>
       </div>
     </>
