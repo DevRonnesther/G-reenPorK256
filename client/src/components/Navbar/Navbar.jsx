@@ -50,7 +50,7 @@ const Navbar = () => {
       <header className="sticky top-0 z-50 transition-all duration-300">
         <div
           className={`transition-all duration-300 ${scrolled
-            ? "bg-white/95 backdrop-blur-lg shadow-sm shadow-[#E5E7EB]/30 py-1"
+            ? "bg-white/95 backdrop-blur-lg shadow-md shadow-[#E5E7EB]/50 py-1"
             : "bg-white/0 py-3"
             }`}
         >
@@ -69,8 +69,8 @@ const Navbar = () => {
                     key={to}
                     to={to}
                     className={({ isActive }) =>
-                      `flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold uppercase tracking-wider transition-all duration-200 ${isActive
-                        ? "text-red-600 bg-red-600/10"
+                      `flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 ${isActive
+                        ? "text-[#0edb0e] bg-[#0edb0e]/10"
                         : "text-[#01060e]/70 hover:text-[#01060e] hover:bg-[#F8FAFC]"
                       }`
                     }
@@ -87,12 +87,12 @@ const Navbar = () => {
                 {/* Cart Button */}
                 <Link
                   to="/cart"
-                  className="relative w-11 h-11 rounded-2xl bg-[#F8FAFC] hover:bg-[#E5E7EB] flex items-center justify-center transition-colors"
+                  className="relative w-11 h-11 rounded-xl bg-[#F8FAFC] hover:bg-[#E5E7EB] flex items-center justify-center transition-colors"
                   aria-label="View cart"
                 >
                   <ShoppingBasket size={18} className="text-[#01060e]" aria-hidden="true" />
                   {totalItems > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-600 shadow-sm text-white text-[10px] font-bold flex items-center justify-center">
+                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-[#0edb0e] border-2 border-yellow-400 text-white text-[10px] font-bold flex items-center justify-center">
                       {totalItems}
                     </span>
                   )}
@@ -103,14 +103,14 @@ const Navbar = () => {
                   href={`tel:+${WHATSAPP_NUMBER}`}
                   className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-[#01060e] transition-all duration-200 hover:scale-[1.02]"
                 >
-                  <Phone className="text-red-600" size={16} aria-hidden="true" />
+                  <Phone className="text-[#0edb0e]" size={16} aria-hidden="true" />
                   {PHONE_DISPLAY}
                 </a>
 
                 {/* Profile Icon link */}
                 <Link
                   to="/profile"
-                  className="w-11 h-11 rounded-2xl flex items-center justify-center text-[#01060e]/60 hover:text-[#01060e] hover:bg-[#F8FAFC] transition-colors"
+                  className="w-11 h-11 rounded-xl flex items-center justify-center text-[#01060e]/60 hover:text-[#01060e] hover:bg-[#F8FAFC] transition-colors"
                   aria-label="View profile"
                 >
                   <UserCircle size={24} aria-hidden="true" />
@@ -121,12 +121,12 @@ const Navbar = () => {
               <div className="flex lg:hidden items-center gap-2">
                 <Link
                   to="/cart"
-                  className="relative w-11 h-11 rounded-2xl bg-[#F8FAFC] flex items-center justify-center"
+                  className="relative w-11 h-11 rounded-xl bg-[#F8FAFC] flex items-center justify-center"
                   aria-label="View cart"
                 >
                   <ShoppingBasket size={18} className="text-[#01060e]" aria-hidden="true" />
                   {totalItems > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center">
+                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-[#0edb0e] text-white text-[10px] font-bold flex items-center justify-center">
                       {totalItems}
                     </span>
                   )}
@@ -134,7 +134,7 @@ const Navbar = () => {
 
                 <button
                   onClick={() => setOpen((v) => !v)}
-                  className="w-11 h-11 rounded-2xl bg-[#F8FAFC] flex items-center justify-center hover:bg-[#E5E7EB] transition-all duration-200"
+                  className="w-11 h-11 rounded-xl bg-[#F8FAFC] flex items-center justify-center hover:bg-[#E5E7EB] transition-all duration-200"
                   aria-label={open ? "Close menu" : "Open menu"}
                   aria-expanded={open}
                 >
@@ -152,7 +152,7 @@ const Navbar = () => {
 
       {/* Glassmorphic overlay background */}
       <div
-        className={`fixed inset-0 z-40 bg-[#01060e]/50 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        className={`fixed inset-0 z-40 bg-[#01060e]/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
           }`}
         onClick={closeMenu}
         aria-hidden="true"
@@ -160,12 +160,12 @@ const Navbar = () => {
 
       {/* Unique Mobile Bottom-Sheet Bento Drawer */}
       <div
-        className={`fixed bottom-0 left-0 right-0 z-50 flex flex-col bg-white rounded-t-[3rem] shadow-2xl transition-all duration-500 ease-out lg:hidden max-h-[85vh] ${open ? "translate-y-0" : "translate-y-full"
+        className={`fixed bottom-0 left-0 right-0 z-50 flex flex-col bg-white rounded-t-[2.5rem] shadow-2xl transition-all duration-500 ease-out lg:hidden max-h-[85vh] ${open ? "translate-y-0" : "translate-y-full"
           }`}
         aria-hidden={!open}
       >
         {/* Pull-down indicator bar representing mobile-native sheet styling */}
-        <div className="w-12 h-1.5 bg-[#E5E7EB]/80 rounded-full mx-auto mt-4 mb-2 shrink-0" onClick={closeMenu} />
+        <div className="w-12 h-1.5 bg-[#E5E7EB] rounded-full mx-auto mt-4 mb-2 shrink-0" onClick={closeMenu} />
 
         {/* Drawer Header */}
         <div className="flex items-center justify-between px-6 pb-4 pt-2">
@@ -191,16 +191,16 @@ const Navbar = () => {
                 to={to}
                 onClick={closeMenu}
                 className={({ isActive }) =>
-                  `flex flex-col items-start p-5 rounded-3xl transition-all duration-200 text-left relative overflow-hidden group ${isActive
-                    ? "bg-red-600/10 text-red-600 shadow-sm shadow-red-600/5"
-                    : "bg-[#F8FAFC] text-[#01060e]/75 active:bg-[#E5E7EB]/40"
+                  `flex flex-col items-start p-4 rounded-2xl border transition-all duration-200 text-left relative overflow-hidden group ${isActive
+                    ? "border-[#0edb0e]/30 bg-[#0edb0e]/5 text-[#0edb0e]"
+                    : "border-[#E5E7EB]/60 bg-[#F8FAFC] text-[#01060e]/75 active:bg-[#E5E7EB]/40"
                   }`
                 }
               >
                 {/* Decorative corner accent block */}
-                <span className="absolute top-0 right-0 w-8 h-8 rounded-bl-3xl bg-yellow-400/10 group-hover:bg-yellow-400/20 transition-all duration-200" />
+                <span className="absolute top-0 right-0 w-8 h-8 rounded-bl-2xl bg-yellow-400/10 group-hover:bg-yellow-400/20 transition-all duration-200" />
 
-                <span className="p-2.5 rounded-2xl bg-white shadow-sm text-red-600 mb-4 inline-block shrink-0">
+                <span className="p-2.5 rounded-xl bg-white shadow-sm text-[#0edb0e] mb-4 inline-block shrink-0">
                   {icon}
                 </span>
 
@@ -215,9 +215,9 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Quick-reach delivery state block (Border-free style) */}
-          <div className="mt-5 p-5 rounded-3xl bg-yellow-400/10 flex items-center gap-3.5">
-            <div className="p-2.5 rounded-2xl bg-white text-yellow-600 shrink-0 shadow-sm">
+          {/* Quick-reach delivery state block */}
+          <div className="mt-5 p-4 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 flex items-center gap-3.5">
+            <div className="p-2.5 rounded-xl bg-white text-yellow-600 shrink-0">
               <Clock size={16} />
             </div>
             <div>
@@ -227,20 +227,20 @@ const Navbar = () => {
           </div>
         </nav>
 
-        {/* Soft Contrast Bottom Actions Strip (Separated by subtle shadow rather than line) */}
-        <div className="p-6 bg-[#F8FAFC] shadow-[0_-12px_24px_-10px_rgba(0,0,0,0.04)] flex flex-col sm:flex-row gap-3 rounded-t-[2.5rem]">
+        {/* Tactile Bottom Actions Strip */}
+        <div className="p-6 bg-[#F8FAFC] border-t border-[#E5E7EB]/60 flex flex-col sm:flex-row gap-3">
           <Link
             to="/favorites"
             onClick={closeMenu}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-[#01060e] text-white font-extrabold text-xs uppercase tracking-wider hover:opacity-90 active:scale-[0.98] transition-all duration-150"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#01060e] text-white font-extrabold text-xs uppercase tracking-wider hover:opacity-90 active:scale-[0.98] transition-all duration-150"
           >
-            <Heart size={14} className="text-red-600 fill-red-600 animate-pulse" aria-hidden="true" />
+            <Heart size={14} className="text-[#0edb0e] fill-[#0edb0e] animate-pulse" aria-hidden="true" />
             Favorites List
           </Link>
 
           <a
             href={`tel:+${WHATSAPP_NUMBER}`}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-2xl text-red-600 font-extrabold text-xs uppercase tracking-wider bg-red-600/10 hover:bg-red-600/15 active:scale-[0.98] transition-all duration-150"
+            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-[#0edb0e] text-[#0edb0e] font-extrabold text-xs uppercase tracking-wider bg-white hover:bg-[#0edb0e]/5 active:scale-[0.98] transition-all duration-150"
           >
             <Phone size={14} aria-hidden="true" />
             Call Now

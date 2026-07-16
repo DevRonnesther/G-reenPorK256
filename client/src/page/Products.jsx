@@ -1,11 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Heart, Star, Clock, Truck, ShieldCheck, Flame, Leaf,
+  Heart, Star, Clock, Truck, ShieldCheck, Leaf,
   Minus, X, ShoppingBasket, ShoppingBag,
   ArrowRight, ArrowLeft,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 
 // ─── Import Cart Context ──────────────────────────────────────────────────────
 import { useCart } from "../components/cart/CartContext.jsx";
@@ -22,7 +21,6 @@ import Chicken from "../assets/pngwing.com (25).png";
 const WHATSAPP_NUMBER = "256776464823";
 const BRAND_NAME = "GreenPork";
 
-
 // ─── HELPERS ──────────────────────────────────────────────────────────────────
 const pct = (price, anchoring) => {
   const anchorNum = parseInt(anchoring, 10);
@@ -32,7 +30,7 @@ const pct = (price, anchoring) => {
 
 const fmt = (n) => Number(n).toLocaleString();
 
-// ─── BRAND PALETTE CONSTANTS ──────────────────────────────────────────────────
+// ─── BRAND DATA ────────────────────────────────────────────────────────────
 const CATEGORIES = [
   { key: "all", label: "All Items" },
   { key: "pork", label: "Premium Pork" },
@@ -53,8 +51,8 @@ const ITEMS = [
 
 const TAG_STYLES = {
   Popular: "bg-amber-100 text-amber-800",
-  "Best Seller": "bg-red-50 text-red-600",
-  Spicy: "bg-orange-50 text-orange-600",
+  "Best Seller": "bg-yellow-100 text-yellow-800",
+  Spicy: "bg-orange-100 text-orange-800",
   New: "bg-stone-100 text-stone-700",
   Organic: "bg-stone-50 text-stone-600",
 };
@@ -71,6 +69,28 @@ const Stars = ({ rating }) => (
   <div className="flex items-center gap-1" role="img" aria-label={`Rated ${rating} out of 5`}>
     <Star size={11} className="text-yellow-400 fill-yellow-400" />
     <span className="text-xs font-bold text-stone-700">{rating}</span>
+  </div>
+);
+
+/** Section eyebrow — mirrors the Hero's dot + tracking-[0.2em] label + line. */
+const Eyebrow = ({ children }) => (
+  <div className="flex items-center gap-2">
+    <span className="h-2 w-2 rounded-full bg-[#0edb0e]" aria-hidden="true" />
+    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">{children}</span>
+    <span className="h-px w-10 bg-stone-300" aria-hidden="true" />
+  </div>
+);
+
+/** Stat chip — same white/border-stone-200/green-icon pattern as the Hero's FEATURES row. */
+const StatChip = ({ Icon, label, value }) => (
+  <div className="flex flex-col items-center gap-1.5 rounded-2xl border border-stone-100 bg-white py-3.5 px-3 text-center">
+    <span className="h-9 w-9 rounded-full bg-white border border-stone-200 flex items-center justify-center text-[#0edb0e]">
+      <Icon size={15} aria-hidden="true" />
+    </span>
+    <div>
+      <p className="text-[9px] font-bold uppercase tracking-wide text-stone-400">{label}</p>
+      <p className="text-xs font-extrabold text-stone-900 mt-0.5">{value}</p>
+    </div>
   </div>
 );
 
@@ -153,42 +173,38 @@ const Products = () => {
     <div className="min-h-screen bg-white text-stone-900 pb-20">
 
       {/* ── STICKY CONTROL DOCK (Header & Category Dock) ── */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md">
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-100">
         <div className="max-w-7xl mx-auto px-6 pt-6 pb-4 flex items-center justify-between gap-6">
 
           {/* Brand & Page Mark */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-red-600 flex items-center justify-center shrink-0 shadow-lg shadow-red-600/15">
-              <Leaf size={18} className="text-white" aria-hidden="true" />
+            <div className="w-10 h-10 rounded-2xl bg-yellow-400 flex items-center justify-center shrink-0 shadow-lg shadow-yellow-400/20">
+              <Leaf size={18} className="text-stone-950" aria-hidden="true" />
             </div>
             <div>
-              <p className="text-[10px] font-extrabold tracking-[0.25em] uppercase text-red-600 leading-none mb-1">
-                {BRAND_NAME}
-              </p>
-              <h1 className="text-xl md:text-2xl font-black leading-tight text-stone-900">
+              <Eyebrow>{BRAND_NAME}</Eyebrow>
+              <h1 className="text-xl md:text-2xl font-black leading-tight text-stone-900 mt-1">
                 Menu Collection
               </h1>
             </div>
           </div>
 
-          {/* Cart Icon & Item Count */}
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => setCartOpen(true)}
-              aria-label="Open your cart"
-              className="relative w-11 h-11 rounded-2xl bg-stone-50 hover:bg-stone-100 flex items-center justify-center text-stone-900 transition-colors"
-            >
-              <ShoppingBasket size={18} />
-              {totalItems > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center">
-                  {totalItems}
-                </span>
-              )}
-            </button>
-          </div>
+          {/* Cart Icon & Item Count (Hidden on desktop screens since the live side-cart is visible) */}
+          <button
+            onClick={() => setCartOpen(true)}
+            aria-label="Open your cart"
+            className="relative h-11 w-11 rounded-full border border-stone-200 bg-white flex items-center justify-center text-stone-900 hover:bg-stone-50 transition-colors lg:hidden"
+          >
+            <ShoppingBasket size={18} />
+            {totalItems > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#0edb0e] text-white text-[10px] font-bold flex items-center justify-center">
+                {totalItems}
+              </span>
+            )}
+          </button>
         </div>
 
-        {/* Minimalist Borderless Category Track */}
+        {/* Category pills — updated to use dynamic brand green */}
         <div className="max-w-7xl mx-auto px-6 pb-6 flex gap-2.5 overflow-x-auto scrollbar-none" role="tablist">
           {CATEGORIES.map((cat) => {
             const isActive = activeCategory === cat.key;
@@ -198,9 +214,9 @@ const Products = () => {
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`px-5 py-2.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 ${isActive
-                  ? "bg-stone-900 text-white shadow-lg shadow-stone-900/10"
-                  : "bg-stone-50 text-stone-500 hover:text-stone-900 hover:bg-stone-100/80"
+                className={`px-4 py-2 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wide border whitespace-nowrap transition-colors duration-200 ${isActive
+                  ? "bg-[#0edb0e] border-[#0edb0e] text-white"
+                  : "bg-white border-stone-200 text-stone-500 hover:text-stone-900"
                   }`}
               >
                 {cat.label}
@@ -210,140 +226,235 @@ const Products = () => {
         </div>
       </div>
 
-      {/* ── GRID SYSTEM (Spotlight + Standard Grid) ── */}
+      {/* ── GRID SYSTEM (Split Double Layout: Menu on Left, Sticky Live Cart on Right) ── */}
       <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 xl:gap-12 items-start">
 
-        {/* SpotLight Block: Prominent Unique Card Layout */}
-        {spotlightItem && (
-          <div
-            onClick={() => setModal(spotlightItem)}
-            className="group relative bg-stone-900 text-white rounded-[2.5rem] p-8 md:p-12 mb-8 grid md:grid-cols-2 gap-8 items-center cursor-pointer overflow-hidden shadow-2xl shadow-stone-900/10 hover:-translate-y-1 transition-all duration-500"
-          >
-            {/* Soft Ambient Blurs */}
-            <div className="absolute -top-16 -right-16 w-80 h-80 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute bottom-0 left-12 w-80 h-80 bg-yellow-400/5 rounded-full blur-3xl pointer-events-none" />
+          {/* LEFT COLUMN: Spotlight + Standard Product Grid (lg:col-span-8) */}
+          <div className="lg:col-span-8 space-y-8">
 
-            <div className="space-y-4 md:space-y-6 relative z-10">
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-600 text-white rounded-full text-[9px] font-bold uppercase tracking-widest">
-                Chef's Spotlight
-              </span>
-              <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
-                {spotlightItem.name}
-              </h2>
-              <p className="text-stone-300 text-sm md:text-base leading-relaxed max-w-md">
-                {spotlightItem.description}
-              </p>
+            {/* SpotLight Block: Prominent Unique Card Layout */}
+            {spotlightItem && (
+              <div
+                onClick={() => setModal(spotlightItem)}
+                className="group relative bg-stone-950 text-white rounded-[2.5rem] p-8 md:p-12 grid md:grid-cols-2 gap-8 items-center cursor-pointer overflow-hidden shadow-2xl shadow-stone-950/10 hover:-translate-y-1 transition-all duration-500"
+              >
+                {/* Soft Ambient Blurs */}
+                <div className="absolute -top-16 -right-16 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute bottom-0 left-12 w-80 h-80 bg-yellow-400/5 rounded-full blur-3xl pointer-events-none" />
 
-              <div className="flex flex-wrap items-center gap-6 pt-2">
-                <div>
-                  <p className="text-[10px] text-stone-400 font-bold uppercase tracking-wider">Starting From</p>
-                  <p className="text-2xl font-black text-yellow-400 mt-1">UGX {fmt(spotlightItem.price)}</p>
-                </div>
-                <button
-                  onClick={(e) => { e.stopPropagation(); addToCart(spotlightItem); }}
-                  className="bg-red-600 hover:bg-red-700 text-white font-bold text-sm px-7 py-3.5 rounded-2xl shadow-xl shadow-red-600/25 transition-colors"
-                >
-                  Add to Order
-                </button>
-              </div>
-            </div>
+                <div className="space-y-4 md:space-y-6 relative z-10">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-yellow-400/20 text-yellow-400 rounded-full text-[9px] font-bold uppercase tracking-widest backdrop-blur-sm">
+                    Chef's Spotlight
+                  </span>
+                  <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+                    {spotlightItem.name}
+                  </h2>
+                  <p className="text-white/70 text-sm md:text-base leading-relaxed max-w-md font-medium">
+                    {spotlightItem.description}
+                  </p>
 
-            <div className="relative flex justify-center items-center h-56 sm:h-72">
-              <img
-                src={spotlightItem.image}
-                alt={spotlightItem.name}
-                className="w-full max-w-[240px] sm:max-w-[280px] h-auto object-contain z-10 group-hover:scale-105 transition-transform duration-700 ease-out"
-                style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.5))" }}
-              />
-            </div>
-          </div>
-        )}
-
-        {/* Standard Grid of remaining items */}
-        <motion.div
-          className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6"
-          initial="hidden"
-          animate="show"
-          variants={{ show: { transition: { staggerChildren: 0.05 } } }}
-        >
-          {standardItems.map((item) => (
-            <motion.div
-              key={item.id}
-              variants={cardVariants}
-              onClick={() => setModal(item)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => e.key === "Enter" && setModal(item)}
-              className="group bg-white rounded-[2rem] overflow-hidden shadow-xl shadow-stone-100/50 hover:-translate-y-1 hover:shadow-2xl hover:shadow-stone-200/40 transition-all duration-300 cursor-pointer"
-            >
-              {/* Product Image Frame */}
-              <div className="relative h-48 flex items-center justify-center bg-stone-50/40 overflow-hidden">
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  className="w-36 h-36 object-contain group-hover:scale-105 transition-transform duration-700 ease-out"
-                />
-
-                {/* Savings tag */}
-                {pct(item.price, item.anchoring) > 0 && (
-                  <div className="absolute top-4 left-4 bg-stone-900 text-yellow-400 px-2.5 py-1 rounded-full text-[10px] font-black">
-                    -{pct(item.price, item.anchoring)}%
-                  </div>
-                )}
-
-                {/* Like Trigger */}
-                <button
-                  onClick={(e) => { e.stopPropagation(); toggleLike(item.id); }}
-                  className={`absolute top-4 right-4 w-9 h-9 rounded-xl flex items-center justify-center transition-all duration-200 ${liked.has(item.id) ? "bg-red-600 text-white shadow-md" : "bg-white/80 backdrop-blur-sm text-stone-400 hover:text-red-600"
-                    }`}
-                >
-                  <Heart size={15} className={liked.has(item.id) ? "fill-white" : ""} />
-                </button>
-              </div>
-
-              {/* Product Info */}
-              <div className="p-5">
-                <div className="flex items-center justify-between mb-2">
-                  <Tag label={item.tag} />
-                  <Stars rating={item.rating} />
-                </div>
-
-                <h3 className="font-extrabold text-base tracking-tight mb-1 text-stone-900 line-clamp-1">{item.name}</h3>
-                <p className="text-stone-400 text-xs leading-relaxed mb-4 line-clamp-2">{item.description}</p>
-
-                <div className="flex items-center justify-between pt-1">
-                  <div>
-                    {pct(item.price, item.anchoring) > 0 && (
-                      <p className="text-stone-400 line-through text-[10px]">UGX {fmt(item.anchoring)}</p>
-                    )}
-                    <p className="text-red-600 font-extrabold text-sm md:text-base">UGX {fmt(item.price)}</p>
-                  </div>
-
-                  <button
-                    onClick={(e) => { e.stopPropagation(); addToCart(item); }}
-                    className="relative w-11 h-11 rounded-xl bg-stone-900 hover:bg-stone-800 text-white flex items-center justify-center shadow-lg transition-colors"
-                  >
-                    <ShoppingBasket size={16} />
-                    {cartCountMap[item.id] > 0 && (
-                      <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-red-600 text-white text-[9px] font-bold flex items-center justify-center">
-                        {cartCountMap[item.id]}
+                  <div className="flex flex-wrap items-center gap-6 pt-2">
+                    <div>
+                      <p className="text-[10px] text-white/50 font-bold uppercase tracking-wider">Starting From</p>
+                      <p className="text-2xl font-black text-yellow-400 mt-1">UGX {fmt(spotlightItem.price)}</p>
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); addToCart(spotlightItem); }}
+                      className="inline-flex items-center gap-2 bg-[#0edb0e] hover:bg-[#0bc50b] text-white font-bold text-sm px-4 py-3 rounded-full transition-colors uppercase tracking-wide"
+                    >
+                      <span className="bg-white rounded-full p-1.5 text-[#0edb0e]">
+                        <ShoppingBasket size={14} />
                       </span>
-                    )}
-                  </button>
+                      Add to Order
+                    </button>
+                  </div>
+                </div>
+
+                <div className="relative flex justify-center items-center h-56 sm:h-72">
+                  <img
+                    src={spotlightItem.image}
+                    alt={spotlightItem.name}
+                    className="w-full max-w-[240px] sm:max-w-[280px] h-auto object-contain z-10 group-hover:scale-105 transition-transform duration-700 ease-out"
+                    style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.4))" }}
+                  />
                 </div>
               </div>
-            </motion.div>
-          ))}
-        </motion.div>
+            )}
 
-        {/* Empty State */}
-        {filtered.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-24 text-stone-400">
-            <ShoppingBag size={48} className="mb-4 opacity-25" aria-hidden="true" />
-            <p className="font-bold text-lg">Nothing here yet</p>
-            <p className="text-sm mt-1">Try a different category</p>
+            {/* Standard Grid of remaining items */}
+            <motion.div
+              className="grid grid-cols-2 md:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6"
+              initial="hidden"
+              animate="show"
+              variants={{ show: { transition: { staggerChildren: 0.05 } } }}
+            >
+              {standardItems.map((item) => (
+                <motion.div
+                  key={item.id}
+                  variants={cardVariants}
+                  onClick={() => setModal(item)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === "Enter" && setModal(item)}
+                  className="group bg-white rounded-[2rem] overflow-hidden border border-stone-100 shadow-sm hover:-translate-y-1 hover:shadow-xl hover:shadow-stone-200/40 transition-all duration-300 cursor-pointer"
+                >
+                  {/* Product Image Frame */}
+                  <div className="relative h-48 flex items-center justify-center bg-stone-50/60 overflow-hidden">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="w-36 h-36 object-contain group-hover:scale-105 transition-transform duration-700 ease-out"
+                    />
+
+                    {/* Savings tag */}
+                    {pct(item.price, item.anchoring) > 0 && (
+                      <div className="absolute top-4 left-4 bg-stone-900 text-yellow-400 px-2.5 py-1 rounded-full text-[10px] font-black">
+                        -{pct(item.price, item.anchoring)}%
+                      </div>
+                    )}
+
+                    {/* Like Trigger */}
+                    <button
+                      onClick={(e) => { e.stopPropagation(); toggleLike(item.id); }}
+                      aria-label={liked.has(item.id) ? "Remove from favorites" : "Add to favorites"}
+                      className={`absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 ${liked.has(item.id) ? "bg-red-600 text-white shadow-md" : "bg-white/90 border border-stone-200 text-stone-400 hover:text-[#0edb0e]"
+                        }`}
+                    >
+                      <Heart size={15} className={liked.has(item.id) ? "fill-white" : ""} />
+                    </button>
+                  </div>
+
+                  {/* Product Info */}
+                  <div className="p-5">
+                    <div className="flex items-center justify-between mb-2">
+                      <Tag label={item.tag} />
+                      <Stars rating={item.rating} />
+                    </div>
+
+                    <h3 className="font-extrabold text-base tracking-tight mb-1 text-stone-900 line-clamp-1">{item.name}</h3>
+                    <p className="text-stone-400 text-xs leading-relaxed mb-4 line-clamp-2">{item.description}</p>
+
+                    <div className="flex items-center justify-between pt-1">
+                      <div>
+                        {pct(item.price, item.anchoring) > 0 && (
+                          <p className="text-red-500 line-through text-[10px]">UGX {fmt(item.anchoring)}</p>
+                        )}
+                        <p className="text-[#0edb0e] font-extrabold text-sm md:text-base">UGX {fmt(item.price)}</p>
+                      </div>
+
+                      <button
+                        onClick={(e) => { e.stopPropagation(); addToCart(item); }}
+                        aria-label={`Add ${item.name} to cart`}
+                        className="relative w-11 h-11 rounded-full bg-[#0edb0e] hover:bg-[#0bc50b] text-white flex items-center justify-center transition-colors"
+                      >
+                        <ShoppingBasket size={16} />
+                        {cartCountMap[item.id] > 0 && (
+                          <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-stone-900 text-yellow-400 text-[9px] font-bold flex items-center justify-center">
+                            {cartCountMap[item.id]}
+                          </span>
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Empty State */}
+            {filtered.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-24 text-stone-400">
+                <ShoppingBag size={48} className="mb-4 opacity-25" aria-hidden="true" />
+                <p className="font-bold text-lg">Nothing here yet</p>
+                <p className="text-sm mt-1">Try a different category</p>
+              </div>
+            )}
+
           </div>
-        )}
+
+          {/* RIGHT COLUMN: Sticky Live Sidebar Cart Panel (lg:col-span-4) — Hidden on Mobile */}
+          <aside className="hidden lg:block lg:col-span-4 lg:sticky lg:top-36 bg-stone-50/70 border border-stone-100 rounded-3xl p-6 space-y-6">
+            <div>
+              <h2 className="text-lg font-black text-stone-900">Your Order</h2>
+              <p className="text-stone-400 text-xs mt-1">{totalItems} item{totalItems !== 1 ? "s" : ""} selected</p>
+            </div>
+
+            {/* Live Cart Items list */}
+            <div className="space-y-4 max-h-[35vh] overflow-y-auto pr-1 scrollbar-thin">
+              {cartItems.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-12 text-stone-400 text-center">
+                  <ShoppingBag size={32} className="mb-3 opacity-20" />
+                  <p className="font-extrabold text-stone-900 text-xs">Your cart is empty</p>
+                  <p className="text-[11px] mt-0.5">Add premium cuts to begin</p>
+                </div>
+              ) : (
+                cartItems.map((item) => (
+                  <div key={`side-${item.id}`} className="flex items-center gap-3 bg-white border border-stone-100 rounded-2xl p-3">
+                    <div className="w-10 h-10 rounded-xl bg-stone-50 flex items-center justify-center shrink-0 p-1">
+                      <img src={item.image} alt="" className="w-full h-full object-contain" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-extrabold text-xs truncate text-stone-900">{item.name}</p>
+                      <p className="text-[#0edb0e] font-extrabold text-xs mt-0.5">UGX {fmt(item.price)}</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-stone-500 font-bold bg-stone-50 px-2 py-0.5 rounded-md border border-stone-100">
+                        x{item.quantity}
+                      </span>
+                      <button
+                        onClick={() => decreaseQuantity(item.id)}
+                        aria-label={`Decrease ${item.name} quantity`}
+                        className="w-7 h-7 rounded-lg bg-stone-50 border border-stone-200 hover:bg-stone-100 flex items-center justify-center transition-colors"
+                      >
+                        <Minus size={10} className="text-stone-500" />
+                      </button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+
+            {/* Totals & WhatsApp Action */}
+            {cartItems.length > 0 && (
+              <div className="space-y-4 pt-4 border-t border-stone-200/60">
+                <div className="space-y-2 text-[11px] text-stone-500">
+                  <div className="flex justify-between">
+                    <span>Subtotal</span>
+                    <span className="font-bold text-stone-900">UGX {fmt(subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Tax (18%)</span>
+                    <span className="font-bold text-stone-900">UGX {fmt(tax)}</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span>Delivery dispatch</span>
+                    <span className={`font-bold ${shipping === 0 ? "text-[#0edb0e]" : "text-stone-900"}`}>
+                      {shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`}
+                    </span>
+                  </div>
+
+                  <div className="h-px bg-stone-200/60 my-3" />
+
+                  <div className="flex justify-between items-end">
+                    <p className="text-stone-900 font-bold text-xs">Grand Total</p>
+                    <p className="text-lg font-black text-[#0edb0e]">UGX {fmt(total)}</p>
+                  </div>
+                </div>
+
+                <a
+                  href={checkoutHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full h-11 rounded-full bg-[#0edb0e] hover:bg-[#0bc50b] text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors uppercase tracking-wide"
+                >
+                  Checkout via WhatsApp
+                  <ArrowRight size={14} />
+                </a>
+              </div>
+            )}
+          </aside>
+
+        </div>
       </div>
 
       {/* ── EDITORIAL PRODUCT DETAILS MODAL ── */}
@@ -369,16 +480,19 @@ const Products = () => {
               className="fixed inset-0 z-[60] flex flex-col md:flex-row bg-white overflow-hidden"
             >
               {/* Left Column: Visual Canvas */}
-              <div className="relative h-[38vh] min-h-[260px] md:h-auto flex-shrink-0 md:flex-1 flex items-center justify-center bg-stone-900 overflow-hidden">
+              <div
+                className="relative h-[38vh] bg-yellow-400 min-h-[260px] md:h-auto flex-shrink-0 md:flex-1 flex items-center justify-center overflow-hidden"
+              >
 
                 {/* Background Blobs */}
-                <div className="absolute top-0 right-0 w-80 h-80 bg-red-600/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-80 h-80 bg-yellow-400/5 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute top-0 right-0 w-80 h-80 bg-white/20 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-80 h-80 bg-stone-950/10 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="absolute top-5 left-5 flex items-center justify-between w-[90%] z-10">
                   <button
                     onClick={() => setModal(null)}
-                    className="w-10 h-10 rounded-xl bg-white/10 hover:bg-white/20 backdrop-blur-sm flex items-center justify-center text-white transition-all"
+                    aria-label="Close details"
+                    className="w-10 h-10 rounded-full bg-stone-950/10 hover:bg-stone-950/20 backdrop-blur-sm flex items-center justify-center text-stone-950 transition-all"
                   >
                     <ArrowLeft size={18} />
                   </button>
@@ -387,7 +501,8 @@ const Products = () => {
                     {modal.tag && <Tag label={modal.tag} />}
                     <button
                       onClick={() => toggleLike(modal.id)}
-                      className={`w-10 h-10 rounded-xl backdrop-blur-sm flex items-center justify-center transition-colors duration-200 ${liked.has(modal.id) ? "bg-red-600 text-white shadow-lg" : "bg-white/10 hover:bg-white/20 text-white"
+                      aria-label={liked.has(modal.id) ? "Remove from favorites" : "Add to favorites"}
+                      className={`w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-colors duration-200 ${liked.has(modal.id) ? "bg-red-600 text-white shadow-lg" : "bg-stone-950/10 hover:bg-stone-950/20 text-stone-950"
                         }`}
                     >
                       <Heart size={16} className={liked.has(modal.id) ? "fill-white" : ""} />
@@ -404,7 +519,7 @@ const Products = () => {
                     src={modal.image}
                     alt={modal.name}
                     className="w-full max-w-[200px] sm:max-w-[260px] md:max-w-[400px] h-auto max-h-[85%] object-contain"
-                    style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.5))" }}
+                    style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.3))" }}
                   />
                 </div>
               </div>
@@ -419,11 +534,11 @@ const Products = () => {
                       <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 tracking-tight mt-3 mb-2">{modal.name}</h2>
 
                       <div className="flex items-center gap-3">
-                        <span className="text-2xl font-black text-red-600">UGX {fmt(modal.price)}</span>
+                        <span className="text-2xl font-black text-[#0edb0e]">UGX {fmt(modal.price)}</span>
                         {pct(modal.price, modal.anchoring) > 0 && (
                           <>
-                            <span className="text-xs text-stone-400 line-through font-semibold">UGX {fmt(modal.anchoring)}</span>
-                            <span className="bg-red-50 text-red-600 text-[10px] font-bold px-2.5 py-1 rounded-full">
+                            <span className="text-xs text-red-500 line-through font-semibold">UGX {fmt(modal.anchoring)}</span>
+                            <span className="bg-yellow-50 text-yellow-700 text-[10px] font-bold px-2.5 py-1 rounded-full">
                               -{pct(modal.price, modal.anchoring)}% Off
                             </span>
                           </>
@@ -437,29 +552,19 @@ const Products = () => {
                     </div>
 
                     <div className="grid grid-cols-3 gap-3 pt-2">
-                      {[
-                        { Icon: Clock, label: "Prep time", value: modal.cookTime, color: "text-red-600", bg: "bg-red-50/50" },
-                        { Icon: Truck, label: "Delivery", value: shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`, color: "text-orange-600", bg: "bg-orange-50/50" },
-                        { Icon: ShieldCheck, label: "Quality", value: "Premium", color: "text-red-600", bg: "bg-red-50/50" },
-                      ].map(({ Icon, label, value, color, bg }) => (
-                        <div key={label} className={`flex flex-col items-center gap-1.5 rounded-[1.25rem] ${bg} py-3.5 px-3 text-center`}>
-                          <Icon size={16} className={color} aria-hidden="true" />
-                          <div>
-                            <p className="text-[9px] font-bold uppercase tracking-wide text-stone-400">{label}</p>
-                            <p className="text-xs font-extrabold text-stone-800 mt-0.5">{value}</p>
-                          </div>
-                        </div>
-                      ))}
+                      <StatChip Icon={Clock} label="Prep time" value={modal.cookTime} />
+                      <StatChip Icon={Truck} label="Delivery" value={shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`} />
+                      <StatChip Icon={ShieldCheck} label="Quality" value="Premium" />
                     </div>
 
                     {pct(modal.price, modal.anchoring) > 0 && (
                       <div className="bg-stone-50/70 rounded-2xl p-5 flex items-center justify-between">
                         <div>
                           <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-0.5">Total Savings</p>
-                          <p className="text-2xl font-black text-red-600">UGX {fmt(parseInt(modal.anchoring, 10) - modal.price)}</p>
+                          <p className="text-2xl font-black text-[#0edb0e]">UGX {fmt(parseInt(modal.anchoring, 10) - modal.price)}</p>
                         </div>
                         <div className="text-right">
-                          <p className="text-xs text-stone-400 line-through">UGX {fmt(modal.anchoring)}</p>
+                          <p className="text-xs text-red-500 line-through">UGX {fmt(modal.anchoring)}</p>
                           <p className="text-sm font-extrabold text-stone-800">UGX {fmt(modal.price)}</p>
                         </div>
                       </div>
@@ -469,13 +574,15 @@ const Products = () => {
                 </div>
 
                 {/* Fixed CTA Footer Bar */}
-                <div className="p-6 bg-white border-t border-stone-50">
+                <div className="p-6 bg-white border-t border-stone-100">
                   <div className="max-w-xl mx-auto flex gap-4">
                     <button
                       onClick={() => { addToCart(modal); setModal(null); setCartOpen(true); }}
-                      className="flex-1 h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold text-sm flex items-center justify-center gap-2 transition-all shadow-xl shadow-red-600/20 hover:scale-[1.01]"
+                      className="flex-1 h-14 rounded-full bg-[#0edb0e] hover:bg-[#0bc50b] text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors uppercase tracking-wide"
                     >
-                      <ShoppingBasket size={18} />
+                      <span className="bg-white rounded-full p-2 text-[#0edb0e]">
+                        <ShoppingBasket size={15} />
+                      </span>
                       Add to order · UGX {fmt(modal.price)}
                     </button>
                   </div>
@@ -510,14 +617,15 @@ const Products = () => {
               className="fixed top-0 right-0 h-full w-full max-w-md bg-white z-[80] flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.15)] rounded-l-[2.5rem]"
             >
               {/* Drawer header */}
-              <div className="px-6 py-6 border-b border-stone-50 flex items-center justify-between">
+              <div className="px-6 py-6 border-b border-stone-100 flex items-center justify-between">
                 <div>
                   <h2 className="text-2xl font-black text-stone-900">Your Order</h2>
                   <p className="text-stone-400 text-xs mt-1">{totalItems} item{totalItems !== 1 ? "s" : ""} selected</p>
                 </div>
                 <button
                   onClick={() => setCartOpen(false)}
-                  className="w-10 h-10 rounded-xl bg-stone-50 flex items-center justify-center hover:bg-stone-100 transition-colors"
+                  aria-label="Close cart"
+                  className="w-10 h-10 rounded-full border border-stone-200 bg-white flex items-center justify-center hover:bg-stone-50 transition-colors"
                 >
                   <X size={18} />
                 </button>
@@ -534,12 +642,12 @@ const Products = () => {
                 ) : (
                   cartItems.map((item) => (
                     <div key={item.id} className="flex items-center gap-4 bg-stone-50/70 rounded-2xl p-4">
-                      <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center shrink-0">
+                      <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center shrink-0 border border-stone-100">
                         <img src={item.image} alt="" className="w-10 h-10 object-contain" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-extrabold text-sm truncate text-stone-900">{item.name}</p>
-                        <p className="text-red-600 font-extrabold text-sm mt-0.5">UGX {fmt(item.price)}</p>
+                        <p className="text-[#0edb0e] font-extrabold text-sm mt-0.5">UGX {fmt(item.price)}</p>
                       </div>
                       <div className="flex items-center gap-3">
                         <span className="text-[11px] text-stone-500 font-bold bg-white px-2.5 py-1 rounded-lg">
@@ -547,9 +655,10 @@ const Products = () => {
                         </span>
                         <button
                           onClick={() => decreaseQuantity(item.id)}
-                          className="w-8 h-8 rounded-lg bg-red-50 hover:bg-red-100 flex items-center justify-center transition-colors"
+                          aria-label={`Decrease ${item.name} quantity`}
+                          className="w-8 h-8 rounded-lg bg-white border border-stone-200 hover:bg-stone-100 flex items-center justify-center transition-colors"
                         >
-                          <Minus size={12} className="text-red-600" />
+                          <Minus size={12} className="text-stone-500" />
                         </button>
                       </div>
                     </div>
@@ -571,7 +680,7 @@ const Products = () => {
                     </div>
                     <div className="flex justify-between items-center">
                       <span>Delivery dispatch</span>
-                      <span className={`font-bold ${shipping === 0 ? "text-green-600" : "text-stone-900"}`}>
+                      <span className={`font-bold ${shipping === 0 ? "text-[#0edb0e]" : "text-stone-900"}`}>
                         {shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`}
                       </span>
                     </div>
@@ -580,7 +689,7 @@ const Products = () => {
 
                     <div className="flex justify-between items-end">
                       <p className="text-stone-900 font-bold text-sm">Grand Total</p>
-                      <p className="text-2xl font-black text-red-600">UGX {fmt(total)}</p>
+                      <p className="text-2xl font-black text-[#0edb0e]">UGX {fmt(total)}</p>
                     </div>
                   </div>
 
@@ -588,7 +697,7 @@ const Products = () => {
                     href={checkoutHref}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-full h-14 rounded-2xl bg-red-600 hover:bg-red-700 text-white font-extrabold flex items-center justify-center gap-2 transition-all shadow-xl shadow-red-600/20"
+                    className="w-full h-14 rounded-full bg-[#0edb0e] hover:bg-[#0bc50b] text-white font-bold flex items-center justify-center gap-2 transition-colors uppercase tracking-wide"
                   >
                     Checkout via WhatsApp
                     <ArrowRight size={18} />

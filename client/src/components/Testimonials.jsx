@@ -33,7 +33,7 @@ const Testimonials = () => {
         <section className="relative py-24 overflow-hidden bg-white">
 
             {/* BACKGROUND DECORATIVE EFFECTS */}
-            <div className="absolute top-0 left-0 w-80 h-80 bg-red-50/50 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 left-0 w-80 h-80 bg-[#0edb0e]/5 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-50/30 rounded-full blur-3xl pointer-events-none" />
 
             <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -42,13 +42,13 @@ const Testimonials = () => {
                     {/* LEFT COLUMN: STICKY BRAND OVERVIEW & TRUST BADGE */}
                     <div className="lg:col-span-5 lg:sticky lg:top-12 space-y-6">
                         <div>
-                            <span className="inline-flex items-center gap-2 text-red-600 text-xs font-bold uppercase tracking-[0.15em] mb-4">
-                                <span className="w-1.5 h-1.5 rounded-full bg-red-600" aria-hidden="true" />
+                            <span className="inline-flex items-center gap-2 text-[#0edb0e] text-xs font-bold uppercase tracking-[0.15em] mb-4">
+                                <span className="w-1.5 h-1.5 rounded-full bg-[#0edb0e]" aria-hidden="true" />
                                 Customer Reviews
                             </span>
 
                             <h2 className="text-4xl md:text-5xl font-extrabold text-stone-900 tracking-tight leading-[1.1] mt-1">
-                                What Our Clients <span className="text-red-600">Say About Us</span>
+                                What Our Clients <span className="text-[#0edb0e]">Say About Us</span>
                             </h2>
                         </div>
 
@@ -80,7 +80,7 @@ const Testimonials = () => {
                         {/* 1. Featured Testimonial (Large Premium Card) */}
                         <div className="bg-stone-900 text-white rounded-[2.5rem] p-8 md:p-10 shadow-2xl shadow-stone-900/10 hover:-translate-y-1 transition-all duration-300">
                             <div className="flex items-center justify-between mb-8">
-                                <div className="w-12 h-12 rounded-xl bg-red-600 flex items-center justify-center">
+                                <div className="w-12 h-12 rounded-xl bg-[#0edb0e] flex items-center justify-center">
                                     <MessageSquareQuote className="text-white" size={20} />
                                 </div>
                                 <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-white/10 text-stone-200 rounded-full text-[10px] font-bold tracking-wider uppercase backdrop-blur-sm">
@@ -115,8 +115,8 @@ const Testimonials = () => {
                             {/* 2. Secondary Testimonial (Left) */}
                             <div className="bg-stone-50/70 hover:bg-stone-50 rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                                 <div className="flex items-center justify-between mb-6">
-                                    <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
-                                        <MessageSquareQuote className="text-red-600" size={16} />
+                                    <div className="w-10 h-10 rounded-xl bg-[#0edb0e]/10 flex items-center justify-center border border-[#0edb0e]/20">
+                                        <MessageSquareQuote className="text-[#0edb0e]" size={16} />
                                     </div>
                                     <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[9px] font-bold tracking-wider uppercase">
                                         <Check size={10} strokeWidth={3} /> Verified
@@ -137,7 +137,7 @@ const Testimonials = () => {
                                         <h4 className="text-sm font-bold text-stone-900 leading-tight">
                                             {testimonials[1].author}
                                         </h4>
-                                        <p className="text-[11px] text-red-600 font-semibold mt-0.5">
+                                        <p className="text-[11px] text-[#0edb0e] font-semibold mt-0.5">
                                             {testimonials[1].title}
                                         </p>
                                     </div>
@@ -147,8 +147,8 @@ const Testimonials = () => {
                             {/* 3. Secondary Testimonial (Right - Staggered Offset) */}
                             <div className="bg-stone-50/70 hover:bg-stone-50 rounded-[2rem] p-8 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 lg:translate-y-6">
                                 <div className="flex items-center justify-between mb-6">
-                                    <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center">
-                                        <MessageSquareQuote className="text-red-600" size={16} />
+                                    <div className="w-10 h-10 rounded-xl bg-[#0edb0e]/10 flex items-center justify-center border border-[#0edb0e]/20">
+                                        <MessageSquareQuote className="text-[#0edb0e]" size={16} />
                                     </div>
                                     <span className="inline-flex items-center gap-1 px-2.5 py-1 bg-emerald-50 text-emerald-700 rounded-full text-[9px] font-bold tracking-wider uppercase">
                                         <Check size={10} strokeWidth={3} /> Verified
@@ -169,7 +169,7 @@ const Testimonials = () => {
                                         <h4 className="text-sm font-bold text-stone-900 leading-tight">
                                             {testimonials[2].author}
                                         </h4>
-                                        <p className="text-[11px] text-red-600 font-semibold mt-0.5">
+                                        <p className="text-[11px] text-[#0edb0e] font-semibold mt-0.5">
                                             {testimonials[2].title}
                                         </p>
                                     </div>

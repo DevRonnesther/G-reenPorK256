@@ -7,7 +7,6 @@ import {
   Search, SlidersHorizontal, Star, Clock, Flame, Minus, Plus, User,
 } from "lucide-react";
 import { useCart } from "../components/cart/CartContext";
-//import Navbar from "../components/Navbar/Navbar.jsx"
 
 import FreshPork from "../assets/freshporke.png";
 import PorkStake from "../assets/ChatGPT Image Jun 18, 2026, 03_34_25 PM.png";
@@ -160,8 +159,8 @@ function SpicePills({ active }) {
             key={level}
             aria-current={isActive}
             className={`px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide border transition-colors duration-200 ${isActive
-              ? "bg-red-600 border-red-600 text-white"
-              : "bg-white border-stone-200 text-stone-500"
+              ? "bg-[#0edb0e] border-[#0edb0e] text-white"
+              : "bg-white border-stone-200 text-stone-50"
               }`}
           >
             {level}
@@ -236,7 +235,7 @@ function DesktopHero({ carousel }) {
   return (
     <section
       aria-label="Featured products"
-      className="hidden lg:block w-full h-screen overflow-hidden// bg-white"
+      className="hidden lg:block w-full h-screen overflow-hidden bg-white"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -247,7 +246,7 @@ function DesktopHero({ carousel }) {
         style={{ clipPath: "polygon(58% 0, 100% 0, 100% 100%, 38% 100%)" }}
       />
 
-      <div className="relative// grid grid-cols-2 min-h-[38rem] h-full">
+      <div className="relative grid grid-cols-2 min-h-[38rem] h-full">
         {/* Left: copy */}
         <div className="flex flex-col justify-center px-16 py-16 max-w-xl">
           {/* Eyebrow tag */}
@@ -258,7 +257,7 @@ function DesktopHero({ carousel }) {
               exit={{ opacity: 0, transition: { duration: 0.2 } }}
               className="flex items-center gap-2 mb-4"
             >
-              <span className="h-2 w-2 rounded-full bg-orange-600" aria-hidden="true" />
+              <span className="h-2 w-2 rounded-full bg-[#0edb0e]" aria-hidden="true" />
               <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">
                 {slide.eyebrow}
               </span>
@@ -275,7 +274,7 @@ function DesktopHero({ carousel }) {
             >
               <span className="block text-lg font-semibold text-stone-500">{slide.title[0]}</span>
               <span className="block text-5xl xl:text-6xl font-black text-stone-900">{slide.title[1]}</span>
-              <span className="block text-3xl xl:text-4xl font-black text-orange-600">{slide.title[2]}</span>
+              <span className="block text-3xl xl:text-4xl font-black text-[#0edb0e]">{slide.title[2]}</span>
             </motion.h1>
           </AnimatePresence>
 
@@ -302,9 +301,9 @@ function DesktopHero({ carousel }) {
               type="button"
               onClick={handleAddToCart}
               aria-label={`Add ${slide.category} to cart`}
-              className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-800 text-white font-bold text-sm px-2.5 py-2.5 rounded-full transition-colors uppercase tracking-wide"
+              className="inline-flex items-center gap-2 bg-[#0edb0e] hover:bg-[#0bc50b] text-white font-bold text-sm px-2.5 py-2.5 rounded-full transition-colors uppercase tracking-wide"
             >
-              <div className="bg-white rounded-full mr-2 p-2 text-red-600">
+              <div className="bg-white rounded-full mr-2 p-2 text-[#0edb0e]">
                 <ShoppingBasket />
               </div>
               Order Now
@@ -316,11 +315,11 @@ function DesktopHero({ carousel }) {
                 key={`price-badge-${slide.id}`}
                 {...fadeUp(0.15)}
                 exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                className=" z-20 h-28 w-28 rounded-full bg-white border-none border-orange-600 flex flex-col items-center justify-center shadow-lg// shadow-none"
+                className="z-20 h-28 w-28 rounded-full bg-white border-none flex flex-col items-center justify-center shadow-lg shadow-none"
               >
                 <span className="text-[10px] font-bold uppercase tracking-wide text-stone-400">Only</span>
                 <span className="text-[10px] font-bold uppercase tracking-wide text-stone-400 -mt-0.5">UGX</span>
-                <span className="text-md font-black text-orange-600 leading-tight mt-0.5">{fmt(slide.price)}</span>
+                <span className="text-md font-black text-[#0edb0e] leading-tight mt-0.5">{fmt(slide.price)}</span>
                 <span className="text-[10px] text-red-500 line-through">{fmt(slide.oldPrice)}</span>
               </motion.div>
             </AnimatePresence>
@@ -330,7 +329,7 @@ function DesktopHero({ carousel }) {
           <div className="flex items-center gap-6 mt-9">
             {FEATURES.map(({ icon: Icon, label, sub }) => (
               <div key={label} className="flex items-center gap-2">
-                <span className="h-9 w-9 rounded-full bg-white border border-stone-200 flex items-center justify-center text-orange-600 flex-shrink-0">
+                <span className="h-9 w-9 rounded-full bg-white border border-stone-200 flex items-center justify-center text-[#0edb0e] flex-shrink-0">
                   <Icon size={16} aria-hidden="true" />
                 </span>
                 <div className="leading-tight">
@@ -373,8 +372,6 @@ function DesktopHero({ carousel }) {
           </AnimatePresence>
           <motion.div className="absolute inset-0 pointer-events-none" animate={floatAnimation} aria-hidden="true" />
 
-
-
           <div className="absolute bottom-10 right-12 flex items-center gap-2 text-stone-900 font-black text-sm z-10">
             <span>{String(current + 1).padStart(2, "0")}</span>
             <span className="text-stone-900/30">/ {String(SLIDES.length).padStart(2, "0")}</span>
@@ -382,12 +379,12 @@ function DesktopHero({ carousel }) {
         </div>
 
         {/* Footer */}
-        <footer className="absolute  bottom-10 left-10 px-6">
+        <footer className="absolute bottom-10 left-10 px-6">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-black tracking-leading text-xs font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
             <Link
               to="/returnPolicy"
-              className="text-sm font-bold text-orange-600 hover:text-orange-700 transition-colors"
+              className="text-sm font-bold text-[#0edb0e] hover:text-[#0bc50b] transition-colors"
             >
               Return Policy
             </Link>
@@ -399,7 +396,6 @@ function DesktopHero({ carousel }) {
 }
 
 /** Mobile Hero — app-style card layout. */
-// ─── MOBILE HERO VIEW ────────────────────────────────────────────────────────
 function MobileHero({ carousel }) {
   const { current, direction, slide, goTo, next, prev, setIsPaused } = carousel;
   const { addToCart } = useCart();
@@ -423,7 +419,7 @@ function MobileHero({ carousel }) {
   return (
     <section
       aria-label="Featured products"
-      className="flex lg:hidden w-full h-[90vh] absolute top-14 bg-white relative// flex-col overflow-hidden"
+      className="flex lg:hidden w-full h-[90vh] absolute top-14 bg-white relative flex-col overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -433,7 +429,7 @@ function MobileHero({ carousel }) {
         <div className="relative flex-1 flex items-center justify-center min-h-0">
           <div className="relative w-full h-full flex items-center justify-center select-none">
             {/* Backdrop circle */}
-            <div aria-hidden="true" className="absolute w-56 h-56 sm:w-64 sm:h-64 bg-[#FACC15] rounded-full" />
+            <div aria-hidden="true" className="absolute w-64 h-64 sm:w-64 sm:h-64 bg-[#FACC15] rounded-full" />
 
             {/* Floating info pill */}
             <AnimatePresence mode="wait">
@@ -443,7 +439,7 @@ function MobileHero({ carousel }) {
                 exit={{ opacity: 0, transition: { duration: 0.2 } }}
                 className="absolute top-2 right-2 flex items-center gap-1.5 bg-[#1F2937] text-white text-xs font-bold px-3.5 py-2 rounded-full z-20"
               >
-                <Flame size={13} className="text-[#F97316]" aria-hidden="true" />
+                <Flame size={13} className="text-[#0edb0e]" aria-hidden="true" />
                 {slide.prepTime} Prep
               </motion.div>
             </AnimatePresence>
@@ -459,7 +455,7 @@ function MobileHero({ carousel }) {
                 animate="center"
                 exit="exit"
                 style={{ filter: "drop-shadow(0 20px 35px rgba(0,0,0,0.18))" }}
-                className="w-64 h-64 sm:w-72 sm:h-72 object-contain z-10"
+                className="w-72 h-72 sm:w-72 sm:h-72 object-contain z-10"
               />
             </AnimatePresence>
             <motion.div className="absolute inset-0 pointer-events-none" animate={floatAnimation} aria-hidden="true" />
@@ -468,7 +464,7 @@ function MobileHero({ carousel }) {
 
         {/* Quantity pill */}
         <div className="flex items-center justify-center flex-shrink-0 mb-4">
-          <div className="flex items-center gap-5 bg-[#F8FAFC]// bg-transparent rounded-full px-5 py-2.5">
+          <div className="flex items-center gap-5 bg-transparent rounded-full px-5 py-2.5">
             <button
               type="button"
               onClick={() => setQuantity((q) => Math.max(1, q - 1))}
@@ -482,7 +478,7 @@ function MobileHero({ carousel }) {
               type="button"
               onClick={() => setQuantity((q) => q + 1)}
               aria-label="Increase quantity"
-              className="text-red-600"
+              className="text-[#0edb0e]"
             >
               <Plus size={15} aria-hidden="true" />
             </button>
@@ -529,7 +525,7 @@ function MobileHero({ carousel }) {
               onClick={() => goTo(idx)}
               aria-label={`Show ${s.category}`}
               aria-current={current === idx}
-              className={`h-11 w-11 rounded-full overflow-hidden bg-[#F8FAFC] flex-shrink-0 transition-all duration-200 ${current === idx ? "ring-2 ring-red-600 scale-105" : "opacity-70"
+              className={`h-11 w-11 rounded-full overflow-hidden bg-[#F8FAFC] flex-shrink-0 transition-all duration-200 ${current === idx ? "ring-2 ring-[#0edb0e] scale-105" : "opacity-70"
                 }`}
             >
               <img src={s.image} alt="" aria-hidden="true" className="h-full w-full object-cover" />
@@ -547,7 +543,7 @@ function MobileHero({ carousel }) {
             type="button"
             onClick={handleAddToCart}
             aria-label={`Add ${quantity} ${slide.category} to cart`}
-            className="flex-1 inline-flex items-center justify-center gap-2 bg-red-600 hover:bg-red-600/90 text-white font-extrabold text-sm py-4 rounded-full transition-colors uppercase tracking-wide"
+            className="flex-1 inline-flex items-center justify-center gap-2 bg-[#0edb0e] hover:bg-[#0bc50b] text-white font-extrabold text-sm py-4 rounded-full transition-colors uppercase tracking-wide"
           >
             <ShoppingBasket size={16} aria-hidden="true" />
             Add to cart

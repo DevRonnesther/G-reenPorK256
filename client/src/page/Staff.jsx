@@ -1,5 +1,4 @@
 import React from "react";
-import { Linkedin, Instagram } from "lucide-react";
 
 export function Staff() {
     const team = [
@@ -37,7 +36,7 @@ export function Staff() {
         <section className="relative py-24 px-6 overflow-hidden bg-white">
 
             {/* BACKGROUND EFFECTS */}
-            <div className="absolute top-0 left-0 w-80 h-80 bg-red-50/50 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute top-0 left-0 w-80 h-80 bg-[#0edb0e]/5 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-yellow-50/40 rounded-full blur-3xl pointer-events-none" />
 
             <div className="max-w-7xl mx-auto relative z-10">
@@ -62,37 +61,13 @@ export function Staff() {
 
                             {/* CONTENT */}
                             <div className="p-6">
+                                <h3 className="text-xl font-extrabold text-stone-900 tracking-tight">
+                                    {member.name}
+                                </h3>
 
-                                <div className="flex items-start justify-between gap-4">
-                                    <div>
-                                        <h3 className="text-xl font-extrabold text-stone-900 tracking-tight">
-                                            {member.name}
-                                        </h3>
-
-                                        <p className="text-red-600 font-semibold text-sm mt-1">
-                                            {member.role}
-                                        </p>
-                                    </div>
-
-                                    {/* SOCIAL LINKS */}
-                                    <div className="flex items-center gap-3 pt-1">
-                                        <a 
-                                            href="#" 
-                                            className="text-stone-400 hover:text-red-600 transition-colors"
-                                            aria-label={`${member.name} Instagram`}
-                                        >
-                                            <Instagram size={18} />
-                                        </a>
-
-                                        <a 
-                                            href="#" 
-                                            className="text-stone-400 hover:text-red-600 transition-colors"
-                                            aria-label={`${member.name} LinkedIn`}
-                                        >
-                                            <Linkedin size={18} />
-                                        </a>
-                                    </div>
-                                </div>
+                                <p className="text-[#0edb0e] font-semibold text-sm mt-1">
+                                    {member.role}
+                                </p>
 
                                 <p className="text-stone-500 leading-relaxed text-sm mt-4">
                                     {member.bio}
