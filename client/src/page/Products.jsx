@@ -303,10 +303,10 @@ const Products = () => {
                   role="button"
                   tabIndex={0}
                   onKeyDown={(e) => e.key === "Enter" && setModal(item)}
-                  className="group bg-white rounded-[2rem] overflow-hidden border border-stone-100 shadow-sm hover:-translate-y-1 hover:shadow-xl hover:shadow-stone-200/40 transition-all duration-300 cursor-pointer"
+                  className="group bg-white rounded-3xl overflow-hidden shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)] hover:-translate-y-1 transition-all duration-300 cursor-pointer"
                 >
                   {/* Product Image Frame */}
-                  <div className="relative h-48 flex items-center justify-center bg-stone-50/60 overflow-hidden">
+                  <div className="relative h-48 flex items-center justify-center bg-stone-50/50 overflow-hidden">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -315,19 +315,21 @@ const Products = () => {
 
                     {/* Savings tag */}
                     {pct(item.price, item.anchoring) > 0 && (
-                      <div className="absolute top-4 left-4 bg-stone-900 text-yellow-400 px-2.5 py-1 rounded-full text-[10px] font-black">
+                      <div className="absolute top-4 left-4 bg-stone-950 text-[#0edb0e] px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider">
                         -{pct(item.price, item.anchoring)}%
                       </div>
                     )}
 
-                    {/* Like Trigger */}
+                    {/* Like Trigger — border removed, using elegant shadow projection */}
                     <button
                       onClick={(e) => { e.stopPropagation(); toggleLike(item.id); }}
                       aria-label={liked.has(item.id) ? "Remove from favorites" : "Add to favorites"}
-                      className={`absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 ${liked.has(item.id) ? "bg-red-600 text-white shadow-md" : "bg-white/90 border border-stone-200 text-stone-400 hover:text-[#0edb0e]"
+                      className={`absolute top-4 right-4 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 shadow-sm hover:scale-105 active:scale-95 ${liked.has(item.id)
+                          ? "bg-[#0edb0e] text-stone-950"
+                          : "bg-white/95 text-stone-400 hover:text-[#0edb0e]"
                         }`}
                     >
-                      <Heart size={15} className={liked.has(item.id) ? "fill-white" : ""} />
+                      <Heart size={15} className={liked.has(item.id) ? "fill-stone-950 text-stone-950" : ""} />
                     </button>
                   </div>
 
@@ -356,7 +358,7 @@ const Products = () => {
                       >
                         <ShoppingBasket size={16} />
                         {cartCountMap[item.id] > 0 && (
-                          <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-stone-900 text-yellow-400 text-[9px] font-bold flex items-center justify-center">
+                          <span className="absolute -top-1.5 -right-1.5 w-4 h-4 rounded-full bg-stone-950 text-[#0edb0e] text-[9px] font-black flex items-center justify-center shadow-md">
                             {cartCountMap[item.id]}
                           </span>
                         )}
