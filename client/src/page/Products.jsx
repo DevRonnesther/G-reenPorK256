@@ -173,7 +173,7 @@ const Products = () => {
     <div className="min-h-screen bg-white text-stone-900 pb-20">
 
       {/* ── STICKY CONTROL DOCK (Header & Category Dock) ── */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-stone-100">
+      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-6 pt-6 pb-4 flex items-center justify-between gap-6">
 
           {/* Brand & Page Mark */}
@@ -193,19 +193,19 @@ const Products = () => {
           <button
             onClick={() => setCartOpen(true)}
             aria-label="Open your cart"
-            className="relative h-11 w-11 rounded-full border border-stone-200 bg-white flex items-center justify-center text-stone-900 hover:bg-stone-50 transition-colors lg:hidden"
+            className="relative h-11 w-11 rounded-full bg-stone-50 flex items-center justify-center text-stone-900 hover:bg-stone-100 transition-colors lg:hidden"
           >
             <ShoppingBasket size={18} />
             {totalItems > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#0edb0e] text-white text-[10px] font-bold flex items-center justify-center">
+              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#0edb0e] text-stone-950 text-[10px] font-black flex items-center justify-center shadow-md">
                 {totalItems}
               </span>
             )}
           </button>
         </div>
 
-        {/* Category pills — updated to use dynamic brand green */}
-        <div className="max-w-7xl mx-auto px-6 pb-6 flex gap-2.5 overflow-x-auto scrollbar-none" role="tablist">
+        {/* Category pills — wrapped layout to completely eliminate horizontal scrolling */}
+        <div className="max-w-7xl mx-auto px-6 pb-6 flex flex-wrap gap-2" role="tablist">
           {CATEGORIES.map((cat) => {
             const isActive = activeCategory === cat.key;
             return (
@@ -214,9 +214,9 @@ const Products = () => {
                 role="tab"
                 aria-selected={isActive}
                 onClick={() => setActiveCategory(cat.key)}
-                className={`px-4 py-2 rounded-full text-[11px] sm:text-xs font-bold uppercase tracking-wide border whitespace-nowrap transition-colors duration-200 ${isActive
-                  ? "bg-[#0edb0e] border-[#0edb0e] text-white"
-                  : "bg-white border-stone-200 text-stone-500 hover:text-stone-900"
+                className={`px-4 py-2 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wide transition-colors duration-200 ${isActive
+                    ? "bg-[#0edb0e] text-stone-950"
+                    : "bg-stone-50 text-stone-500 hover:text-stone-900 hover:bg-stone-100"
                   }`}
               >
                 {cat.label}
@@ -237,46 +237,52 @@ const Products = () => {
             {spotlightItem && (
               <div
                 onClick={() => setModal(spotlightItem)}
-                className="group relative bg-stone-950 text-white rounded-[2.5rem] p-8 md:p-12 grid md:grid-cols-2 gap-8 items-center cursor-pointer overflow-hidden shadow-2xl shadow-stone-950/10 hover:-translate-y-1 transition-all duration-500"
+                className="group relative bg-stone-950 text-white rounded-3xl md:rounded-[2.5rem] p-5 sm:p-8 md:p-12 mb-8 grid grid-cols-12 gap-4 md:gap-8 items-center cursor-pointer overflow-hidden shadow-2xl shadow-stone-950/10 hover:-translate-y-1 transition-all duration-500"
               >
-                {/* Soft Ambient Blurs */}
-                <div className="absolute -top-16 -right-16 w-80 h-80 bg-yellow-400/10 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-0 left-12 w-80 h-80 bg-yellow-400/5 rounded-full blur-3xl pointer-events-none" />
+                {/* Soft Ambient Blurs (Green Accent) */}
+                <div className="absolute -top-16 -right-16 w-48 h-44 md:w-80 md:h-80 bg-[#0edb0e]/10 rounded-full blur-3xl pointer-events-none" />
+                <div className="absolute bottom-0 left-12 w-48 h-44 md:w-80 md:h-80 bg-[#0edb0e]/5 rounded-full blur-3xl pointer-events-none" />
 
-                <div className="space-y-4 md:space-y-6 relative z-10">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-yellow-400/20 text-yellow-400 rounded-full text-[9px] font-bold uppercase tracking-widest backdrop-blur-sm">
+                {/* Left Side: Details (Spans 7 of 12 columns on mobile, 6 on desktop) */}
+                <div className="col-span-7 md:col-span-6 space-y-2 md:space-y-6 relative z-10">
+                  <span className="inline-flex items-center gap-1.5 px-2 md:px-3 py-0.5 md:py-1 bg-[#0edb0e]/15 text-[#0edb0e] rounded-full text-[8px] md:text-[9px] font-bold uppercase tracking-widest backdrop-blur-sm">
                     Chef's Spotlight
                   </span>
-                  <h2 className="text-3xl md:text-5xl font-black tracking-tight leading-tight">
+                  <h2 className="text-base xs:text-lg sm:text-2xl md:text-5xl font-black tracking-tight leading-tight">
                     {spotlightItem.name}
                   </h2>
-                  <p className="text-white/70 text-sm md:text-base leading-relaxed max-w-md font-medium">
+
+                  {/* Description hidden on mobile to dramatically save vertical space */}
+                  <p className="hidden sm:block text-white/70 text-xs sm:text-sm md:text-base leading-relaxed max-w-md font-medium">
                     {spotlightItem.description}
                   </p>
 
-                  <div className="flex flex-wrap items-center gap-6 pt-2">
+                  <div className="flex flex-col xs:flex-row xs:items-center gap-2 xs:gap-4 md:gap-6 pt-1 md:pt-2">
                     <div>
-                      <p className="text-[10px] text-white/50 font-bold uppercase tracking-wider">Starting From</p>
-                      <p className="text-2xl font-black text-yellow-400 mt-1">UGX {fmt(spotlightItem.price)}</p>
+                      <p className="text-[8px] md:text-[10px] text-white/50 font-bold uppercase tracking-wider">Starting From</p>
+                      <p className="text-sm xs:text-base md:text-2xl font-black text-[#0edb0e] mt-0.5 md:mt-1">
+                        UGX {fmt(spotlightItem.price)}
+                      </p>
                     </div>
                     <button
                       onClick={(e) => { e.stopPropagation(); addToCart(spotlightItem); }}
-                      className="inline-flex items-center gap-2 bg-[#0edb0e] hover:bg-[#0bc50b] text-white font-bold text-sm px-4 py-3 rounded-full transition-colors uppercase tracking-wide"
+                      className="inline-flex items-center gap-1.5 bg-[#0edb0e] hover:bg-[#0bc50b] text-white font-bold text-[10px] md:text-sm px-3 md:px-4 py-1.5 md:py-3 rounded-full transition-colors uppercase tracking-wide w-fit"
                     >
-                      <span className="bg-white rounded-full p-1.5 text-[#0edb0e]">
-                        <ShoppingBasket size={14} />
+                      <span className="bg-white rounded-full p-1 text-[#0edb0e] hidden xs:inline-block">
+                        <ShoppingBasket size={12} />
                       </span>
-                      Add to Order
+                      Add
                     </button>
                   </div>
                 </div>
 
-                <div className="relative flex justify-center items-center h-56 sm:h-72">
+                {/* Right Side: Visual Container (Spans 5 of 12 columns on mobile, 6 on desktop) */}
+                <div className="col-span-5 md:col-span-6 relative flex justify-center items-center h-28 xs:h-36 sm:h-48 md:h-72">
                   <img
                     src={spotlightItem.image}
                     alt={spotlightItem.name}
-                    className="w-full max-w-[240px] sm:max-w-[280px] h-auto object-contain z-10 group-hover:scale-105 transition-transform duration-700 ease-out"
-                    style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.4))" }}
+                    className="w-full max-w-[85px] xs:max-w-[110px] sm:max-w-[180px] md:max-w-[280px] h-auto object-contain z-10 group-hover:scale-105 transition-transform duration-700 ease-out"
+                    style={{ filter: "drop-shadow(0 10px 20px rgba(0,0,0,0.45))" }}
                   />
                 </div>
               </div>
@@ -458,142 +464,150 @@ const Products = () => {
       </div>
 
       {/* ── EDITORIAL PRODUCT DETAILS MODAL ── */}
-      <AnimatePresence>
-        {modal && (
-          <>
-            <motion.div
-              key="backdrop"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+<AnimatePresence>
+  {modal && (
+    <>
+      <motion.div
+        key="backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        onClick={() => setModal(null)}
+        className="fixed inset-0 bg-stone-950/40 backdrop-blur-md z-50"
+      />
+
+      <motion.div
+        key="modal"
+        variants={modalVariants}
+        initial="hidden"
+        animate="show"
+        exit="exit"
+        role="dialog"
+        className="fixed inset-0 z-[60] flex flex-col md:flex-row bg-white overflow-hidden"
+      >
+        {/* Left Column: Visual Canvas */}
+        <div
+          className="relative h-[38vh] bg-gradient-to-tr from-stone-50 to-[#0edb0e]/15 min-h-[260px] md:h-auto flex-shrink-0 md:flex-1 flex items-center justify-center overflow-hidden border-b md:border-b-0 md:border-r border-stone-100"
+        >
+          {/* Soft Organic Brand Glows */}
+          <div className="absolute -top-16 -right-16 w-80 h-80 bg-[#0edb0e]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-80 h-80 bg-[#0bc50b]/5 rounded-full blur-3xl pointer-events-none" />
+
+          {/* Top Floating Controls */}
+          <div className="absolute top-5 left-5 flex items-center justify-between w-[90%] z-10">
+            <button
               onClick={() => setModal(null)}
-              className="fixed inset-0 bg-stone-950/40 backdrop-blur-md z-50"
-            />
-
-            <motion.div
-              key="modal"
-              variants={modalVariants}
-              initial="hidden"
-              animate="show"
-              exit="exit"
-              role="dialog"
-              className="fixed inset-0 z-[60] flex flex-col md:flex-row bg-white overflow-hidden"
+              aria-label="Close details"
+              className="w-10 h-10 rounded-full bg-stone-900/5 hover:bg-stone-900/10 backdrop-blur-sm flex items-center justify-center text-stone-900 transition-all active:scale-95"
             >
-              {/* Left Column: Visual Canvas */}
-              <div
-                className="relative h-[38vh] bg-yellow-400 min-h-[260px] md:h-auto flex-shrink-0 md:flex-1 flex items-center justify-center overflow-hidden"
+              <ArrowLeft size={18} />
+            </button>
+
+            <div className="flex items-center gap-2">
+              {modal.tag && <Tag label={modal.tag} />}
+              <button
+                onClick={() => toggleLike(modal.id)}
+                aria-label={liked.has(modal.id) ? "Remove from favorites" : "Add to favorites"}
+                className={`w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-all duration-200 active:scale-95 ${
+                  liked.has(modal.id) 
+                    ? "bg-[#0edb0e] text-stone-950 shadow-lg shadow-[#0edb0e]/20" 
+                    : "bg-stone-900/5 hover:bg-stone-900/10 text-stone-900"
+                }`}
               >
+                <Heart size={16} className={liked.has(modal.id) ? "fill-stone-950 text-stone-950" : ""} />
+              </button>
+            </div>
+          </div>
 
-                {/* Background Blobs */}
-                <div className="absolute top-0 right-0 w-80 h-80 bg-white/20 rounded-full blur-3xl pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-80 h-80 bg-stone-950/10 rounded-full blur-3xl pointer-events-none" />
+          {/* Food Photography Container */}
+          <div className="relative flex items-center justify-center p-6 h-full w-full select-none">
+            <motion.img
+              key={modal.id}
+              initial={{ opacity: 0, scale: 0.85, rotate: -4 }}
+              animate={{ opacity: 1, scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 220, damping: 20 }}
+              src={modal.image}
+              alt={modal.name}
+              className="w-full max-w-[200px] sm:max-w-[260px] md:max-w-[380px] h-auto max-h-[85%] object-contain"
+              style={{ filter: "drop-shadow(0 25px 45px rgba(0,0,0,0.15))" }}
+            />
+          </div>
+        </div>
 
-                <div className="absolute top-5 left-5 flex items-center justify-between w-[90%] z-10">
-                  <button
-                    onClick={() => setModal(null)}
-                    aria-label="Close details"
-                    className="w-10 h-10 rounded-full bg-stone-950/10 hover:bg-stone-950/20 backdrop-blur-sm flex items-center justify-center text-stone-950 transition-all"
-                  >
-                    <ArrowLeft size={18} />
-                  </button>
+        {/* Right Column: Detailed Info Panel */}
+        <div className="flex-1 flex flex-col overflow-hidden bg-white">
+          <div className="flex-1 overflow-y-auto px-6 py-8 md:py-12">
+            <div className="max-w-xl mx-auto space-y-8">
 
-                  <div className="flex items-center gap-2">
-                    {modal.tag && <Tag label={modal.tag} />}
-                    <button
-                      onClick={() => toggleLike(modal.id)}
-                      aria-label={liked.has(modal.id) ? "Remove from favorites" : "Add to favorites"}
-                      className={`w-10 h-10 rounded-full backdrop-blur-sm flex items-center justify-center transition-colors duration-200 ${liked.has(modal.id) ? "bg-red-600 text-white shadow-lg" : "bg-stone-950/10 hover:bg-stone-950/20 text-stone-950"
-                        }`}
-                    >
-                      <Heart size={16} className={liked.has(modal.id) ? "fill-white" : ""} />
-                    </button>
-                  </div>
-                </div>
+              {/* Title, rating, and prices */}
+              <div className="space-y-4">
+                <Stars rating={modal.rating} />
+                <h2 className="text-3xl md:text-4xl font-black text-stone-900 tracking-tight leading-tight">{modal.name}</h2>
 
-                <div className="relative flex items-center justify-center p-6 h-full w-full">
-                  <motion.img
-                    key={modal.id}
-                    initial={{ opacity: 0, scale: 0.85, rotate: -4 }}
-                    animate={{ opacity: 1, scale: 1, rotate: 0 }}
-                    transition={{ type: "spring", stiffness: 220, damping: 20 }}
-                    src={modal.image}
-                    alt={modal.name}
-                    className="w-full max-w-[200px] sm:max-w-[260px] md:max-w-[400px] h-auto max-h-[85%] object-contain"
-                    style={{ filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.3))" }}
-                  />
-                </div>
-              </div>
-
-              {/* Right Column: Detailed Info Panel */}
-              <div className="flex-1 flex flex-col overflow-hidden">
-                <div className="flex-1 overflow-y-auto px-6 py-8">
-                  <div className="max-w-xl mx-auto space-y-6">
-
-                    <div>
-                      <Stars rating={modal.rating} />
-                      <h2 className="text-3xl md:text-4xl font-extrabold text-stone-900 tracking-tight mt-3 mb-2">{modal.name}</h2>
-
-                      <div className="flex items-center gap-3">
-                        <span className="text-2xl font-black text-[#0edb0e]">UGX {fmt(modal.price)}</span>
-                        {pct(modal.price, modal.anchoring) > 0 && (
-                          <>
-                            <span className="text-xs text-red-500 line-through font-semibold">UGX {fmt(modal.anchoring)}</span>
-                            <span className="bg-yellow-50 text-yellow-700 text-[10px] font-bold px-2.5 py-1 rounded-full">
-                              -{pct(modal.price, modal.anchoring)}% Off
-                            </span>
-                          </>
-                        )}
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">About this selection</p>
-                      <p className="text-stone-500 leading-relaxed text-sm md:text-base">{modal.description}</p>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-3 pt-2">
-                      <StatChip Icon={Clock} label="Prep time" value={modal.cookTime} />
-                      <StatChip Icon={Truck} label="Delivery" value={shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`} />
-                      <StatChip Icon={ShieldCheck} label="Quality" value="Premium" />
-                    </div>
-
-                    {pct(modal.price, modal.anchoring) > 0 && (
-                      <div className="bg-stone-50/70 rounded-2xl p-5 flex items-center justify-between">
-                        <div>
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mb-0.5">Total Savings</p>
-                          <p className="text-2xl font-black text-[#0edb0e]">UGX {fmt(parseInt(modal.anchoring, 10) - modal.price)}</p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-xs text-red-500 line-through">UGX {fmt(modal.anchoring)}</p>
-                          <p className="text-sm font-extrabold text-stone-800">UGX {fmt(modal.price)}</p>
-                        </div>
-                      </div>
-                    )}
-
-                  </div>
-                </div>
-
-                {/* Fixed CTA Footer Bar */}
-                <div className="p-6 bg-white border-t border-stone-100">
-                  <div className="max-w-xl mx-auto flex gap-4">
-                    <button
-                      onClick={() => { addToCart(modal); setModal(null); setCartOpen(true); }}
-                      className="flex-1 h-14 rounded-full bg-[#0edb0e] hover:bg-[#0bc50b] text-white font-bold text-sm flex items-center justify-center gap-2 transition-colors uppercase tracking-wide"
-                    >
-                      <span className="bg-white rounded-full p-2 text-[#0edb0e]">
-                        <ShoppingBasket size={15} />
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-black text-[#0edb0e]">UGX {fmt(modal.price)}</span>
+                  {pct(modal.price, modal.anchoring) > 0 && (
+                    <>
+                      <span className="text-xs text-red-500 line-through font-semibold">UGX {fmt(modal.anchoring)}</span>
+                      <span className="bg-[#0edb0e]/10 text-[#0bc50b] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
+                        -{pct(modal.price, modal.anchoring)}% Off
                       </span>
-                      Add to order · UGX {fmt(modal.price)}
-                    </button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              {/* Description */}
+              <div className="space-y-2">
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400">About this selection</p>
+                <p className="text-stone-500 leading-relaxed text-sm md:text-base font-medium">{modal.description}</p>
+              </div>
+
+              {/* Stat Chips Grid */}
+              <div className="grid grid-cols-3 gap-3">
+                <StatChip Icon={Clock} label="Prep time" value={modal.cookTime} />
+                <StatChip Icon={Truck} label="Delivery" value={shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`} />
+                <StatChip Icon={ShieldCheck} label="Quality" value="Premium" />
+              </div>
+
+              {/* Total Savings Card */}
+              {pct(modal.price, modal.anchoring) > 0 && (
+                <div className="bg-stone-50/70 border border-stone-100 rounded-2xl p-5 flex items-center justify-between">
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-stone-400 mb-0.5">Total Savings</p>
+                    <p className="text-2xl font-black text-[#0edb0e]">UGX {fmt(parseInt(modal.anchoring, 10) - modal.price)}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-xs text-red-500 line-through font-semibold">UGX {fmt(modal.anchoring)}</p>
+                    <p className="text-sm font-extrabold text-stone-800">UGX {fmt(modal.price)}</p>
                   </div>
                 </div>
+              )}
 
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+            </div>
+          </div>
 
+          {/* Fixed CTA Footer Bar */}
+          <div className="p-6 bg-white border-t border-stone-100">
+            <div className="max-w-xl mx-auto flex gap-4">
+              <button
+                onClick={() => { addToCart(modal); setModal(null); setCartOpen(true); }}
+                className="flex-1 h-14 rounded-full bg-[#0edb0e] hover:bg-[#0bc50b] text-white font-bold text-sm flex items-center justify-center gap-2 transition-all duration-200 active:scale-[0.99] uppercase tracking-wide shadow-lg shadow-[#0edb0e]/15"
+              >
+                <span className="bg-white rounded-full p-2 text-[#0edb0e]">
+                  <ShoppingBasket size={15} />
+                </span>
+                Add to order · UGX {fmt(modal.price)}
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </motion.div>
+    </>
+  )}
+</AnimatePresence>
+      
       {/* ── CART DRAWER (Modern Floating Capsule Sheet) ── */}
       <AnimatePresence>
         {cartOpen && (

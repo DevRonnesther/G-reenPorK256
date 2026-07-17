@@ -92,7 +92,7 @@ const Navbar = () => {
                 >
                   <ShoppingBasket size={18} className="text-[#01060e]" aria-hidden="true" />
                   {totalItems > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-[#0edb0e] border-2 border-yellow-400 text-white text-[10px] font-bold flex items-center justify-center">
+                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-600 border-2 border-yellow-400 text-white text-[10px] font-bold flex items-center justify-center">
                       {totalItems}
                     </span>
                   )}
@@ -126,7 +126,7 @@ const Navbar = () => {
                 >
                   <ShoppingBasket size={18} className="text-[#01060e]" aria-hidden="true" />
                   {totalItems > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-[#0edb0e] text-white text-[10px] font-bold flex items-center justify-center">
+                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center">
                       {totalItems}
                     </span>
                   )}
