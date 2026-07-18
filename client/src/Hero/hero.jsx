@@ -158,9 +158,9 @@ function SpicePills({ active }) {
           <span
             key={level}
             aria-current={isActive}
-            className={`px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide border transition-colors duration-200 ${isActive
-              ? "bg-[#0edb0e] border-[#0edb0e] text-white"
-              : "bg-white border-stone-200 text-stone-50"
+            className={`px-3.5 py-1.5 rounded-full text-[10px] sm:text-xs font-bold uppercase tracking-wide transition-colors duration-200 ${isActive
+              ? "bg-[#0edb0e] text-stone-950"
+              : "bg-stone-50 text-stone-500 hover:text-stone-900"
               }`}
           >
             {level}
@@ -171,7 +171,7 @@ function SpicePills({ active }) {
   );
 }
 
-/** Bottom thumbnail rail, framed by prev/next arrows — mirrors the reference's carousel strip. */
+/** Bottom thumbnail rail — borders completely removed with smooth micro-scale and clean ring accents. */
 function DesktopThumbnailRail({ slides, current, onSelect, onPrev, onNext }) {
   return (
     <div className="flex items-center gap-3">
@@ -179,7 +179,7 @@ function DesktopThumbnailRail({ slides, current, onSelect, onPrev, onNext }) {
         type="button"
         onClick={onPrev}
         aria-label="Previous product"
-        className="h-11 w-11 flex-shrink-0 rounded-full border border-stone-200 bg-white flex items-center justify-center hover:bg-stone-50 transition-colors"
+        className="h-11 w-11 flex-shrink-0 rounded-full bg-stone-50 flex items-center justify-center hover:bg-stone-100 transition-colors"
       >
         <ChevronLeft size={16} aria-hidden="true" />
       </button>
@@ -194,7 +194,9 @@ function DesktopThumbnailRail({ slides, current, onSelect, onPrev, onNext }) {
               aria-label={`Show ${s.category}`}
               aria-current={isActive}
               onClick={() => onSelect(index)}
-              className={`h-14 w-14 rounded-2xl overflow-hidden border-2 bg-stone-50 transition-all duration-200 ${isActive ? "border-yellow-400 scale-105 shadow-md" : "border-stone-100 opacity-70 hover:opacity-100"
+              className={`h-14 w-14 rounded-2xl overflow-hidden bg-stone-50 transition-all duration-200 ${isActive
+                  ? "scale-110 shadow-md ring-2 ring-[#0edb0e]"
+                  : "opacity-75 hover:opacity-100 hover:scale-105"
                 }`}
             >
               <img src={s.image} alt="" aria-hidden="true" className="h-full w-full object-cover" />
@@ -207,7 +209,7 @@ function DesktopThumbnailRail({ slides, current, onSelect, onPrev, onNext }) {
         type="button"
         onClick={onNext}
         aria-label="Next product"
-        className="h-11 w-11 flex-shrink-0 rounded-full bg-stone-900 text-white flex items-center justify-center hover:bg-stone-800 transition-colors"
+        className="h-11 w-11 flex-shrink-0 rounded-full bg-stone-900 text-white flex items-center justify-center hover:bg-stone-850 transition-colors"
       >
         <ChevronRight size={16} aria-hidden="true" />
       </button>
@@ -295,27 +297,27 @@ function DesktopHero({ carousel }) {
             </motion.div>
           </AnimatePresence>
 
-          {/* CTA row: Order Now + Watch Video */}
+          {/* CTA row: Order Now + Price badge */}
           <div className="flex items-center gap-5 mt-7">
             <button
               type="button"
               onClick={handleAddToCart}
               aria-label={`Add ${slide.category} to cart`}
-              className="inline-flex items-center gap-2 bg-[#0edb0e] hover:bg-[#0bc50b] text-white font-bold text-sm px-2.5 py-2.5 rounded-full transition-colors uppercase tracking-wide"
+              className="inline-flex items-center gap-2 bg-[#0edb0e] hover:bg-[#0bc50b] text-stone-950 font-black text-sm px-2.5 py-2.5 rounded-full transition-colors uppercase tracking-wide shadow-lg shadow-[#0edb0e]/10 active:scale-95"
             >
-              <div className="bg-white rounded-full mr-2 p-2 text-[#0edb0e]">
-                <ShoppingBasket />
+              <div className="bg-stone-950 rounded-full mr-2 p-2 text-[#0edb0e]">
+                <ShoppingBasket size={15} />
               </div>
               Order Now
             </button>
 
-            {/* Circular price badge, echoing the reference's "ONLY UGX" ring */}
+            {/* Circular price badge — border removed, premium drop shadow added */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={`price-badge-${slide.id}`}
                 {...fadeUp(0.15)}
                 exit={{ opacity: 0, transition: { duration: 0.2 } }}
-                className="z-20 h-28 w-28 rounded-full bg-white border-none flex flex-col items-center justify-center shadow-lg shadow-none"
+                className="z-20 h-28 w-28 rounded-full bg-white flex flex-col items-center justify-center shadow-[0_10px_35px_rgba(0,0,0,0.05)]"
               >
                 <span className="text-[10px] font-bold uppercase tracking-wide text-stone-400">Only</span>
                 <span className="text-[10px] font-bold uppercase tracking-wide text-stone-400 -mt-0.5">UGX</span>
@@ -325,11 +327,11 @@ function DesktopHero({ carousel }) {
             </AnimatePresence>
           </div>
 
-          {/* Feature icons row */}
+          {/* Feature icons row — borders completely removed, clean flat elements */}
           <div className="flex items-center gap-6 mt-9">
             {FEATURES.map(({ icon: Icon, label, sub }) => (
               <div key={label} className="flex items-center gap-2">
-                <span className="h-9 w-9 rounded-full bg-white border border-stone-200 flex items-center justify-center text-[#0edb0e] flex-shrink-0">
+                <span className="h-9 w-9 rounded-full bg-stone-50 flex items-center justify-center text-[#0edb0e] flex-shrink-0">
                   <Icon size={16} aria-hidden="true" />
                 </span>
                 <div className="leading-tight">
@@ -346,13 +348,13 @@ function DesktopHero({ carousel }) {
           </div>
         </div>
 
-        {/* Right: image + circular price badge + peeking next image */}
+        {/* Right: image + peeking next image */}
         <div className="flex items-center justify-center overflow-hidden">
           <img
             src={nextSlide.image}
             alt=""
             aria-hidden="true"
-            className="absolute right-[4rem] top-1/2 -translate-y-1/2 w-54 h-54 object-contain opacity-90"
+            className="absolute right-[4rem] top-1/2 -translate-y-1/2 w-54 h-54 object-contain opacity-90 select-none pointer-events-none"
             style={{ filter: "drop-shadow(0 15px 25px rgba(0,0,0,0.2))" }}
           />
 
@@ -367,12 +369,12 @@ function DesktopHero({ carousel }) {
               animate="center"
               exit="exit"
               style={{ filter: "drop-shadow(0 25px 35px rgba(0,0,0,0.25))" }}
-              className="w-[28rem] h-[28rem] object-contain absolute -translate-x-80 z-10"
+              className="w-[28rem] h-[28rem] object-contain absolute -translate-x-80 z-10 select-none pointer-events-none"
             />
           </AnimatePresence>
           <motion.div className="absolute inset-0 pointer-events-none" animate={floatAnimation} aria-hidden="true" />
 
-          <div className="absolute bottom-10 right-12 flex items-center gap-2 text-stone-900 font-black text-sm z-10">
+          <div className="absolute bottom-10 right-12 flex items-center gap-2 text-stone-900 font-black text-sm z-10 select-none">
             <span>{String(current + 1).padStart(2, "0")}</span>
             <span className="text-stone-900/30">/ {String(SLIDES.length).padStart(2, "0")}</span>
           </div>

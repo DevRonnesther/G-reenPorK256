@@ -173,58 +173,68 @@ const Products = () => {
     <div className="min-h-screen bg-white text-stone-900 pb-20">
 
       {/* ── STICKY CONTROL DOCK (Header & Category Dock) ── */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-6 pt-6 pb-4 flex items-center justify-between gap-6">
+      {/* ── STICKY CONTROL DOCK (Header & Segmented Category Dock) ── */}
+<div className="sticky top-0 z-40 bg-white/90 backdrop-blur-md">
+  <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
 
-          {/* Brand & Page Mark */}
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-yellow-400 flex items-center justify-center shrink-0 shadow-lg shadow-yellow-400/20">
-              <Leaf size={18} className="text-stone-950" aria-hidden="true" />
-            </div>
-            <div>
-              <Eyebrow>{BRAND_NAME}</Eyebrow>
-              <h1 className="text-xl md:text-2xl font-black leading-tight text-stone-900 mt-1">
-                Menu Collection
-              </h1>
-            </div>
-          </div>
-
-          {/* Cart Icon & Item Count (Hidden on desktop screens since the live side-cart is visible) */}
-          <button
-            onClick={() => setCartOpen(true)}
-            aria-label="Open your cart"
-            className="relative h-11 w-11 rounded-full bg-stone-50 flex items-center justify-center text-stone-900 hover:bg-stone-100 transition-colors lg:hidden"
-          >
-            <ShoppingBasket size={18} />
-            {totalItems > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 w-5 h-5 rounded-full bg-[#0edb0e] text-stone-950 text-[10px] font-black flex items-center justify-center shadow-md">
-                {totalItems}
-              </span>
-            )}
-          </button>
+    {/* Top Row: Brand Logo & Mobile Action (Spans full-width on mobile, auto on desktop) */}
+    <div className="flex items-center justify-between w-full md:w-auto">
+      
+      {/* Brand & Page Mark */}
+      <div className="flex items-center gap-3 select-none">
+        <div className="w-10 h-10 rounded-xl bg-[#0edb0e]/10 flex items-center justify-center shrink-0 shadow-sm shadow-[#0edb0e]/5 text-[#0edb0e]">
+          <Leaf size={18} aria-hidden="true" />
         </div>
-
-        {/* Category pills — wrapped layout to completely eliminate horizontal scrolling */}
-        <div className="max-w-7xl mx-auto px-6 pb-6 flex flex-wrap gap-2" role="tablist">
-          {CATEGORIES.map((cat) => {
-            const isActive = activeCategory === cat.key;
-            return (
-              <button
-                key={cat.key}
-                role="tab"
-                aria-selected={isActive}
-                onClick={() => setActiveCategory(cat.key)}
-                className={`px-4 py-2 rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wide transition-colors duration-200 ${isActive
-                    ? "bg-[#0edb0e] text-stone-950"
-                    : "bg-stone-50 text-stone-500 hover:text-stone-900 hover:bg-stone-100"
-                  }`}
-              >
-                {cat.label}
-              </button>
-            );
-          })}
+        <div>
+          <Eyebrow>{BRAND_NAME}</Eyebrow>
+          <h1 className="text-lg md:text-xl font-black leading-tight text-stone-900 mt-0.5">
+            Menu Collection
+          </h1>
         </div>
       </div>
+
+      {/* Cart Icon & Item Count (Visible only on mobile/tablet screens) */}
+      <button
+        onClick={() => setCartOpen(true)}
+        aria-label="Open your cart"
+        className="relative h-10 w-10 rounded-xl bg-stone-50 flex items-center justify-center text-stone-800 hover:bg-stone-100 hover:text-stone-900 transition-all duration-200 lg:hidden active:scale-95"
+      >
+        <ShoppingBasket size={18} />
+        {totalItems > 0 && (
+          <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#0edb0e] text-stone-950 text-[9px] font-black flex items-center justify-center shadow-sm">
+            {totalItems}
+          </span>
+        )}
+      </button>
+
+    </div>
+
+    {/* Segmented Category Pill Track (Folds cleanly on mobile, sits adjacent to title on desktop) */}
+    <div className="w-full md:w-auto" role="tablist">
+      <div className="bg-stone-50 p-1 rounded-2xl md:rounded-full flex flex-wrap gap-1">
+        {CATEGORIES.map((cat) => {
+          const isActive = activeCategory === cat.key;
+          return (
+            <button
+              key={cat.key}
+              role="tab"
+              aria-selected={isActive}
+              onClick={() => setActiveCategory(cat.key)}
+              className={`px-4 py-1.5 md:py-2 rounded-xl md:rounded-full text-[11px] sm:text-xs font-black uppercase tracking-wide transition-all duration-200 ${
+                isActive
+                  ? "bg-[#0edb0e] text-stone-950 shadow-sm"
+                  : "text-stone-500 hover:text-stone-900 hover:bg-stone-100/50"
+              }`}
+            >
+              {cat.label}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+
+  </div>
+</div>
 
       {/* ── GRID SYSTEM (Split Double Layout: Menu on Left, Sticky Live Cart on Right) ── */}
       <div className="max-w-7xl mx-auto px-6 py-6">
