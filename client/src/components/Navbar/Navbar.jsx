@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { Link, NavLink, useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import green from "../../assets/ChatGPT Image Jul 12, 2026, 04_17_26 PM.png";
 import { useCart } from "../cart/CartContext";
 import {
   Menu, X, Home, UserCircle, Store, Info, Phone,
-  ShoppingBasket, Heart, Clock
+  ShoppingBasket, PiggyBank, Heart, Clock
 } from "lucide-react";
 
 // ─── CONFIGURATION ───────────────────────────────────────────────────────────
@@ -24,6 +25,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { totalItems } = useCart();
+  const location = useLocation();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -38,6 +40,11 @@ const Navbar = () => {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
+  // Auto-close drawer on route change for seamless UX
+  useEffect(() => {
+    setOpen(false);
+  }, [location.pathname]);
+
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -47,31 +54,57 @@ const Navbar = () => {
 
   return (
     <>
-      <header className="sticky top-0 z-50 transition-all duration-300">
+      {/* ════════════════════════════════════════════════════════════════════════
+          STICKY HEADER (Both Desktop & Mobile)
+      ════════════════════════════════════════════════════════════════════════ */}
+      <header className="sticky top-0 z-40 transition-all duration-500">
         <div
-          className={`transition-all duration-300 ${scrolled
-            ? "bg-white/95 backdrop-blur-lg shadow-md shadow-[#E5E7EB]/50 py-1"
-            : "bg-white/0 py-3"
+          className={`transition-all duration-500 ${scrolled
+            ? "bg-white/80 backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.04)] py-1"
+            : "bg-transparent py-3"
             }`}
         >
-          <div className="max-w-7xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex items-center justify-between h-16 sm:h-20">
 
-              {/* Logo */}
-              <Link to="/" className="flex items-center gap-2 group shrink-0" aria-label={`${BRAND_NAME} home`}>
-                <img src={green} alt={BRAND_NAME} className="w-auto h-34 sm:h-14 md:h-44 object-contain" />
+                            {/* ── Premium Logo Layout ── */}
+              <Link 
+                to="/" 
+                className="flex items-center gap-3 group shrink-0" 
+                aria-label={`${BRAND_NAME} home`}
+              >
+                {/* High-end dimensional icon vessel */}
+                <div className="relative flex items-center justify-center w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0edb0e] to-[#0bc50b] shadow-lg shadow-[#0edb0e]/25 transition-transform duration-300 group-hover:scale-105">
+                  {/* Inset light overlay for 3D depth */}
+                  <div className="absolute inset-0 rounded-2xl bg-white/10" style={{ clipPath: "polygon(0 0, 100% 0, 100% 30%, 0 30%)" }} />
+                  <PiggyBank className="w-5 h-5 text-white drop-shadow-sm" aria-hidden="true" />
+                </div>
+
+                {/* Premium Typography Treatment */}
+                <div className="hidden sm:flex flex-col">
+                  <h3 className="text-[1.35rem] font-extrabold tracking-[-0.025em] text-stone-900 leading-none flex items-baseline gap-1.5">
+                    <span className="text-[#0edb0e]">Green</span>
+                    <span>Pork</span>
+                  </h3>
+                  {/* Refined architectural accent underline */}
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <span className="h-[2.5px] w-2 rounded-full bg-[#0edb0e]" />
+                    <span className="h-[1px] w-10 bg-stone-300" />
+                    <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-stone-400">Premium Cuts</span>
+                  </div>
+                </div>
               </Link>
 
-              {/* Desktop Nav Pill */}
-              <nav className="hidden lg:flex items-center gap-1.5" aria-label="Primary Nav">
+              {/* ─── Desktop Nav Links (Hidden on Mobile) ─── */}
+              <nav className="hidden lg:flex items-center gap-1 p-1 bg-stone-100/50 rounded-full" aria-label="Primary Nav">
                 {NAV_LINKS.map(({ icon, label, to }) => (
                   <NavLink
                     key={to}
                     to={to}
                     className={({ isActive }) =>
-                      `flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold uppercase tracking-wider transition-all duration-200 ${isActive
-                        ? "text-[#0edb0e] bg-[#0edb0e]/10"
-                        : "text-[#01060e]/70 hover:text-[#01060e] hover:bg-[#F8FAFC]"
+                      `flex items-center gap-2 px-5 py-2.5 rounded-full text-[11px] font-bold uppercase tracking-widest transition-all duration-300 ${isActive
+                        ? "text-stone-950 bg-white shadow-[0_4px_15px_rgba(0,0,0,0.05)]"
+                        : "text-stone-500 hover:text-stone-900 hover:bg-white/50"
                       }`
                     }
                   >
@@ -81,52 +114,48 @@ const Navbar = () => {
                 ))}
               </nav>
 
-              {/* Desktop Actions */}
-              <div className="hidden lg:flex items-center gap-4">
-
-                {/* Cart Button */}
+              {/* ─── Desktop Actions (Hidden on Mobile) ─── */}
+              <div className="hidden lg:flex items-center gap-3 select-none">
                 <Link
                   to="/cart"
-                  className="relative w-11 h-11 rounded-xl bg-[#F8FAFC] hover:bg-[#E5E7EB] flex items-center justify-center transition-colors"
+                  className="relative w-11 h-11 rounded-full bg-[#F8F8F5] hover:bg-white hover:shadow-sm flex items-center justify-center transition-all duration-300"
                   aria-label="View cart"
                 >
-                  <ShoppingBasket size={18} className="text-[#01060e]" aria-hidden="true" />
+                  <ShoppingBasket size={18} className="text-stone-800" aria-hidden="true" />
                   {totalItems > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-600 border-2 border-yellow-400 text-white text-[10px] font-bold flex items-center justify-center">
+                    <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-[#0edb0e] text-stone-950 text-[9px] font-black flex items-center justify-center shadow-sm shadow-[#0edb0e]/20">
                       {totalItems}
                     </span>
                   )}
                 </Link>
 
-                {/* Telephone Action Link */}
-                <a
-                  href={`tel:+${WHATSAPP_NUMBER}`}
-                  className="flex items-center gap-2 text-xs font-extrabold uppercase tracking-widest text-[#01060e] transition-all duration-200 hover:scale-[1.02]"
-                >
-                  <Phone className="text-[#0edb0e]" size={16} aria-hidden="true" />
-                  {PHONE_DISPLAY}
-                </a>
-
-                {/* Profile Icon link */}
                 <Link
                   to="/profile"
-                  className="w-11 h-11 rounded-xl flex items-center justify-center text-[#01060e]/60 hover:text-[#01060e] hover:bg-[#F8FAFC] transition-colors"
+                  className="w-11 h-11 rounded-full flex items-center justify-center text-stone-500 hover:text-stone-900 hover:bg-[#F8F8F5] transition-all duration-300"
                   aria-label="View profile"
                 >
-                  <UserCircle size={24} aria-hidden="true" />
+                  <UserCircle size={22} aria-hidden="true" />
                 </Link>
+
+                <a
+                  href={`tel:+${WHATSAPP_NUMBER}`}
+                  className="flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-widest text-stone-500 hover:text-stone-900 transition-all duration-300 pl-4"
+                >
+                  <Phone className="text-[#0edb0e]" size={14} aria-hidden="true" />
+                  {PHONE_DISPLAY}
+                </a>
               </div>
 
-              {/* Mobile Trigger Hub */}
-              <div className="flex lg:hidden items-center gap-2">
+              {/* ─── Mobile Trigger Hub (Hidden on Desktop) ─── */}
+              <div className="flex lg:hidden items-center gap-2 select-none">
                 <Link
                   to="/cart"
-                  className="relative w-11 h-11 rounded-xl bg-[#F8FAFC] flex items-center justify-center"
+                  className="relative w-11 h-11 rounded-full bg-[#F8F8F5] flex items-center justify-center transition-all duration-200"
                   aria-label="View cart"
                 >
-                  <ShoppingBasket size={18} className="text-[#01060e]" aria-hidden="true" />
+                  <ShoppingBasket size={18} className="text-stone-800" aria-hidden="true" />
                   {totalItems > 0 && (
-                    <span className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-red-600 text-white text-[10px] font-bold flex items-center justify-center">
+                    <span className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-[#0edb0e] text-stone-950 text-[9px] font-black flex items-center justify-center shadow-sm shadow-[#0edb0e]/20">
                       {totalItems}
                     </span>
                   )}
@@ -134,13 +163,13 @@ const Navbar = () => {
 
                 <button
                   onClick={() => setOpen((v) => !v)}
-                  className="w-11 h-11 rounded-xl bg-[#F8FAFC] flex items-center justify-center hover:bg-[#E5E7EB] transition-all duration-200"
+                  className="w-11 h-11 rounded-full bg-stone-900 text-white flex items-center justify-center hover:bg-stone-800 transition-all duration-200 shadow-lg shadow-stone-900/10"
                   aria-label={open ? "Close menu" : "Open menu"}
                   aria-expanded={open}
                 >
                   {open
-                    ? <X size={18} className="text-[#01060e]" aria-hidden="true" />
-                    : <Menu size={22} className="text-[#01060e]" aria-hidden="true" />
+                    ? <X size={18} aria-hidden="true" />
+                    : <Menu size={20} aria-hidden="true" />
                   }
                 </button>
               </div>
@@ -150,103 +179,160 @@ const Navbar = () => {
         </div>
       </header>
 
-      {/* Glassmorphic overlay background */}
-      <div
-        className={`fixed inset-0 z-40 bg-[#01060e]/60 backdrop-blur-sm transition-opacity duration-300 lg:hidden ${open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
-          }`}
-        onClick={closeMenu}
-        aria-hidden="true"
-      />
 
-      {/* Unique Mobile Bottom-Sheet Bento Drawer */}
-      <div
-        className={`fixed bottom-0 left-0 right-0 z-50 flex flex-col bg-white rounded-t-[2.5rem] shadow-2xl transition-all duration-500 ease-out lg:hidden max-h-[85vh] ${open ? "translate-y-0" : "translate-y-full"
-          }`}
-        aria-hidden={!open}
-      >
-        {/* Pull-down indicator bar representing mobile-native sheet styling */}
-        <div className="w-12 h-1.5 bg-[#E5E7EB] rounded-full mx-auto mt-4 mb-2 shrink-0" onClick={closeMenu} />
+      {/* ════════════════════════════════════════════════════════════════════════
+          TACTILE iOS-STYLE SLIDING SHEET DRAWER (Mobile Only)
+      ════════════════════════════════════════════════════════════════════════ */}
+      {/* ════════════════════════════════════════════════════════════════════════
+          TACTILE iOS-STYLE SLIDING SHEET DRAWER (Mobile Only)
+      ════════════════════════════════════════════════════════════════════════ */}
+      <AnimatePresence>
+        {open && (
+          <>
+            {/* Backdrop Blur Overlay */}
+            <motion.div
+              key="nav-backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              onClick={closeMenu}
+              className="fixed inset-0 z-40 bg-stone-950/40 backdrop-blur-md lg:hidden"
+              aria-hidden="true"
+            />
 
-        {/* Drawer Header */}
-        <div className="flex items-center justify-between px-6 pb-4 pt-2">
-          <div>
-            <h2 className="text-xl font-black text-[#01060e] tracking-tight">Navigation</h2>
-            <p className="text-[#01060e]/50 text-[11px] mt-0.5">Where would you like to go today?</p>
-          </div>
-          <button
-            onClick={closeMenu}
-            className="w-9 h-9 rounded-full bg-[#F8FAFC] flex items-center justify-center text-[#01060e] hover:bg-[#E5E7EB] transition-colors"
-            aria-label="Close menu"
-          >
-            <X size={16} aria-hidden="true" />
-          </button>
-        </div>
-
-        {/* Bento Grid Layout Navigation Links */}
-        <nav className="flex-1 px-6 py-2 overflow-y-auto" aria-label="Mobile Navigation">
-          <div className="grid grid-cols-2 gap-3.5">
-            {NAV_LINKS.map(({ label, to, icon, desc }) => (
-              <NavLink
-                key={to}
-                to={to}
+            {/* Sliding Sheet Drawer */}
+            <motion.div
+              key="nav-sheet"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 280, damping: 30 }}
+              className="fixed bottom-0 left-0 right-0 z-50 flex flex-col bg-white rounded-t-[2.5rem] shadow-[0_-15px_40px_rgba(0,0,0,0.12)] border-t border-stone-100 lg:hidden max-h-[85vh] select-none overflow-hidden"
+              role="dialog"
+              aria-label="Navigation drawer"
+            >
+              {/* Pull-down indicator bar */}
+              <div 
+                className="py-3 shrink-0 cursor-pointer flex justify-center group" 
                 onClick={closeMenu}
-                className={({ isActive }) =>
-                  `flex flex-col items-start p-4 rounded-2xl border transition-all duration-200 text-left relative overflow-hidden group ${isActive
-                    ? "border-[#0edb0e]/30 bg-[#0edb0e]/5 text-[#0edb0e]"
-                    : "border-[#E5E7EB]/60 bg-[#F8FAFC] text-[#01060e]/75 active:bg-[#E5E7EB]/40"
-                  }`
-                }
               >
-                {/* Decorative corner accent block */}
-                <span className="absolute top-0 right-0 w-8 h-8 rounded-bl-2xl bg-yellow-400/10 group-hover:bg-yellow-400/20 transition-all duration-200" />
+                <div className="w-12 h-1.5 bg-stone-200 group-hover:bg-stone-300 rounded-full transition-colors duration-200" />
+              </div>
 
-                <span className="p-2.5 rounded-xl bg-white shadow-sm text-[#0edb0e] mb-4 inline-block shrink-0">
-                  {icon}
-                </span>
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between px-6 pb-3 pt-1 shrink-0">
+                <div>
+                  <h2 className="text-2xl font-black text-stone-900 tracking-tight">Navigation</h2>
+                  <p className="text-stone-400 text-xs mt-0.5 font-medium">Where would you like to go today?</p>
+                </div>
+                <button
+                  onClick={closeMenu}
+                  className="w-10 h-10 rounded-full bg-stone-50 flex items-center justify-center text-stone-900 hover:bg-stone-100 active:scale-95 transition-all duration-200"
+                  aria-label="Close menu"
+                >
+                  <X size={18} aria-hidden="true" />
+                </button>
+              </div>
 
-                <span className="font-extrabold text-sm tracking-tight block">
-                  {label}
-                </span>
+              {/* Bento Grid Layout Navigation Links with staggered animation */}
+              <motion.nav 
+                className="flex-1 px-6 py-2 overflow-y-auto" 
+                aria-label="Mobile Navigation"
+                variants={{
+                  hidden: { opacity: 0 },
+                  show: {
+                    opacity: 1,
+                    transition: {
+                      staggerChildren: 0.05,
+                      delayChildren: 0.05
+                    }
+                  }
+                }}
+                initial="hidden"
+                animate="show"
+              >
+                <div className="grid grid-cols-2 gap-3.5">
+                  {NAV_LINKS.map(({ label, to, icon, desc }) => {
+                    // Create an animated NavLink using framer-motion
+                    const MotionNavLink = motion(NavLink);
+                    
+                    return (
+                      <MotionNavLink
+                        key={to}
+                        to={to}
+                        onClick={closeMenu}
+                        variants={{
+                          hidden: { opacity: 0, y: 15, scale: 0.96 },
+                          show: { opacity: 1, y: 0, scale: 1 }
+                        }}
+                        className={({ isActive }) =>
+                          `flex flex-col items-start p-4 rounded-2xl transition-all duration-200 text-left relative overflow-hidden group border ${isActive
+                            ? "bg-gradient-to-b from-[#0edb0e]/10 to-[#0edb0e]/5 border-[#0edb0e]/20 text-stone-900 shadow-sm shadow-[#0edb0e]/5"
+                            : "bg-stone-50/60 border-stone-100 hover:border-stone-200 text-stone-600 active:bg-stone-100"
+                          }`
+                        }
+                      >
+                        {/* Decorative corner accent block */}
+                        <span className="absolute top-0 right-0 w-12 h-12 rounded-bl-3xl bg-gradient-to-br from-[#0edb0e]/10 to-transparent group-hover:scale-110 transition-transform duration-300" />
 
-                <span className="text-[10px] text-[#01060e]/40 mt-1 line-clamp-1">
-                  {desc}
-                </span>
-              </NavLink>
-            ))}
-          </div>
+                        <span className="p-2.5 rounded-xl bg-white shadow-[0_2px_8px_rgba(0,0,0,0.04)] text-[#0edb0e] mb-4 inline-block shrink-0 border border-stone-100">
+                          {icon}
+                        </span>
 
-          {/* Quick-reach delivery state block */}
-          <div className="mt-5 p-4 rounded-2xl bg-yellow-400/10 border border-yellow-400/20 flex items-center gap-3.5">
-            <div className="p-2.5 rounded-xl bg-white text-yellow-600 shrink-0">
-              <Clock size={16} />
-            </div>
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-yellow-700">Service Hours</p>
-              <p className="text-xs font-black text-[#01060e]">Open Daily · 10 AM – 10 PM</p>
-            </div>
-          </div>
-        </nav>
+                        <span className="font-extrabold text-[14px] tracking-tight block">
+                          {label}
+                        </span>
 
-        {/* Tactile Bottom Actions Strip */}
-        <div className="p-6 bg-[#F8FAFC] border-t border-[#E5E7EB]/60 flex flex-col sm:flex-row gap-3">
-          <Link
-            to="/favorites"
-            onClick={closeMenu}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#01060e] text-white font-extrabold text-xs uppercase tracking-wider hover:opacity-90 active:scale-[0.98] transition-all duration-150"
-          >
-            <Heart size={14} className="text-[#0edb0e] fill-[#0edb0e] animate-pulse" aria-hidden="true" />
-            Favorites List
-          </Link>
+                        <span className="text-[10px] text-stone-400 mt-1 font-medium line-clamp-1">
+                          {desc}
+                        </span>
+                      </MotionNavLink>
+                    );
+                  })}
+                </div>
 
-          <a
-            href={`tel:+${WHATSAPP_NUMBER}`}
-            className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl border border-[#0edb0e] text-[#0edb0e] font-extrabold text-xs uppercase tracking-wider bg-white hover:bg-[#0edb0e]/5 active:scale-[0.98] transition-all duration-150"
-          >
-            <Phone size={14} aria-hidden="true" />
-            Call Now
-          </a>
-        </div>
-      </div>
+                {/* Quick-reach cohesive brand Hours info box */}
+                <motion.div 
+                  variants={{
+                    hidden: { opacity: 0, y: 15 },
+                    show: { opacity: 1, y: 0 }
+                  }}
+                  className="mt-5 p-4 rounded-2xl bg-gradient-to-r from-[#0edb0e]/8 to-[#0edb0e]/3 border border-[#0edb0e]/10 flex items-center gap-3.5"
+                >
+                  <div className="p-2.5 rounded-xl bg-white text-[#0edb0e] shadow-[0_2px_8px_rgba(0,0,0,0.04)] shrink-0 border border-stone-50">
+                    <Clock size={16} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold uppercase tracking-wider text-[#0bc50b]">Service Hours</p>
+                    <p className="text-xs font-black text-stone-900">Open Daily · 10 AM – 10 PM</p>
+                  </div>
+                </motion.div>
+              </motion.nav>
+
+              {/* Tactile Action Strip */}
+              <div className="p-6 bg-stone-50/80 backdrop-blur-sm border-t border-stone-100/60 flex flex-col sm:flex-row gap-3 shrink-0">
+                <Link
+                  to="/favorites"
+                  onClick={closeMenu}
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-white hover:bg-stone-100 text-stone-800 font-extrabold text-xs uppercase tracking-wider active:scale-[0.98] transition-all duration-150 border border-stone-200/60 shadow-[0_2px_8px_rgba(0,0,0,0.02)]"
+                >
+                  <Heart size={14} className="text-red-500 fill-red-500 animate-pulse" aria-hidden="true" />
+                  Favorites List
+                </Link>
+
+                <a
+                  href={`tel:+${WHATSAPP_NUMBER}`}
+                  className="flex-1 flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-[#0edb0e] to-[#0bc50b] hover:from-[#0bc50b] hover:to-[#09b009] text-stone-950 font-black text-xs uppercase tracking-wider active:scale-[0.98] transition-all duration-150 shadow-[0_4px_20px_rgba(14,219,14,0.15)]"
+                >
+                  <Phone size={14} aria-hidden="true" />
+                  Call Now
+                </a>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </>
   );
 };

@@ -23,16 +23,16 @@ const BRAND_NAME = "GreenPork";
 
 // ─── Section eyebrow — identical dot + line treatment used in Hero / Products ─
 const Eyebrow = ({ children }) => (
-  <div className="flex items-center justify-center gap-2 mb-3">
+  <div className="flex items-center justify-center gap-2 mb-3 select-none">
     <span className="h-2 w-2 rounded-full bg-[#0edb0e]" aria-hidden="true" />
     <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">{children}</span>
     <span className="h-px w-10 bg-stone-300" aria-hidden="true" />
   </div>
 );
 
-// ─── Stat chip used in intro section ──────────────────────────────────────────
+// ─── Stat chip — borderless, soft shadow ──────────────────────────────────────
 const StatChip = ({ value, label }) => (
-  <div className="flex flex-col items-center bg-white border border-stone-100 shadow-sm rounded-2xl px-5 py-3 min-w-[80px]">
+  <div className="flex flex-col items-center bg-stone-50/50 shadow-[0_4px_20px_rgba(0,0,0,0.015)] rounded-2xl px-5 py-3.5 min-w-[90px]">
     <span className="text-2xl font-black text-stone-900 leading-tight">{value}</span>
     <span className="text-[10px] font-bold uppercase tracking-widest text-stone-400 mt-0.5 text-center">{label}</span>
   </div>
@@ -87,7 +87,7 @@ const About = () => {
           </div>
 
           {/* Right Column — Editorial Image Presentation */}
-          <div className="relative flex justify-center lg:justify-end">
+          <div className="relative flex justify-center lg:justify-end select-none">
             <div className="relative max-w-md w-full">
               <img
                 src="https://images.unsplash.com/photo-1624462966581-bc6d768cbce5?q=80&w=1000&auto=format&fit=crop"
@@ -109,7 +109,7 @@ const About = () => {
       {/* ──────────────────────────────────────────────────────────────────────────
           STORY / FEATURE CARDS
       ────────────────────────────────────────────────────────────────────────── */}
-      <section className="py-20 px-6">
+      <section className="py-20 px-6 bg-white">
         <div className="max-w-7xl mx-auto grid sm:grid-cols-2 gap-6">
           {[
             {
@@ -118,7 +118,7 @@ const About = () => {
               text: "Carefully curated premium farm cuts and organic ingredients sourced fresh daily. Hygienically packaged with zero shortcuts.",
               bg: "bg-[#0edb0e]/5",
               iconColor: "text-[#0edb0e]",
-              iconBg: "bg-white border border-stone-200",
+              iconBg: "bg-white shadow-sm",
             },
             {
               icon: <Award className="w-7 h-7" aria-hidden="true" />,
@@ -126,12 +126,12 @@ const About = () => {
               text: "Our signature spices, double-glazing techniques, and precise wood-smoking methods deliver unforgettable local flavors.",
               bg: "bg-[#0edb0e]/5",
               iconColor: "text-[#0edb0e]",
-              iconBg: "bg-white border border-stone-200",
+              iconBg: "bg-white shadow-sm",
             },
           ].map((item) => (
             <div
               key={item.title}
-              className={`${item.bg} border border-stone-100/50 rounded-[2rem] p-8 hover:shadow-xl transition-all duration-300 hover:-translate-y-1`}
+              className={`${item.bg} rounded-[2rem] p-8 shadow-[0_4px_20px_rgba(0,0,0,0.015)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.05)] hover:-translate-y-1 transition-all duration-300`}
             >
               <div className={`w-14 h-14 rounded-full ${item.iconBg} flex items-center justify-center mb-5 ${item.iconColor}`}>
                 {item.icon}
@@ -143,12 +143,10 @@ const About = () => {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────────────────────────────────
-          CORE VALUES
-      ────────────────────────────────────────────────────────────────────────── */}
-      <section className="py-16 px-6 bg-stone-50/60 border-y border-stone-100">
+      {/* ─── CORE VALUES (Borders removed, seamless flat layout) ─── */}
+      <section className="py-20 px-6 bg-stone-50/40">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-14">
+          <div className="text-center mb-14 select-none">
             <Eyebrow>Our Values</Eyebrow>
             <h2 className="text-4xl md:text-5xl font-black text-stone-900">Why Customers Choose Us</h2>
           </div>
@@ -179,9 +177,9 @@ const About = () => {
             ].map((item) => (
               <div
                 key={item.title}
-                className={`${item.bg} rounded-[2rem] p-8 hover:-translate-y-1 transition-all duration-300 hover:shadow-xl`}
+                className={`${item.bg} rounded-[2rem] p-8 hover:-translate-y-1 transition-all duration-300 shadow-[0_4px_20px_rgba(0,0,0,0.015)] hover:shadow-[0_20px_40px_rgba(0,0,0,0.06)]`}
               >
-                <div className={`w-14 h-14 rounded-full ${item.accent} flex items-center justify-center mb-6`}>
+                <div className={`w-14 h-14 rounded-full ${item.accent} flex items-center justify-center mb-6 text-white`}>
                   {item.icon}
                 </div>
                 <h3 className="text-2xl font-black mb-3">{item.title}</h3>
@@ -195,9 +193,9 @@ const About = () => {
       {/* ──────────────────────────────────────────────────────────────────────────
           TEAM
       ────────────────────────────────────────────────────────────────────────── */}
-      <section className="py-20 px-6">
+      <section className="py-20 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-14">
+          <div className="text-center mb-14 select-none">
             <Eyebrow>The People</Eyebrow>
             <h2 className="text-4xl md:text-5xl font-black text-stone-900">Meet Our Team</h2>
           </div>
@@ -208,34 +206,32 @@ const About = () => {
       {/* ──────────────────────────────────────────────────────────────────────────
           TESTIMONIALS
       ────────────────────────────────────────────────────────────────────────── */}
-      <section className="py-12 bg-stone-50/60">
+      <section className="py-12 bg-stone-50/40">
         <Testimonials />
       </section>
 
       {/* ──────────────────────────────────────────────────────────────────────────
           GALLERY
       ────────────────────────────────────────────────────────────────────────── */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-6 text-center mb-12">
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6 text-center mb-12 select-none">
           <Eyebrow>Gallery</Eyebrow>
           <h2 className="text-4xl md:text-5xl font-black text-stone-900">Our Kitchen & Food</h2>
         </div>
         <Gallery />
       </section>
 
-      {/* ──────────────────────────────────────────────────────────────────────────
-          DELIVERY BANNER
-      ────────────────────────────────────────────────────────────────────────── */}
-      <section className="py-12 px-6">
+      {/* ─── DELIVERY BANNER (No borders, responsive CTA) ─── */}
+      <section className="py-12 px-6 bg-white">
         <div className="max-w-7xl mx-auto">
-          <div className="max-w-7xl mx-auto px-6 text-center mb-12">
+          <div className="max-w-7xl mx-auto px-6 text-center mb-12 select-none">
             <Eyebrow>Delivery</Eyebrow>
             <h2 className="text-4xl md:text-5xl font-black text-stone-900">Prompt Dispatch</h2>
           </div>
           <div className="rounded-[2.5rem] overflow-hidden shadow-2xl grid lg:grid-cols-2">
 
-            {/* Left — yellow panel, bike image, same solid yellow-400 as Hero's diagonal panel */}
-            <div className="relative min-h-[420px] flex items-center justify-center overflow-hidden bg-yellow-400">
+            {/* Left — yellow panel, bike image */}
+            <div className="relative min-h-[420px] flex items-center justify-center overflow-hidden bg-yellow-400 select-none">
               <img
                 src={Bike}
                 alt="GreenPork delivery rider"
@@ -250,8 +246,8 @@ const About = () => {
             </div>
 
             {/* Right — white, copy + CTA */}
-            <div className="bg-white px-10 md:px-16 py-16 flex flex-col justify-center border-y border-r border-stone-100">
-              <div className="flex items-center gap-2 mb-3">
+            <div className="bg-white px-10 md:px-16 py-16 flex flex-col justify-center">
+              <div className="flex items-center gap-2 mb-3 select-none">
                 <span className="h-2 w-2 rounded-full bg-[#0edb0e]" aria-hidden="true" />
                 <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-500">Fast Delivery</span>
                 <span className="h-px w-10 bg-stone-300" aria-hidden="true" />
@@ -269,14 +265,14 @@ const About = () => {
                   href={`https://wa.me/${WHATSAPP_NUMBER}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2.5 bg-[#0edb0e] hover:bg-[#0bc50b] text-white px-7 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors shadow-xl shadow-[#0edb0e]/25"
+                  className="inline-flex items-center gap-2.5 bg-[#0edb0e] hover:bg-[#0bc50b] text-stone-950 font-black px-7 py-4 rounded-full text-sm uppercase tracking-wide transition-all duration-200 active:scale-95 shadow-xl shadow-[#0edb0e]/15"
                 >
                   Order Now
                   <ArrowRight size={18} aria-hidden="true" />
                 </a>
                 <a
                   href={`tel:${WHATSAPP_NUMBER}`}
-                  className="inline-flex items-center gap-2.5 bg-stone-50 hover:bg-stone-100 border border-stone-200 text-stone-800 px-7 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-colors"
+                  className="inline-flex items-center gap-2.5 bg-stone-50 hover:bg-stone-100 text-stone-800 px-7 py-4 rounded-full font-bold text-sm uppercase tracking-wide transition-all duration-200 shadow-sm"
                 >
                   <Phone size={16} aria-hidden="true" />
                   Call Us
@@ -287,12 +283,10 @@ const About = () => {
         </div>
       </section>
 
-      {/* ──────────────────────────────────────────────────────────────────────────
-          CONTACT
-      ────────────────────────────────────────────────────────────────────────── */}
-      <section className="py-24 px-6 bg-stone-50/60 border-t border-stone-100">
+      {/* ─── CONTACT (Borders removed, highly polished layout) ─── */}
+      <section className="py-24 px-6 bg-stone-50/40">
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
+          <div className="text-center mb-16 select-none">
             <Eyebrow>Find Us</Eyebrow>
             <h2 className="text-4xl md:text-5xl font-black text-stone-900">Get in Touch</h2>
           </div>
@@ -344,14 +338,14 @@ const About = () => {
                   <a
                     key={item.title}
                     href={item.href}
-                    className="block bg-white border border-stone-100 rounded-2xl px-6 py-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300"
+                    className="block bg-white rounded-2xl px-6 py-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.05)] hover:-translate-y-0.5 transition-all duration-300"
                   >
                     {Inner}
                   </a>
                 ) : (
                   <div
                     key={item.title}
-                    className="bg-white border border-stone-100 rounded-2xl px-6 py-5 shadow-sm"
+                    className="bg-white rounded-2xl px-6 py-5 shadow-[0_4px_20px_rgba(0,0,0,0.015)]"
                   >
                     {Inner}
                   </div>
@@ -373,8 +367,8 @@ const About = () => {
               </a>
             </div>
 
-            {/* Map */}
-            <div className="rounded-[2rem] overflow-hidden border border-stone-100 shadow-xl bg-white aspect-[4/3] lg:aspect-auto lg:h-[460px] flex items-center justify-center text-stone-300 text-sm font-semibold">
+            {/* Map (Border removed) */}
+            <div className="rounded-[2rem] overflow-hidden shadow-xl bg-white aspect-[4/3] lg:aspect-auto lg:h-[460px] flex items-center justify-center text-stone-300 text-sm font-semibold">
               <iframe
                 src="https://www.google.com/maps/embed?pb="
                 className="w-full h-full"
@@ -386,8 +380,8 @@ const About = () => {
         </div>
       </section>
 
-      {/* ── Footer ── */}
-      <footer className="border-t border-stone-100 py-8 px-6">
+      {/* ─── Footer (No border lines, spacious flat layout) ─── */}
+      <footer className="py-12 px-6 bg-white">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-stone-400 text-sm font-medium">© {year} {BRAND_NAME}. All rights reserved.</p>
           <Link
