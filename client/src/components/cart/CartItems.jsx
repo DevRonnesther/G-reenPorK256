@@ -1,37 +1,79 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Trash2, Minus, Plus, ArrowLeft, ArrowRight, ShoppingBag,
-  User, MapPin, CreditCard, ShieldCheck, Truck, Clock, ShoppingBasket
+  User, MapPin, CreditCard, ShieldCheck, Truck, Clock, ShoppingBasket,
+  Moon, Sun,
 } from "lucide-react";
 import { useCart } from "../../components/cart/CartContext.jsx";
 
-// ─── CONFIGURATION ───────────────────────────────────────────────────────────
+// ─── DESIGN TOKENS (brand accents fixed; surfaces switch with mode) ─────────
+const GREEN = "#0edb0e";
+const GOLD = "#facc15";
+const cx = (...c) => c.filter(Boolean).join(" ");
+const ease = [0.22, 1, 0.36, 1];
+
+const THEME = {
+  light: {
+    bg: "#ffffff", text: "#1c1917", textSoft: "#57534e", textFaint: "#a8a29e",
+    surface: "rgba(0,0,0,0.03)", surfaceStrong: "#ffffff",
+    border: "rgba(0,0,0,0.07)", inputBg: "rgba(0,0,0,0.03)",
+  },
+  dark: {
+    bg: "#0b0d0c", text: "#f5f5f4", textSoft: "#a8a29e", textFaint: "#78716c",
+    surface: "rgba(255,255,255,0.05)", surfaceStrong: "rgba(255,255,255,0.07)",
+    border: "rgba(255,255,255,0.09)", inputBg: "rgba(255,255,255,0.05)",
+  },
+};
+
 const WHATSAPP_NUMBER = "256776464823";
 const fmt = (n) => Number(n).toLocaleString();
 
 const UG_REGIONS = [
-  "Kampala (Central)", "Kira", "Entebbe", "Mukono", "Wakiso", 
+  "Kampala (Central)", "Kira", "Entebbe", "Mukono", "Wakiso",
   "Nansana", "Makindye", "Lubaga", "Njeru", "Other"
 ];
 
 // ─── LOCAL SUB-COMPONENTS ────────────────────────────────────────────────────
 
+const FontFace = React.memo(function FontFace() {
+  return (
+    <style>{`
+      @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Inter:wght@400;500;600&family=Poppins:wght@500;600;700&display=swap');
+      .font-display{font-family:'Montserrat',sans-serif}
+      .font-ui{font-family:'Poppins',sans-serif}
+      .font-body{font-family:'Inter',sans-serif}
+    `}</style>
+  );
+});
+
 /** Premium eyebrow — dot + text + line, no borders */
-const Eyebrow = ({ children }) => (
+const Eyebrow = ({ children, theme }) => (
   <div className="flex items-center gap-2.5">
-    <span className="h-2 w-2 rounded-full bg-[#0edb0e]" aria-hidden="true" />
-    <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-400">{children}</span>
-    <span className="h-px w-8 bg-stone-200/60" aria-hidden="true" />
+    <motion.span
+      className="h-2 w-2 rounded-full"
+      style={{ backgroundColor: GREEN, boxShadow: `0 0 8px ${GREEN}66` }}
+      animate={{ scale: [1, 1.3, 1] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+      aria-hidden="true"
+    />
+    <span className="text-[11px] font-ui font-semibold uppercase tracking-[0.25em]" style={{ color: theme.textSoft }}>{children}</span>
+    <span className="h-px w-8" style={{ backgroundColor: theme.border }} aria-hidden="true" />
   </div>
 );
 
-const FieldLabel = ({ icon: Icon, required, children }) => (
-  <label className="flex items-center gap-1.5 text-[10px] font-bold text-stone-400 uppercase tracking-[0.15em] mb-2">
-    {Icon && <Icon size={12} className="text-[#0edb0e]" aria-hidden="true" />}
+const FieldLabel = ({ icon: Icon, required, children, theme }) => (
+  <label className="flex items-center gap-1.5 text-[10px] font-ui font-bold uppercase tracking-[0.15em] mb-2" style={{ color: theme.textSoft }}>
+    {Icon && <Icon size={12} style={{ color: GREEN }} aria-hidden="true" />}
     {children} {required && <span className="text-red-400">*</span>}
   </label>
 );
+
+const inputStyle = (theme, invalid) => ({
+  backgroundColor: invalid ? "rgba(239,68,68,0.06)" : theme.inputBg,
+  border: `1px solid ${invalid ? "rgba(239,68,68,0.3)" : theme.border}`,
+  color: theme.text,
+});
 
 // ─── MAIN CART COMPONENT ─────────────────────────────────────────────────────
 export default function Cart() {
@@ -40,8 +82,12 @@ export default function Cart() {
     subtotal, shipping, tax, total,
   } = useCart();
 
+  const [mode, setMode] = useState("light");
+  const theme = useMemo(() => THEME[mode], [mode]);
+  const toggleMode = useCallback(() => setMode((p) => (p === "light" ? "dark" : "light")), []);
+
   const [formData, setFormData] = useState({
-    fullName: "", phone: "", city: "Kampala (Central)", 
+    fullName: "", phone: "", city: "Kampala (Central)",
     address: "", paymentMethod: "Cash on Delivery", notes: ""
   });
 
@@ -78,28 +124,48 @@ export default function Cart() {
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
   }, [cartItems, subtotal, tax, shipping, total, formData]);
 
+  const ModeToggle = (
+    <motion.button
+      onClick={toggleMode}
+      className="h-10 w-10 rounded-full flex items-center justify-center flex-shrink-0"
+      style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}
+      whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
+      aria-label="Toggle theme"
+    >
+      {mode === "light" ? <Moon size={16} style={{ color: theme.text }} /> : <Sun size={16} style={{ color: theme.text }} />}
+    </motion.button>
+  );
+
   // ── EMPTY STATE ──────────────────────────────────────────────────────────
   if (cartItems.length === 0) {
     return (
-      <div className="min-h-screen bg-[#F8F8F5] flex flex-col items-center justify-center px-6 py-24 text-center">
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 py-24 text-center font-body relative overflow-hidden transition-colors duration-300" style={{ backgroundColor: theme.bg }}>
+        <FontFace />
+
+        <div className="fixed top-6 right-6 z-40">{ModeToggle}</div>
+
+        {/* Ambient Glow */}
+        <div className="absolute inset-0 -z-10 pointer-events-none" style={{ background: `radial-gradient(circle at 50% 30%, ${GREEN}15, transparent 55%)` }} />
+
         <div className="relative w-24 h-24 flex items-center justify-center mb-10">
-          <div className="absolute inset-0 bg-[#0edb0e]/10 rounded-full scale-150 blur-2xl"></div>
-          <div className="relative w-20 h-20 rounded-full bg-white flex items-center justify-center text-[#0edb0e] shadow-[0_8px_30px_rgba(0,0,0,0.04)]">
+          <div className="absolute inset-0 rounded-full scale-150 blur-2xl" style={{ backgroundColor: `${GREEN}20` }}></div>
+          <div className="relative w-20 h-20 rounded-full flex items-center justify-center shadow-[0_10px_40px_rgba(0,0,0,0.06)]" style={{ backgroundColor: theme.surfaceStrong, border: `1px solid ${theme.border}`, color: GREEN }}>
             <ShoppingBag size={32} strokeWidth={1.5} aria-hidden="true" />
           </div>
         </div>
-        <h2 className="text-3xl font-black text-stone-900 tracking-tight">Your cart is empty</h2>
-        <p className="text-stone-400 text-sm mt-3 max-w-xs leading-relaxed font-medium">
+        <h2 className="text-3xl font-display font-black tracking-tight" style={{ color: theme.text }}>Your cart is empty</h2>
+        <p className="text-sm mt-3 max-w-xs leading-relaxed font-body" style={{ color: theme.textFaint }}>
           You haven't added anything delicious yet. Explore our farm-to-table menu.
         </p>
         <Link
           to="/Products"
-          className="group mt-10 inline-flex items-center gap-3 bg-stone-900 hover:bg-stone-800 text-white font-bold text-sm pl-5 pr-7 py-4 rounded-full transition-all shadow-xl shadow-stone-900/10 active:scale-[0.98]"
+          className="group mt-10 inline-flex items-center gap-3 font-ui font-bold text-sm pl-5 pr-7 py-4 rounded-full transition-all shadow-lg active:scale-[0.98]"
+          style={{ background: `linear-gradient(135deg, ${GREEN}, #0bb00b)`, color: "#000", boxShadow: `0 10px 28px ${GREEN}40` }}
         >
-          <span className="bg-[#0edb0e] rounded-full p-2 text-stone-950 transition-colors">
+          <span className="bg-stone-950 rounded-full p-2 transition-colors" style={{ color: GREEN }}>
             <ShoppingBasket size={14} aria-hidden="true" />
           </span>
-          <span>Browse Menu</span>
+          <span className="text-stone-950">Browse Menu</span>
         </Link>
       </div>
     );
@@ -107,21 +173,29 @@ export default function Cart() {
 
   // ── ACTIVE CART ──────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#F8F8F5] text-stone-900 pb-32">
-      <div className="max-w-6xl mx-auto px-6 py-14 md:py-24">
+    <div className="min-h-screen font-body pb-32 relative overflow-hidden transition-colors duration-300" style={{ backgroundColor: theme.bg, color: theme.text }}>
+      <FontFace />
+
+      {/* Ambient Background */}
+      <div className="absolute inset-0 -z-10 pointer-events-none" style={{ background: `radial-gradient(circle at 86% 10%, ${GOLD}10, transparent 55%), radial-gradient(circle at 14% 80%, ${GREEN}12, transparent 55%)` }} />
+
+      <div className="fixed top-6 right-6 z-40">{ModeToggle}</div>
+
+      <div className="max-w-6xl mx-auto px-6 py-14 md:py-24 pt-32">
 
         {/* Header */}
         <div className="flex items-end justify-between gap-6 mb-16">
           <div>
-            <Eyebrow>Checkout</Eyebrow>
-            <h1 className="text-4xl md:text-5xl font-black text-stone-900 tracking-tight mt-3">Your Order</h1>
-            <p className="text-stone-400 text-sm mt-2 font-medium">
+            <Eyebrow theme={theme}>Checkout</Eyebrow>
+            <h1 className="text-4xl md:text-5xl font-display font-black tracking-tight mt-3" style={{ color: theme.text }}>Your Order</h1>
+            <p className="text-sm mt-2 font-body" style={{ color: theme.textFaint }}>
               {cartItems.length} item{cartItems.length !== 1 ? "s" : ""} awaiting dispatch
             </p>
           </div>
           <Link
             to="/Products"
-            className="hidden sm:flex items-center gap-2 text-stone-500 hover:text-stone-900 text-xs font-bold uppercase tracking-widest transition-colors bg-white hover:shadow-sm px-4 py-2.5 rounded-full"
+            className="hidden sm:flex items-center gap-2 text-xs font-ui font-semibold uppercase tracking-widest transition-colors px-4 py-2.5 rounded-full"
+            style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}`, color: theme.textSoft }}
           >
             <ArrowLeft size={13} />
             Continue
@@ -134,36 +208,36 @@ export default function Cart() {
           <div className="lg:col-span-7 space-y-10">
 
             {/* ── ITEMS ── */}
-            <div className="bg-white rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.03)]">
+            <div className="rounded-[2rem] p-6 md:p-8 shadow-[0_8px_30px_rgba(0,0,0,0.03)]" style={{ backgroundColor: theme.surface, border: `1px solid ${theme.border}` }}>
               <div className="space-y-6">
                 {cartItems.map((item) => (
                   <div key={item.id} className="flex flex-col sm:flex-row sm:items-center gap-5">
                     <div className="flex items-center gap-5 flex-1 min-w-0">
-                      <div className="w-20 h-20 rounded-2xl bg-[#F8F8F5] flex items-center justify-center shrink-0 p-2">
+                      <div className="w-20 h-20 rounded-2xl flex items-center justify-center shrink-0 p-2 shadow-sm" style={{ backgroundColor: theme.surfaceStrong, border: `1px solid ${theme.border}` }}>
                         <img src={item.image} alt={item.name} className="w-full h-full object-contain" />
                       </div>
                       <div className="min-w-0">
-                        <h3 className="font-bold text-stone-900 text-base truncate">{item.name}</h3>
-                        <p className="text-stone-400 text-xs mt-1 font-medium">UGX {fmt(item.price)} / unit</p>
+                        <h3 className="font-display font-bold text-base truncate" style={{ color: theme.text }}>{item.name}</h3>
+                        <p className="text-xs mt-1 font-body" style={{ color: theme.textFaint }}>UGX {fmt(item.price)} / unit</p>
                       </div>
                     </div>
 
                     <div className="flex items-center justify-between sm:justify-end gap-4 sm:gap-5 pl-10 sm:pl-0">
-                      <div className="flex items-center gap-1 bg-[#F8F8F5] rounded-full p-1 shrink-0">
-                        <button onClick={() => decreaseQuantity(item.id)} aria-label={`Decrease quantity of ${item.name}`} className="h-8 w-8 rounded-full bg-white text-stone-600 flex items-center justify-center hover:bg-stone-50 transition-colors active:scale-90 shadow-sm">
+                      <div className="flex items-center gap-1 rounded-full p-1 shadow-sm shrink-0" style={{ backgroundColor: theme.surfaceStrong, border: `1px solid ${theme.border}` }}>
+                        <button onClick={() => decreaseQuantity(item.id)} aria-label={`Decrease quantity of ${item.name}`} className="h-8 w-8 rounded-full flex items-center justify-center transition-colors active:scale-90" style={{ backgroundColor: theme.surface, color: theme.textSoft }}>
                           <Minus size={12} strokeWidth={3} aria-hidden="true" />
                         </button>
-                        <span className="w-8 text-center text-sm font-black text-stone-800 select-none">{item.quantity}</span>
-                        <button onClick={() => increaseQuantity(item.id)} aria-label={`Increase quantity of ${item.name}`} className="h-8 w-8 rounded-full bg-white text-stone-600 flex items-center justify-center hover:bg-stone-50 transition-colors active:scale-90 shadow-sm">
+                        <span className="w-8 text-center text-sm font-display font-black select-none" style={{ color: theme.text }}>{item.quantity}</span>
+                        <button onClick={() => increaseQuantity(item.id)} aria-label={`Increase quantity of ${item.name}`} className="h-8 w-8 rounded-full flex items-center justify-center transition-colors active:scale-90" style={{ backgroundColor: theme.surface, color: theme.textSoft }}>
                           <Plus size={12} strokeWidth={3} aria-hidden="true" />
                         </button>
                       </div>
 
-                      <p className="font-black text-stone-900 text-base shrink-0 w-28 text-right tabular-nums">
+                      <p className="font-display font-black text-base shrink-0 w-28 text-right tabular-nums" style={{ color: theme.text }}>
                         UGX {fmt(item.price * item.quantity)}
                       </p>
 
-                      <button onClick={() => removeFromCart(item.id)} aria-label={`Remove ${item.name} from cart`} className="w-8 h-8 rounded-full text-stone-300 hover:text-red-500 hover:bg-red-50 flex items-center justify-center shrink-0 transition-colors active:scale-90">
+                      <button onClick={() => removeFromCart(item.id)} aria-label={`Remove ${item.name} from cart`} className="w-8 h-8 rounded-full text-stone-300 hover:text-red-500 hover:bg-red-500/10 flex items-center justify-center shrink-0 transition-colors active:scale-90">
                         <Trash2 size={15} aria-hidden="true" />
                       </button>
                     </div>
@@ -174,76 +248,82 @@ export default function Cart() {
 
             {/* ── DELIVERY DETAILS ── */}
             <div>
-              <Eyebrow>Delivery Details</Eyebrow>
-              <p className="text-stone-400 mt-3 text-sm font-medium max-w-md">
+              <Eyebrow theme={theme}>Delivery Details</Eyebrow>
+              <p className="mt-3 text-sm font-body max-w-md" style={{ color: theme.textFaint }}>
                 Provide details for swift, contactless dispatch.
               </p>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8">
                 <div className="space-y-1">
-                  <FieldLabel icon={User} required>Full Name</FieldLabel>
+                  <FieldLabel icon={User} required theme={theme}>Full Name</FieldLabel>
                   <input type="text" name="fullName" value={formData.fullName} onChange={handleInputChange} onBlur={() => handleBlur("fullName")} placeholder="e.g. John Doe"
-                    className={`w-full h-12 px-4 rounded-xl text-sm font-semibold bg-white transition-all outline-none focus:ring-4 focus:ring-[#0edb0e]/10 focus:bg-white ${touched.fullName && formData.fullName.trim().length < 2 ? "bg-red-50 focus:ring-red-500/10" : "bg-[#F8F8F5]"}`} />
+                    className="w-full h-12 px-4 rounded-xl text-sm font-body font-medium transition-all outline-none focus:ring-4"
+                    style={{ ...inputStyle(theme, touched.fullName && formData.fullName.trim().length < 2), "--tw-ring-color": `${GREEN}1a` }} />
                   {touched.fullName && formData.fullName.trim().length < 2 && (
-                    <p className="text-[10px] text-red-500 font-bold tracking-tight mt-1">Please enter your real full name.</p>
+                    <p className="text-[10px] text-red-400 font-ui font-bold tracking-tight mt-1">Please enter your real full name.</p>
                   )}
                 </div>
 
                 <div className="space-y-1">
-                  <FieldLabel icon={Clock} required>Phone Number</FieldLabel>
+                  <FieldLabel icon={Clock} required theme={theme}>Phone Number</FieldLabel>
                   <input type="tel" name="phone" value={formData.phone} onChange={handleInputChange} onBlur={() => handleBlur("phone")} placeholder="e.g. 0776464823"
-                    className={`w-full h-12 px-4 rounded-xl text-sm font-semibold bg-white transition-all outline-none focus:ring-4 focus:ring-[#0edb0e]/10 focus:bg-white ${touched.phone && formData.phone.trim().length < 9 ? "bg-red-50 focus:ring-red-500/10" : "bg-[#F8F8F5]"}`} />
+                    className="w-full h-12 px-4 rounded-xl text-sm font-body font-medium transition-all outline-none focus:ring-4"
+                    style={inputStyle(theme, touched.phone && formData.phone.trim().length < 9)} />
                   {touched.phone && formData.phone.trim().length < 9 && (
-                    <p className="text-[10px] text-red-500 font-bold tracking-tight mt-1">Please enter a valid phone number.</p>
+                    <p className="text-[10px] text-red-400 font-ui font-bold tracking-tight mt-1">Please enter a valid phone number.</p>
                   )}
                 </div>
 
                 <div className="space-y-1">
-                  <FieldLabel icon={MapPin}>Region / City</FieldLabel>
+                  <FieldLabel icon={MapPin} theme={theme}>Region / City</FieldLabel>
                   <select name="city" value={formData.city} onChange={handleInputChange}
-                    className="w-full h-12 px-3.5 rounded-xl text-sm font-semibold bg-[#F8F8F5] transition-all outline-none focus:ring-4 focus:ring-[#0edb0e]/10 focus:bg-white cursor-pointer appearance-none">
-                    {UG_REGIONS.map((region) => (<option key={region} value={region}>{region}</option>))}
+                    className="w-full h-12 px-3.5 rounded-xl text-sm font-body font-medium transition-all outline-none focus:ring-4 cursor-pointer appearance-none"
+                    style={inputStyle(theme, false)}>
+                    {UG_REGIONS.map((region) => (<option key={region} value={region} style={{ color: "#1c1917" }}>{region}</option>))}
                   </select>
                 </div>
 
                 <div className="space-y-1">
-                  <FieldLabel icon={CreditCard}>Payment Method</FieldLabel>
+                  <FieldLabel icon={CreditCard} theme={theme}>Payment Method</FieldLabel>
                   <select name="paymentMethod" value={formData.paymentMethod} onChange={handleInputChange}
-                    className="w-full h-12 px-3.5 rounded-xl text-sm font-semibold bg-[#F8F8F5] transition-all outline-none focus:ring-4 focus:ring-[#0edb0e]/10 focus:bg-white cursor-pointer appearance-none">
-                    <option value="Cash on Delivery">Cash on Delivery</option>
-                    <option value="Mobile Money (MTN/Airtel)">Mobile Money</option>
+                    className="w-full h-12 px-3.5 rounded-xl text-sm font-body font-medium transition-all outline-none focus:ring-4 cursor-pointer appearance-none"
+                    style={inputStyle(theme, false)}>
+                    <option value="Cash on Delivery" style={{ color: "#1c1917" }}>Cash on Delivery</option>
+                    <option value="Mobile Money (MTN/Airtel)" style={{ color: "#1c1917" }}>Mobile Money</option>
                   </select>
                 </div>
 
                 <div className="space-y-1 md:col-span-2">
-                  <FieldLabel icon={MapPin} required>Delivery Address</FieldLabel>
+                  <FieldLabel icon={MapPin} required theme={theme}>Delivery Address</FieldLabel>
                   <input type="text" name="address" value={formData.address} onChange={handleInputChange} onBlur={() => handleBlur("address")} placeholder="Street name, landmark, gate details, or plot number"
-                    className={`w-full h-12 px-4 rounded-xl text-sm font-semibold bg-white transition-all outline-none focus:ring-4 focus:ring-[#0edb0e]/10 focus:bg-white ${touched.address && formData.address.trim().length <= 3 ? "bg-red-50 focus:ring-red-500/10" : "bg-[#F8F8F5]"}`} />
+                    className="w-full h-12 px-4 rounded-xl text-sm font-body font-medium transition-all outline-none focus:ring-4"
+                    style={inputStyle(theme, touched.address && formData.address.trim().length <= 3)} />
                   {touched.address && formData.address.trim().length <= 3 && (
-                    <p className="text-[10px] text-red-500 font-bold tracking-tight mt-1">Please provide a clear physical address.</p>
+                    <p className="text-[10px] text-red-400 font-ui font-bold tracking-tight mt-1">Please provide a clear physical address.</p>
                   )}
                 </div>
 
                 <div className="space-y-1 md:col-span-2">
-                  <label className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.15em] mb-2">Delivery Notes (Optional)</label>
+                  <label className="text-[10px] font-ui font-bold uppercase tracking-[0.15em] mb-2 block" style={{ color: theme.textSoft }}>Delivery Notes (Optional)</label>
                   <textarea name="notes" rows="2" value={formData.notes} onChange={handleInputChange} placeholder="e.g. Leave order with guard, extra crispy request..."
-                    className="w-full p-4 rounded-xl text-sm font-semibold bg-[#F8F8F5] transition-all outline-none focus:ring-4 focus:ring-[#0edb0e]/10 focus:bg-white resize-none" />
+                    className="w-full p-4 rounded-xl text-sm font-body font-medium transition-all outline-none focus:ring-4 resize-none"
+                    style={inputStyle(theme, false)} />
                 </div>
               </div>
 
               {/* Guarantees */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-10">
-                <div className="flex items-center gap-3 bg-white p-4 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
-                  <span className="h-10 w-10 rounded-xl bg-[#F8F8F5] flex items-center justify-center text-[#0edb0e] flex-shrink-0">
+                <div className="flex items-center gap-3 p-4 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)]" style={{ backgroundColor: theme.surfaceStrong, border: `1px solid ${theme.border}` }}>
+                  <span className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${GREEN}18`, color: GREEN }}>
                     <ShieldCheck size={18} aria-hidden="true" />
                   </span>
-                  <span className="font-semibold text-stone-700 text-xs">100% Fresh Farm Quality</span>
+                  <span className="font-ui font-semibold text-xs" style={{ color: theme.textSoft }}>100% Fresh Farm Quality</span>
                 </div>
-                <div className="flex items-center gap-3 bg-white p-4 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)]">
-                  <span className="h-10 w-10 rounded-xl bg-[#F8F8F5] flex items-center justify-center text-[#0edb0e] flex-shrink-0">
+                <div className="flex items-center gap-3 p-4 rounded-2xl shadow-[0_4px_20px_rgba(0,0,0,0.02)]" style={{ backgroundColor: theme.surfaceStrong, border: `1px solid ${theme.border}` }}>
+                  <span className="h-10 w-10 rounded-xl flex items-center justify-center flex-shrink-0" style={{ backgroundColor: `${GREEN}18`, color: GREEN }}>
                     <Truck size={18} aria-hidden="true" />
                   </span>
-                  <span className="font-semibold text-stone-700 text-xs">Prompt Contactless Dispatch</span>
+                  <span className="font-ui font-semibold text-xs" style={{ color: theme.textSoft }}>Prompt Contactless Dispatch</span>
                 </div>
               </div>
             </div>
@@ -251,55 +331,56 @@ export default function Cart() {
           </div>
 
           {/* RIGHT COLUMN: Order Summary */}
-          <div className="lg:col-span-5 lg:sticky lg:top-10 space-y-6">
-            <div className="bg-white rounded-[2rem] p-8 shadow-[0_12px_40px_rgba(0,0,0,0.04)]">
+          <div className="lg:col-span-5 lg:sticky lg:top-32 space-y-6">
+            <div className="rounded-[2rem] p-8 shadow-[0_12px_40px_rgba(0,0,0,0.05)]" style={{ backgroundColor: theme.surfaceStrong, border: `1px solid ${theme.border}` }}>
               <div className="flex items-center gap-3 mb-8">
-                <span className="h-2 w-2 rounded-full bg-[#0edb0e]" aria-hidden="true" />
-                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-stone-400">Order Summary</span>
-                <span className="h-px flex-1 bg-stone-100" aria-hidden="true" />
+                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: GREEN, boxShadow: `0 0 8px ${GREEN}66` }} aria-hidden="true" />
+                <span className="text-[11px] font-ui font-semibold uppercase tracking-[0.25em]" style={{ color: theme.textSoft }}>Order Summary</span>
+                <span className="h-px flex-1" style={{ backgroundColor: theme.border }} aria-hidden="true" />
               </div>
 
-              <div className="space-y-4 text-sm text-stone-500">
+              <div className="space-y-4 text-sm font-body" style={{ color: theme.textSoft }}>
                 <div className="flex justify-between items-center">
                   <span>Subtotal</span>
-                  <span className="font-bold text-stone-800 tabular-nums">UGX {fmt(subtotal)}</span>
+                  <span className="font-bold tabular-nums" style={{ color: theme.text }}>UGX {fmt(subtotal)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Tax (18%)</span>
-                  <span className="font-bold text-stone-800 tabular-nums">UGX {fmt(tax)}</span>
+                  <span className="font-bold tabular-nums" style={{ color: theme.text }}>UGX {fmt(tax)}</span>
                 </div>
                 <div className="flex justify-between items-center">
                   <span>Delivery dispatch</span>
-                  <span className={`font-bold tabular-nums ${shipping === 0 ? "text-[#0edb0e]" : "text-stone-800"}`}>
+                  <span className="font-bold tabular-nums" style={{ color: shipping === 0 ? GREEN : theme.text }}>
                     {shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`}
                   </span>
                 </div>
               </div>
 
-              <div className="h-px bg-stone-100 my-7" />
+              <div className="h-px my-7" style={{ backgroundColor: theme.border }} />
 
               <div className="flex items-end justify-between mb-10">
-                <span className="text-stone-800 font-bold text-sm">Grand Total</span>
-                <span className="text-3xl font-black text-[#0edb0e] tracking-tight tabular-nums">UGX {fmt(total)}</span>
+                <span className="font-ui font-bold text-sm" style={{ color: theme.text }}>Grand Total</span>
+                <span className="text-3xl font-display font-black tracking-tight tabular-nums" style={{ color: GREEN }}>UGX {fmt(total)}</span>
               </div>
 
               {/* Desktop Checkout Button */}
               <div className="hidden lg:block">
                 {isFormValid ? (
                   <a href={checkoutHref} target="_blank" rel="noopener noreferrer"
-                    className="group flex items-center justify-center gap-3 bg-stone-900 hover:bg-stone-800 text-white font-bold text-sm uppercase tracking-wide pl-3 pr-7 py-4 rounded-full transition-all shadow-xl shadow-stone-900/10 active:scale-[0.99] w-full">
-                    <span className="bg-[#0edb0e] rounded-full p-2.5 text-stone-950 transition-colors">
+                    className="group flex items-center justify-center gap-3 font-ui font-bold text-sm uppercase tracking-wide pl-3 pr-7 py-4 rounded-full transition-all shadow-lg active:scale-[0.99] w-full"
+                    style={{ background: `linear-gradient(135deg, ${GREEN}, #0bb00b)`, color: "#000", boxShadow: `0 10px 28px ${GREEN}30` }}>
+                    <span className="bg-stone-950 rounded-full p-2.5 transition-colors" style={{ color: GREEN }}>
                       <ShoppingBasket size={15} aria-hidden="true" />
                     </span>
-                    <span>Checkout via WhatsApp</span>
-                    <ArrowRight size={16} className="ml-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200" aria-hidden="true" />
+                    <span className="text-stone-950">Checkout via WhatsApp</span>
+                    <ArrowRight size={16} className="ml-1 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-200 text-stone-950" aria-hidden="true" />
                   </a>
                 ) : (
                   <div className="text-center w-full">
-                    <div className="flex items-center justify-center gap-2 bg-stone-100 text-stone-400 font-bold text-xs uppercase tracking-wide px-7 py-4 rounded-full cursor-not-allowed select-none w-full">
+                    <div className="flex items-center justify-center gap-2 font-ui font-bold text-xs uppercase tracking-wide px-7 py-4 rounded-full cursor-not-allowed select-none w-full" style={{ backgroundColor: theme.surface, color: theme.textFaint }}>
                       Checkout Locked
                     </div>
-                    <p className="text-[10px] text-stone-400 font-medium mt-3">
+                    <p className="text-[10px] font-body mt-3" style={{ color: theme.textFaint }}>
                       Complete the delivery details to unlock checkout.
                     </p>
                   </div>
@@ -312,24 +393,25 @@ export default function Cart() {
       </div>
 
       {/* ── STICKY MOBILE CHECKOUT BAR ── */}
-      <div className="fixed bottom-0 inset-x-0 bg-white/80 backdrop-blur-xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-30 lg:hidden">
+      <div className="fixed bottom-0 inset-x-0 backdrop-blur-xl shadow-[0_-10px_40px_rgba(0,0,0,0.05)] z-30 lg:hidden transition-colors duration-300" style={{ backgroundColor: mode === "light" ? "rgba(255,255,255,0.9)" : "rgba(11,13,12,0.9)", borderTop: `1px solid ${theme.border}` }}>
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-stone-400">Total</p>
-            <p className="text-xl font-black text-[#0edb0e] tabular-nums">UGX {fmt(total)}</p>
+            <p className="text-[10px] font-ui font-bold uppercase tracking-widest" style={{ color: theme.textFaint }}>Total</p>
+            <p className="text-xl font-display font-black tabular-nums" style={{ color: GREEN }}>UGX {fmt(total)}</p>
           </div>
 
           {isFormValid ? (
             <a href={checkoutHref} target="_blank" rel="noopener noreferrer"
-              className="group inline-flex items-center gap-2 bg-stone-900 hover:bg-stone-800 text-white font-bold text-xs uppercase tracking-wide pl-3 pr-5 py-3.5 rounded-full transition-all shadow-lg shadow-stone-900/10 active:scale-[0.99]">
-              <span className="bg-[#0edb0e] rounded-full p-2 text-stone-950 transition-colors">
+              className="group inline-flex items-center gap-2 font-ui font-bold text-xs uppercase tracking-wide pl-3 pr-5 py-3.5 rounded-full transition-all shadow-lg active:scale-[0.99]"
+              style={{ background: `linear-gradient(135deg, ${GREEN}, #0bb00b)`, color: "#000", boxShadow: `0 10px 28px ${GREEN}30` }}>
+              <span className="bg-stone-950 rounded-full p-2 transition-colors" style={{ color: GREEN }}>
                 <ShoppingBasket size={13} aria-hidden="true" />
               </span>
-              <span>Checkout</span>
+              <span className="text-stone-950">Checkout</span>
             </a>
           ) : (
             <div className="text-right">
-              <div className="inline-flex items-center gap-2 bg-stone-100 text-stone-400 font-bold text-xs uppercase tracking-wide px-5 py-3.5 rounded-full cursor-not-allowed select-none">
+              <div className="inline-flex items-center gap-2 font-ui font-bold text-xs uppercase tracking-wide px-5 py-3.5 rounded-full cursor-not-allowed select-none" style={{ backgroundColor: theme.surface, color: theme.textFaint }}>
                 Locked
               </div>
             </div>
