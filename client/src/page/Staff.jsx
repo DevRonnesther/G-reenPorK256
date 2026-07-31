@@ -1,28 +1,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-// ─── Design Tokens (Synced with Hero.jsx Light Mode) ──────────────────────
-const DEFAULT_THEME = {
-    text: "#0a0a0a",
-    textSoft: "rgba(10,10,10,0.75)",
-    textFaint: "rgba(10,10,10,0.5)",
-    panel: "rgba(255,255,255,0.6)",
-    panelStrong: "rgba(255,255,255,0.8)",
-    border: "rgba(10,10,10,0.06)"
-};
+const CTA_COLOR = "#D4FF00";
 
-const GREEN = "#0edb0e";
-const GOLD = "#facc15";
-
-const glassStyle = (t) => ({
-    backgroundColor: t.panel,
-    backdropFilter: "blur(16px)",
-    WebkitBackdropFilter: "blur(16px)",
-    border: `1px solid ${t.border}`,
-    boxShadow: "0 8px 30px rgba(0,0,0,0.04)"
-});
-
-export function Staff({ theme = DEFAULT_THEME }) {
+export function Staff({ theme = { text: "#000000", textSoft: "#333333", textFaint: "#666666", border: "#000000", bg: "#ffffff" } }) {
     const team = [
         {
             name: "Green Ronnie", role: "Founder & CEO",
@@ -47,47 +28,40 @@ export function Staff({ theme = DEFAULT_THEME }) {
     ];
 
     return (
-        <section className="relative py-12 font-body">
-            <div className="max-w-7xl mx-auto relative z-10">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {team.map((member, i) => (
-                        <motion.div
-                            key={member.name}
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5, delay: i * 0.08 }}
-                            whileHover={{ y: -6 }}
-                            className="group rounded-[2rem] overflow-hidden transition-all duration-300"
-                            style={glassStyle(theme)}
-                        >
-                            <div className="relative overflow-hidden aspect-[4/5]">
-                                <img
-                                    src={member.image}
-                                    alt={member.name}
-                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
-                                />
-                                {/* Fade image into the white card background at the bottom */}
-                                <div className="absolute inset-0" style={{ background: "linear-gradient(180deg, transparent 60%, rgba(255,255,255,0.8) 100%)" }} />
-                            </div>
+        <section className="font-body">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+                {team.map((member, i) => (
+                    <motion.div
+                        key={member.name}
+                        initial={{ opacity: 0, y: 20 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.5, delay: i * 0.08 }}
+                        className="group border-2 cursor-pointer transition-colors duration-300"
+                        style={{ borderColor: theme.border, backgroundColor: theme.bg, color: theme.text }}
+                        whileHover={{ backgroundColor: theme.text, color: theme.bg }}
+                    >
+                        <div className="relative overflow-hidden aspect-[4/5] border-b-2" style={{ borderColor: theme.border }}>
+                            <img
+                                src={member.image}
+                                alt={member.name}
+                                className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500 ease-out"
+                            />
+                        </div>
 
-                            <div className="p-6 relative -mt-12 z-10">
-                                <h3 className="text-xl font-display font-extrabold tracking-tight" style={{ color: theme.text }}>
-                                    {member.name}
-                                </h3>
-                                <div className="flex items-center gap-2 mt-1">
-                                    <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: GREEN }}></span>
-                                    <p className="font-ui font-semibold text-sm" style={{ color: GREEN }}>
-                                        {member.role}
-                                    </p>
-                                </div>
-                                <p className="leading-relaxed text-sm mt-4 font-body" style={{ color: theme.textSoft }}>
-                                    {member.bio}
-                                </p>
-                            </div>
-                        </motion.div>
-                    ))}
-                </div>
+                        <div className="p-6">
+                            <h3 className="text-2xl font-display font-black tracking-tighter mb-2">
+                                {member.name}
+                            </h3>
+                            <p className="font-display font-bold text-[10px] uppercase tracking-widest mb-4 transition-colors" style={{ color: theme.textFaint }}>
+                                <span className="group-hover:text-[#D4FF00] transition-colors">{member.role}</span>
+                            </p>
+                            <p className="leading-relaxed text-sm font-body opacity-80">
+                                {member.bio}
+                            </p>
+                        </div>
+                    </motion.div>
+                ))}
             </div>
         </section>
     );
