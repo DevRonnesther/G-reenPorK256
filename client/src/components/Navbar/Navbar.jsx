@@ -6,7 +6,7 @@ import {
   Menu, X, Home, UserCircle, Store, Info, Phone,
   ShoppingBasket, Clock, Heart, ArrowRight, ShoppingCart
 } from "lucide-react";
-import GreenPorkIcon from "../../assets/greenpork-icon.png";
+import GreenPorkIcon from "../../assets/favicon.png";
 
 const BRAND_GREEN = "#D4FF00"; // Match Hero CTA color
 const BRAND_NAME = "GreenPork";
@@ -53,12 +53,40 @@ export default function Navbar() {
         <div className="max-w-[1500px] mx-auto flex items-center justify-between pointer-events-auto">
 
           {/* Logo */}
-          <Link to="/" className="flex items-center gap-2 group relative" aria-label={`${BRAND_NAME} homepage`}>
-            <span className="absolute inset-0 rounded-full blur-md opacity-40 group-hover:opacity-80 transition-opacity pointer-events-none" style={{ backgroundColor: BRAND_GREEN }} />
-            <span className="font-display  flex items-center gap-1 text-xl font-black tracking-tight text-white drop-shadow-lg">
+          <Link
+            to="/"
+            className="group relative flex uppercase items-center gap-1.5 select-none"
+            aria-label={`${BRAND_NAME} homepage`}
+          >
+            {/* Text: Green */}
+            <span className="font-display text-xl font-black tracking-tighter text-[#D4FF00]// text-black/90 uppercase drop-shadow-lg">
               Green
-              <img src={GreenPorkIcon} alt="" width={36} height={36} className="relative h-9 w-9 object-contain pointer-events-none transition-transform duration-500 group-hover:rotate-6" draggable={false} />
-              <span style={{ color: BRAND_GREEN }}>Pork</span>
+            </span>
+
+            {/* Icon + Isolated Glow Container */}
+            <span className="relative inline-flex items-center justify-center">
+              {/* Glow strictly bound to the icon size */}
+              <span
+                className="absolute inset-0 hidden rounded-full blur-md opacity-50 group-hover:opacity-100 transition-opacity pointer-events-none"
+                style={{ backgroundColor: BRAND_GREEN }}
+              />
+              <img
+                src={GreenPorkIcon}
+                alt=""
+                width={32}
+                height={32}
+                className="relative h-8 w-8 object-contain pointer-events-none transition-transform duration-500 group-hover:rotate-6"
+                draggable={false}
+              />
+            </span>
+
+            {/* Text: Pork */}
+            <span
+              className="font-display flex  text-xl text-[#D4FF00]// text-black font-black tracking-tighter drop-shadow-lg"
+              // style={{ color: BRAND_GREEN }}
+            >
+              Pork
+              <div className="w-2 h-2 rounded-full hidden bg-black"></div>
             </span>
           </Link>
 
@@ -117,7 +145,13 @@ export default function Navbar() {
             >
               <AnimatePresence mode="wait" initial={false}>
                 <motion.span key={open ? "close" : "open"} initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                  {open ? <X size={22} /> : <Menu size={22} />}
+                  {open ? <X size={22} /> : <div className="flex flex-col space-y-2">
+                    <div className="w-8 h-1 rounded-lg bg-white/90"></div>
+                    <div className="w-5 h-1 rounded-lg bg-white/90"></div>
+                  </div>
+
+                  
+                  }
                 </motion.span>
               </AnimatePresence>
             </button>

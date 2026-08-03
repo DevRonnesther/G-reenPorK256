@@ -9,7 +9,7 @@ import Testimonials from "../components/Testimonials";
 import { Staff } from "./Staff";
 import Gallery from "../components/Gallery";
 
-import Bike from "../assets/DeliveryBike.png";
+import Bike from "../assets/transbike.png";
 
 const BRAND_NAME = "GreenPork";
 const WHATSAPP_NUMBER = "256776464823";

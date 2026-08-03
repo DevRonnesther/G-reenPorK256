@@ -35,11 +35,13 @@ const BRAND = {
 // ─── Background themes (Preserved) ─────────
 const lightThemes = {
   red: {
-    bgFrom: "#A83232",
-    bgTo: "#4A1A1A",
+    bgFrom: "#DC2626",
+    bgTo: "#6F0D0D",
     text: "#FFFFFF",
-    textSoft: "rgba(255,255,255,.90)", textFaint: "rgba(255,255,255,.65)",
-    panel: "rgba(255,255,255,.14)", panelStrong: "rgba(255,255,255,.25)",
+    textSoft: "rgba(255,255,255,.92)",
+    textFaint: "rgba(255,255,255,.72)",
+    panel: "rgba(255,255,255,.15)",
+    panelStrong: "rgba(255,255,255,.28)",
   },
   yellow: {
     bgFrom: "#D4780A",
@@ -52,44 +54,138 @@ const lightThemes = {
 
 const SLIDES = [
   {
-    id: "pork-skewer", eyebrow: "Chef's Special",
-    title: ["Slow-Roasted Perfection", "SMOKY", "PORK SKEWERS"],
-    category: "Artisanal Pork Skewers", image: PorkStake,
-    price: 6000, oldPrice: 8000, rating: 4.8, prepTime: "12 min",
-    description: "Tender, wood-fired premium pork skewers served with crisp house salad, fresh chapati, and sweet roasted bananas.",
-    tags: ["Wood-Fired", "Farm Raised"],
+    id: "pork-skewer",
+    eyebrow: "Chef's Signature",
+    title: [
+      "Slow-Roasted Perfection",
+      "SMOKY",
+      "PORK SKEWERS",
+    ],
+    category: "Premium Wood-Fired Pork Skewers",
+    image: PorkStake,
+
+    price: 6000,
+    oldPrice: 8000,
+    rating: 4.9,
+    prepTime: "12 min",
+
+    description:
+      "Juicy, flame-grilled pork skewers marinated in our signature spices and served with fresh salad, soft chapati, and sweet roasted bananas.",
+
+    tags: ["Wood-Fired", "Farm Fresh"],
+
     watermark: Flame,
-    theme: { ...lightThemes.red },
+
+    theme: {
+      ...lightThemes.red,
+      bgFrom: "#DC2626",
+      bgTo: "#6F0D0D",
+    },
   },
+
   {
-    id: "beef-burger", eyebrow: "House Favorite",
-    title: ["Flame-Grilled Masterpiece", "CHEESY", "ANGUS BURGER"],
-    category: "Prime Angus Beef Burger", image: Burger,
-    price: 10000, oldPrice: 12000, rating: 4.9, prepTime: "10 min",
-    description: "Char-broiled premium beef patty layered with melted sharp cheddar, ripe vine tomatoes, crisp leaf lettuce, and signature garlic aioli.",
-    tags: ["Prime Angus", "Aged Cheddar"],
+    id: "angus-burger",
+    eyebrow: "Customer Favorite",
+
+    title: [
+      "Flame-Grilled",
+      "CHEESY",
+      "ANGUS BURGER",
+    ],
+
+    category: "Premium Angus Beef Burger",
+    image: Burger,
+
+    price: 10000,
+    oldPrice: 12000,
+    rating: 4.9,
+    prepTime: "10 min",
+
+    description:
+      "A juicy Angus beef patty layered with melted cheddar, crisp lettuce, vine-ripened tomatoes, caramelized onions, and our signature burger sauce.",
+
+    tags: ["100% Angus", "Melted Cheddar"],
+
     watermark: Hamburger,
-    theme: { ...lightThemes.red, bgFrom: "#C4521A", bgTo: "#4A1E10" },
+
+    theme: {
+      ...lightThemes.red,
+      bgFrom: "#C2410C",
+      bgTo: "#7C2D12",
+    },
   },
+
   {
-    id: "chicken-pizza", eyebrow: "Freshly Baked",
-    title: ["Stone-Baked Crust", "FIRED", "CHICKEN PIZZA"],
-    category: "Gourmet Chicken Pizza", image: Pizza,
-    price: 10000, oldPrice: 12000, rating: 4.7, prepTime: "18 min",
-    description: "Neapolitan-style hand-stretched dough topped with smoky shredded chicken, rich buffalo mozzarella, and slow-simmered marinara.",
-    tags: ["Stone-Baked", "Buffalo Mozzarella"],
+    id: "chicken-pizza",
+    eyebrow: "Stone Oven Fresh",
+
+    title: [
+      "Stone-Baked",
+      "FIRED",
+      "CHICKEN PIZZA",
+    ],
+
+    category: "Premium Chicken Pizza",
+    image: Pizza,
+
+    price: 10000,
+    oldPrice: 12000,
+    rating: 4.8,
+    prepTime: "18 min",
+
+    description:
+      "Hand-stretched artisan dough topped with smoked chicken, creamy mozzarella, fresh herbs, and rich slow-cooked tomato sauce.",
+
+    tags: ["Stone-Baked", "Fresh Mozzarella"],
+
     watermark: PizzaIcon,
-    theme: { ...lightThemes.yellow },
+
+    theme: {
+      ...lightThemes.yellow,
+      bgFrom: "#F59E0B",
+      bgTo: "#B45309",
+    },
   },
+
   {
-    id: "chicken-pizza", eyebrow: "Freshly Baked",
-    title: ["Crispy", "FIRED ROASTED", "CHICKEN "],
-    category: "Gourmet Chicken Pizza", image: Chicken,
-    price: 55000, oldPrice: 78000, rating: 4.7, prepTime: "18 min",
-    description: "Neapolitan-style hand-stretched dough topped with smoky shredded chicken, rich buffalo mozzarella, and slow-simmered marinara.",
-    tags: ["Crispy", "Delicious chicken"],
-    watermark: PizzaIcon,
-    theme: { ...lightThemes.yellow },
+    id: "roasted-chicken",
+    eyebrow: "Family Feast",
+
+    title: [
+      "Golden Crispy",
+      "FIRE ROASTED",
+      "WHOLE CHICKEN",
+    ],
+
+    category: "Premium Fire-Roasted Chicken",
+    image: Chicken,
+
+    price: 55000,
+    oldPrice: 78000,
+    rating: 4.9,
+    prepTime: "25 min",
+
+    description:
+      "Whole chicken slow-roasted over open flames until perfectly crisp outside and irresistibly juicy inside, seasoned with our signature herb blend.",
+
+    tags: ["Fire Roasted", "Farm Fresh"],
+
+    watermark: Flame,
+
+    theme: {
+      bgFrom: "#FFFFFF",
+      bgTo: "#F8FAFC",
+
+      text: "#111827",
+      textSoft: "rgba(17,24,39,.88)",
+      textFaint: "rgba(17,24,39,.65)",
+
+      panel: "rgba(255,255,255,.82)",
+      panelStrong: "rgba(255,255,255,.96)",
+
+      accent: "#F59E0B",      // Warm golden amber
+      accentDark: "#B45309",  // Deep roasted gold
+    },
   }
 ];
 
