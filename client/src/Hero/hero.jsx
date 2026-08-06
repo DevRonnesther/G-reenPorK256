@@ -636,7 +636,6 @@ const MobileHero = React.memo(function MobileHero({ carousel }) {
             </motion.button>
           ))}
         </div>
-
         <div className="flex items-center gap-3 mt-6 flex-shrink-0">
           <div className="min-w-[5rem] hidden">
             <span className="font-ui text-[7px] font-bold uppercase tracking-widest block" style={{ color: themedSlide.textFaint }}>Total</span>

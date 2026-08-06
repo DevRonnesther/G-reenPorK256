@@ -59,10 +59,6 @@ export default function Navbar() {
             aria-label={`${BRAND_NAME} homepage`}
           >
             {/* Text: Green */}
-            <span className="font-display text-xl font-black tracking-tighter text-[#D4FF00]// text-black/90 uppercase drop-shadow-lg">
-              Green
-            </span>
-
             {/* Icon + Isolated Glow Container */}
             <span className="relative inline-flex items-center justify-center">
               {/* Glow strictly bound to the icon size */}
@@ -79,6 +75,10 @@ export default function Navbar() {
                 draggable={false}
               />
             </span>
+            <span className="font-display text-xl font-black tracking-tighter text-[#D4FF00] uppercase drop-shadow-lg">
+              Green
+            </span>
+
 
             {/* Text: Pork */}
             <span
