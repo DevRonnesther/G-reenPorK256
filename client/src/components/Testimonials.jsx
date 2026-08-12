@@ -49,7 +49,7 @@ const Testimonials = ({ theme = DEFAULT_THEME }) => {
             <div>
               <Eyebrow theme={theme} />
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tighter leading-[0.9]" style={{ color: theme.text }}>
-                What Our Clients <br />Say About Us
+                What Our Valued Clients <br />Say About Us
               </h2>
             </div>
 

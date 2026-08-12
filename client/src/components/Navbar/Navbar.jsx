@@ -9,7 +9,7 @@ import {
 import GreenPorkIcon from "../../assets/favicon.png";
 
 const BRAND_GREEN = "#D4FF00"; // Match Hero CTA color
-const BRAND_NAME = "GreenPork";
+const BRAND_NAME = "GREENPORK";
 const WHATSAPP_NUMBER = "256776464823";
 const PHONE_DISPLAY = "+256 776 464 823";
 
@@ -20,7 +20,7 @@ const NAV_LINKS = [
   { icon: Phone, label: "Contact", to: "/contactUs" },
 ];
 
-// Re-added the missing cx utility
+// Utility for conditional classes
 const cx = (...c) => c.filter(Boolean).join(" ");
 
 const FontFace = () => (
@@ -37,6 +37,7 @@ export default function Navbar() {
   const location = useLocation();
 
   useEffect(() => { setOpen(false); }, [location.pathname]);
+
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -52,55 +53,64 @@ export default function Navbar() {
       <header className="fixed top-0 left-0 right-0 z-50 w-full px-6 md:px-10 py-5 pointer-events-none select-none font-ui">
         <div className="max-w-[1500px] mx-auto flex items-center justify-between pointer-events-auto">
 
-          {/* Logo */}
+          {/* ── Premium Brand Lockup ── */}
           <Link
             to="/"
-            className="group relative flex uppercase items-center gap-1.5 select-none"
+            className="group relative flex items-center gap-3 select-none"
             aria-label={`${BRAND_NAME} homepage`}
           >
-            {/* Text: Green */}
-            {/* Icon + Isolated Glow Container */}
-            <span className="relative inline-flex items-center justify-center">
-              {/* Glow strictly bound to the icon size */}
-              <span
-                className="absolute inset-0 hidden rounded-full blur-md opacity-50 group-hover:opacity-100 transition-opacity pointer-events-none"
+            {/* Icon Container with Hover Glow */}
+            <div className="relative">
+              <div
+                className="absolute inset-0 rounded-sm blur-md opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none"
                 style={{ backgroundColor: BRAND_GREEN }}
               />
-              <img
-                src={GreenPorkIcon}
-                alt=""
-                width={32}
-                height={32}
-                className="relative h-8 w-8 object-contain pointer-events-none transition-transform duration-500 group-hover:rotate-6"
-                draggable={false}
-              />
-            </span>
-            <span className="font-display text-xl font-black tracking-tighter text-[#D4FF00] uppercase drop-shadow-lg">
-              Green
-            </span>
+              <div className="relative flex items-center justify-center overflow-hidden">
+                <img
+                  src={GreenPorkIcon}
+                  alt="GreenPork Logo"
+                  className="h-9 w-9 object-contain pointer-events-none transition-transform duration-500 group-hover:scale-110"
+                  draggable={false}
+                />
+              </div>
+            </div>
 
-
-            {/* Text: Pork */}
-            <span
-              className="font-display flex  text-xl text-[#D4FF00]// text-black font-black tracking-tighter drop-shadow-lg"
-              // style={{ color: BRAND_GREEN }}
-            >
-              Pork
-              <div className="w-2 h-2 rounded-full hidden bg-black"></div>
-            </span>
+            {/* Text Wordmark & Slogan */}
+            <div className="flex flex-col leading-none">
+              <div className="flex items-baseline gap-1">
+                <span className="font-display text-2xl md:text-3xl font-black tracking-tighter text-white drop-shadow-md">
+                  Green
+                </span>
+                <span className="font-display text-xl md:text-2xl font-black tracking-[0.1em] text-[#D4FF00] drop-shadow-md uppercase">
+                  Pork
+                </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#D4FF00] ml-0.5 mb-1"></span>
+              </div>
+              <span className="font-ui text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 mt-1">
+                Great Food. Good Mood.
+              </span>
+            </div>
           </Link>
 
           {/* ── Desktop Nav Links ── */}
           <nav className="hidden lg:flex items-center gap-1 border border-white/20 backdrop-blur-md bg-black/30 p-1" aria-label="Primary Navigation">
             {NAV_LINKS.map(({ icon: Icon, label, to }) => (
-              <NavLink key={to} to={to} className="relative flex items-center gap-2 px-4 py-2 text-xs font-display font-bold uppercase tracking-wider transition-all focus:outline-none">
+              <NavLink
+                key={to}
+                to={to}
+                className="relative flex items-center gap-2 px-4 py-2 text-xs font-display font-bold uppercase tracking-wider transition-all focus:outline-none"
+              >
                 {({ isActive }) => (
                   <>
                     <span className={cx("relative z-10 flex items-center gap-2 transition-colors", isActive ? "text-black" : "text-white/80 hover:text-white")}>
                       <Icon size={14} /> {label}
                     </span>
                     {isActive && (
-                      <motion.span layoutId="activeNavTab" transition={{ type: "spring", stiffness: 380, damping: 30 }} className="absolute inset-0 bg-white" />
+                      <motion.span
+                        layoutId="activeNavTab"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                        className="absolute inset-0 bg-white"
+                      />
                     )}
                   </>
                 )}
@@ -112,7 +122,11 @@ export default function Navbar() {
           <div className="hidden lg:flex items-center gap-4">
             <Link to="/cart" className="relative h-10 w-10 flex items-center justify-center bg-black/30 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-black transition-colors" aria-label="View Cart">
               <ShoppingCart size={18} />
-              {totalItems > 0 && <span className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-[10px] font-black bg-[#D4FF00] text-black rounded-full">{totalItems}</span>}
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-[10px] font-black bg-[#D4FF00] text-black rounded-full">
+                  {totalItems}
+                </span>
+              )}
             </Link>
 
             <button type="button" className="h-10 w-10 flex items-center justify-center bg-black/30 backdrop-blur-md border border-white/20 text-white hover:bg-white hover:text-black transition-colors" aria-label="User Profile">
@@ -135,7 +149,11 @@ export default function Navbar() {
           <div className="flex lg:hidden items-center gap-3">
             <Link to="/cart" className="relative h-10 w-10 flex items-center justify-center bg-black/30 backdrop-blur-md border border-white/20 text-white" aria-label="View Cart">
               <ShoppingBasket size={18} />
-              {totalItems > 0 && <span className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-[10px] font-black bg-[#D4FF00] text-black rounded-full">{totalItems}</span>}
+              {totalItems > 0 && (
+                <span className="absolute -top-2 -right-2 h-5 w-5 flex items-center justify-center text-[10px] font-black bg-[#D4FF00] text-black rounded-full">
+                  {totalItems}
+                </span>
+              )}
             </Link>
 
             <button
@@ -144,14 +162,19 @@ export default function Navbar() {
               aria-label={open ? "Close menu" : "Open menu"}
             >
               <AnimatePresence mode="wait" initial={false}>
-                <motion.span key={open ? "close" : "open"} initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.15 }}>
-                  {open ? <X size={22} /> : <div className="flex flex-col space-y-2">
-                    <div className="w-8 h-1 rounded-lg bg-white/90"></div>
-                    <div className="w-5 h-1 rounded-lg bg-white/90"></div>
-                  </div>
-
-                  
-                  }
+                <motion.span
+                  key={open ? "close" : "open"}
+                  initial={{ rotate: -90, opacity: 0 }}
+                  animate={{ rotate: 0, opacity: 1 }}
+                  exit={{ rotate: 90, opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  {open ? <X size={22} /> : (
+                    <div className="flex flex-col space-y-[5px] items-center">
+                      <div className="w-6 h-[2.5px] rounded-full bg-white"></div>
+                      <div className="w-4 h-[2.5px] rounded-full bg-white"></div>
+                    </div>
+                  )}
                 </motion.span>
               </AnimatePresence>
             </button>
@@ -163,18 +186,36 @@ export default function Navbar() {
       <AnimatePresence>
         {open && (
           <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={closeMenu} className="fixed inset-0 z-40 bg-black/80 backdrop-blur-md lg:hidden" />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={closeMenu}
+              className="fixed inset-0 z-40 bg-black/80 backdrop-blur-md lg:hidden"
+            />
 
             <motion.div
-              initial={{ y: "100%" }} animate={{ y: 0 }} exit={{ y: "100%" }} transition={{ type: "spring", stiffness: 320, damping: 32 }}
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 32 }}
               className="fixed bottom-0 left-0 right-0 z-50 flex flex-col bg-[#0A0A0A] text-white lg:hidden max-h-[85vh] select-none overflow-hidden border-t border-white/10"
-              role="dialog" aria-label="Navigation Menu"
+              role="dialog"
+              aria-label="Navigation Menu"
             >
-              {/* Drawer Header */}
+              {/* Drawer Header (Matched Desktop Lockup) */}
               <div className="flex items-center justify-between px-6 pb-4 pt-6 border-b border-white/10">
                 <div className="flex items-center gap-3">
-                  <img src={GreenPorkIcon} alt="" className="h-8 w-8 object-contain" />
-                  <h2 className="font-display text-xl font-black tracking-tight">Green<span style={{ color: BRAND_GREEN }}>Pork</span></h2>
+                  <div className="h-9 w-9 flex items-center justify-center border border-white/20 bg-black/40 overflow-hidden">
+                    <img src={GreenPorkIcon} alt="" className="h-6 w-6 object-contain" />
+                  </div>
+                  <div className="flex flex-col leading-none">
+                    <div className="flex items-baseline gap-1">
+                      <span className="font-display text-xl font-black tracking-tighter text-white">Green</span>
+                      <span className="font-display text-lg font-black tracking-[0.1em] text-[#D4FF00] uppercase">Pork</span>
+                    </div>
+                    <span className="font-ui text-[8px] font-bold uppercase tracking-[0.3em] text-white/40 mt-1">Great Food. Good Mood.</span>
+                  </div>
                 </div>
                 <button onClick={closeMenu} className="w-9 h-9 flex items-center justify-center bg-white/10 text-white hover:bg-white/20 transition-colors">
                   <X size={18} />
@@ -184,7 +225,15 @@ export default function Navbar() {
               {/* Drawer Links */}
               <nav className="flex-1 px-6 py-6 overflow-y-auto space-y-2">
                 {NAV_LINKS.map(({ label, to, icon: Icon }) => (
-                  <NavLink key={to} to={to} onClick={closeMenu} className={({ isActive }) => cx("flex items-center gap-4 p-4 border-l-2 font-display font-bold text-lg uppercase tracking-tight transition-all", isActive ? "border-[#D4FF00] text-white bg-white/5" : "border-transparent text-white/50 hover:text-white")}>
+                  <NavLink
+                    key={to}
+                    to={to}
+                    onClick={closeMenu}
+                    className={({ isActive }) => cx(
+                      "flex items-center gap-4 p-4 border-l-2 font-display font-bold text-lg uppercase tracking-tight transition-all",
+                      isActive ? "border-[#D4FF00] text-white bg-white/5" : "border-transparent text-white/50 hover:text-white"
+                    )}
+                  >
                     <Icon size={18} /> {label}
                   </NavLink>
                 ))}
@@ -205,7 +254,8 @@ export default function Navbar() {
                 </Link>
 
                 <motion.a
-                  href={`tel:+${WHATSAPP_NUMBER}`} whileTap={{ scale: 0.98 }}
+                  href={`tel:+${WHATSAPP_NUMBER}`}
+                  whileTap={{ scale: 0.98 }}
                   className="flex-1 flex items-center justify-center gap-2 py-4 font-display font-black text-xs uppercase tracking-wide text-black shadow-xl"
                   style={{ backgroundColor: BRAND_GREEN, clipPath: "polygon(0 0, 100% 0, 96% 100%, 0% 100%)" }}
                 >

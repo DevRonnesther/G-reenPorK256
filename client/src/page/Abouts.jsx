@@ -62,7 +62,7 @@ const About = () => {
       {/* Dark/Light Mode Toggle */}
       <motion.button
         onClick={toggleMode}
-        className="fixed top-24 right-6 z-40 h-12 w-12 flex items-center justify-center border-2 transition-colors"
+        className="fixed top-24 hidden right-6 z-40 h-12 w-12 flex// items-center justify-center border-2 transition-colors"
         style={{ borderColor: theme.border, color: theme.text }}
         whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}
         aria-label="Toggle theme"
@@ -138,7 +138,7 @@ const About = () => {
         <div className="max-w-7xl mx-auto">
           <div className="mb-12 md:mb-16">
             <Eyebrow theme={theme}>Our Values</Eyebrow>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tighter">Why Customers <br className="md:hidden" />Choose Us</h2>
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tighter">Why Valued Clients <br className="md:hidden" />Choose Us</h2>
           </div>
           <div className="grid md:grid-cols-3 gap-8">
             {[
@@ -213,7 +213,7 @@ const About = () => {
                 transition={{ opacity: { duration: 0.6 }, x: { duration: 0.6 }, y: { duration: 4, repeat: Infinity, ease: "easeInOut" } }}
                 src={Bike}
                 alt="GreenPork delivery rider"
-                className="relative z-10 w-full max-w-xs md:max-w-md object-contain p-8"
+                className="relative z-10 w-full max-w-xs md:max-w-2xl object-contain p-8"
               />
               <div className="absolute bottom-6 left-6 md:bottom-8 md:left-8 px-5 py-3 border-2 border-white">
                 <p className="text-[10px] uppercase tracking-widest font-display font-bold text-white/60">Average time</p>

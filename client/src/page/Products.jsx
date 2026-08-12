@@ -343,7 +343,7 @@ export default function Products() {
                 <motion.img
                   key={modal.id} initial={{ scale: 0.8, rotate: -4 }} animate={{ scale: 1, rotate: 0, y: [0, -15, 0] }}
                   transition={{ scale: { duration: 0.5 }, y: { duration: 5, repeat: Infinity, ease: "easeInOut" } }}
-                  src={modal.image} alt={modal.name} className="w-full max-w-[320px] md:max-w-[440px] h-auto max-h-[80%] object-contain drop-shadow-2xl"
+                  src={modal.image} alt={modal.name} className="w-full max-w-[380px] md:max-w-[540px] h-auto max-h-[80%] object-contain drop-shadow-2xl"
                 />
               </div>
 
