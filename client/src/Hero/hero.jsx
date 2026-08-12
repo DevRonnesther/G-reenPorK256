@@ -7,7 +7,7 @@ import {
   Instagram, Facebook, Music2, Twitter, Youtube, Hamburger, Sun, Moon,
 } from "lucide-react";
 import { useCart } from "../components/cart/CartContext";
-import { useTheme } from "../components/ThemeContext/ThemeContext.jsx"; // <-- Import the hook
+import { useTheme } from "../components/ThemeContext/ThemeContext";
 
 import PorkStake from "../assets/ChatGPT Image Jun 18, 2026, 03_34_25 PM.png";
 import Burger from "../assets/Burger.png";
@@ -26,34 +26,32 @@ const FEATURES = [
 // ─── Design Tokens ──────────────────────────────────────
 const BRAND = {
   amber: "#FFC400",
-  gold: "#D4A437",
-  cta: "#D4FF00",         // Punchy Chartreuse - bold contrast
+  cta: "#D4FF00",         // Punchy Chartreuse
   ctaText: "#0A0A0A",     // Black text on green
   ctaGlow: "rgba(212,255,0,0.4)",
-  white: "#FFFFFF",
 };
 
-// ─── Dark & Light Themes ────────────────────────────────
+// ─── Themes ────────────────────────────────────────────────
+const warmTheme = {
+  mode: "warm",
+  text: "#FFFFFF",
+  textSoft: "rgba(255,255,255,.95)",
+  textFaint: "rgba(255,255,255,.75)",
+  panel: "rgba(255,255,255,.18)",
+  panelStrong: "rgba(255,255,255,.30)",
+  vignette: "rgba(0,0,0,0.5)", // Darker vignette to keep text readable on bright bg
+  watermarkOpacity: 0.08,
+};
+
 const darkTheme = {
+  mode: "dark",
   text: "#FFFFFF",
   textSoft: "rgba(255,255,255,.95)",
   textFaint: "rgba(255,255,255,.65)",
   panel: "rgba(255,255,255,.12)",
   panelStrong: "rgba(255,255,255,.25)",
-  pageBg: "#000000",
-  vignette: "rgba(0,0,0,0.8)",
-  grainOpacity: 0.08,
-};
-
-const lightTheme = {
-  text: "#0A0A0A",
-  textSoft: "rgba(10,10,10,.85)",
-  textFaint: "rgba(10,10,10,.55)",
-  panel: "rgba(0,0,0,.08)",
-  panelStrong: "rgba(0,0,0,.15)",
-  pageBg: "#F5F5F5",
-  vignette: "rgba(255,255,255,0.6)",
-  grainOpacity: 0.03,
+  vignette: "rgba(0,0,0,0.85)", // Deep black vignette
+  watermarkOpacity: 0.05,
 };
 
 const SLIDES = [
@@ -148,9 +146,13 @@ function useSlideCarousel() {
 
 function useQuantity(id) { const [q, setQ] = useState(1); useEffect(() => setQ(1), [id]); return { quantity: q, dec: () => setQ((v) => Math.max(1, v - 1)), inc: () => setQ((v) => v + 1) }; }
 
-// --- DYNAMIC GLOW COLOR EXTRACTION ---
+// --- DYNAMIC COLOR EXTRACTION (Returns RGB strings for easy opacity control) ---
 function useDynamicWarmColors(src) {
-  const [colors, setColors] = useState({ glow: "#FBBF24", accent: "#D97706" });
+  const [colors, setColors] = useState({
+    bgFrom: "217, 119, 6",
+    bgTo: "124, 45, 18",
+    glow: "251, 191, 36"
+  });
 
   useEffect(() => {
     const img = new Image();
@@ -169,12 +171,13 @@ function useDynamicWarmColors(src) {
         let r = 0, g = 0, b = 0, count = 0;
 
         for (let i = 0; i < data.length; i += 4) {
-          if (data[i + 3] < 200) continue;
+          if (data[i + 3] < 200) continue; // Skip transparent
 
           const red = data[i];
           const green = data[i + 1];
           const blue = data[i + 2];
 
+          // Prioritize warm colors (Red, Yellow, Orange)
           if (red > blue && red > 50) {
             r += Math.min(255, red + 20);
             g += Math.min(255, green + 10);
@@ -189,11 +192,14 @@ function useDynamicWarmColors(src) {
           const avgB = Math.floor(b / count);
 
           const lighten = (val, factor) => Math.min(255, Math.floor(val * factor));
+          const darken = (val, factor) => Math.floor(val * factor);
 
-          const glow = `rgb(${lighten(avgR, 1.2)}, ${lighten(avgG, 1.1)}, ${lighten(avgB, 0.8)})`;
-          const accent = `rgb(${lighten(avgR, 1.1)}, ${lighten(avgG, 0.9)}, ${lighten(avgB, 0.6)})`;
+          // Return as comma-separated RGB values for rgba() usage
+          const bgFrom = `${lighten(avgR, 1.1)}, ${lighten(avgG, 0.9)}, ${lighten(avgB, 0.6)}`;
+          const bgTo = `${darken(avgR, 0.6)}, ${darken(avgG, 0.4)}, ${darken(avgB, 0.2)}`;
+          const glow = `${lighten(avgR, 1.2)}, ${lighten(avgG, 1.1)}, ${lighten(avgB, 0.8)}`;
 
-          setColors({ glow, accent });
+          setColors({ bgFrom, bgTo, glow });
         }
       } catch (e) {
         console.warn("Could not extract color", e);
@@ -221,9 +227,19 @@ const FontFace = React.memo(function FontFace() {
   );
 });
 
-// ─── DYNAMIC BACKGROUND ──────────────────────────────────
+// ─── DYNAMIC BACKGROUND (Handles Both Warm & Dark Modes) ──────────────────────────────────
 const DynamicBackground = React.memo(function DynamicBackground({ slide, dynamicColors, theme }) {
   const Watermark = slide.watermark;
+  const isDark = theme.mode === "dark";
+
+  // If Dark Mode: solid black bg. If Warm Mode: Vibrant Gradient bg.
+  const bgStyle = isDark
+    ? { backgroundColor: "#000000" }
+    : { background: `linear-gradient(155deg, rgb(${dynamicColors.bgFrom}) 0%, rgb(${dynamicColors.bgTo}) 100%)` };
+
+  // Control opacity of glows based on theme
+  const glowOpacity = isDark ? 0.15 : 0.45;
+  const accentOpacity = isDark ? 0.10 : 0.35;
 
   return (
     <AnimatePresence mode="wait">
@@ -234,12 +250,12 @@ const DynamicBackground = React.memo(function DynamicBackground({ slide, dynamic
         exit={{ opacity: 0 }}
         transition={{ duration: 0.8, ease }}
         className="absolute inset-0 -z-10 overflow-hidden transition-colors duration-500"
-        style={{ backgroundColor: theme.pageBg }} // Dynamic page bg
+        style={bgStyle}
       >
         {/* Ambient Bright Spotlight */}
         <motion.div
           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[70rem] h-[70rem] rounded-full pointer-events-none blur-[120px]"
-          style={{ background: `radial-gradient(circle, ${dynamicColors.glow}22 0%, transparent 60%)` }}
+          style={{ background: `radial-gradient(circle, rgba(${dynamicColors.glow}, ${glowOpacity}) 0%, transparent 60%)` }}
           animate={{ scale: [1, 1.1, 1], opacity: [0.6, 0.8, 0.6] }}
           transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -247,27 +263,27 @@ const DynamicBackground = React.memo(function DynamicBackground({ slide, dynamic
         {/* Floating Ambient Blobs */}
         <motion.div
           className="absolute top-[-10%] left-[-10%] w-[50rem] h-[50rem] rounded-full pointer-events-none blur-3xl"
-          style={{ background: `radial-gradient(circle, ${dynamicColors.accent}18 0%, transparent 70%)` }}
+          style={{ background: `radial-gradient(circle, rgba(${dynamicColors.bgFrom}, ${accentOpacity}) 0%, transparent 70%)` }}
           animate={{ x: [0, 50, 0], y: [0, 30, 0] }}
           transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
           className="absolute bottom-[-20%] right-[-10%] w-[60rem] h-[60rem] rounded-full pointer-events-none blur-3xl"
-          style={{ background: `radial-gradient(circle, ${dynamicColors.glow}14 0%, transparent 70%)` }}
+          style={{ background: `radial-gradient(circle, rgba(${dynamicColors.glow}, ${accentOpacity}) 0%, transparent 70%)` }}
           animate={{ x: [0, -40, 0], y: [0, -20, 0] }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
         />
 
         {/* Giant Ghost Watermark Icon */}
         <Watermark
-          className="absolute -right-16 top-1/2 -translate-y-1/2 opacity-[0.05] pointer-events-none"
+          className="absolute -right-16 top-1/2 -translate-y-1/2 pointer-events-none"
+          style={{ color: theme.text, stroke: theme.text, opacity: theme.watermarkOpacity }}
           size={620}
-          style={{ color: theme.text, stroke: theme.text }}
           strokeWidth={1}
         />
 
         {/* Cinematic Film Grain */}
-        <div className="absolute inset-0 film-grain pointer-events-none mix-blend-overlay" style={{ opacity: theme.grainOpacity }}></div>
+        <div className="absolute inset-0 film-grain opacity-[0.08] pointer-events-none mix-blend-overlay"></div>
 
         {/* Soft Edge Vignette */}
         <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(circle, transparent 30%, ${theme.vignette} 100%)` }}></div>
@@ -357,7 +373,7 @@ const ThumbnailRail = React.memo(function ThumbnailRail({ current, onSelect, onP
   return (
     <nav className="flex items-center gap-4" aria-label="Product selector">
       <motion.button type="button" onClick={onPrev} aria-label="Previous" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-        className="h-10 w-10 flex items-center justify-center transition-colors border border-white/20 hover:bg-white hover:text-black"
+        className="h-10 w-10 flex items-center justify-center transition-colors border hover:bg-white hover:text-black"
         style={{ color: theme.text, borderColor: theme.panelStrong }}>
         <ChevronLeft size={18} strokeWidth={2.5} />
       </motion.button>
@@ -371,7 +387,7 @@ const ThumbnailRail = React.memo(function ThumbnailRail({ current, onSelect, onP
         ))}
       </div>
       <motion.button type="button" onClick={onNext} aria-label="Next" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.85 }}
-        className="h-10 w-10 flex items-center justify-center transition-all border border-white/20 hover:bg-white hover:text-black"
+        className="h-10 w-10 flex items-center justify-center transition-all border hover:bg-white hover:text-black"
         style={{ color: theme.text, borderColor: theme.panelStrong }}>
         <ChevronRight size={18} strokeWidth={2.5} />
       </motion.button>
@@ -639,11 +655,11 @@ const MobileHero = React.memo(function MobileHero({ carousel, theme }) {
 
 export default function Hero() {
   const carousel = useSlideCarousel();
-  const { theme } = useTheme(); // Consume theme context
-  const activeTheme = theme === "dark" ? darkTheme : lightTheme;
+  const { theme } = useTheme();
+  const activeTheme = theme === "dark" ? darkTheme : warmTheme;
 
   return (
-    <main className="fixed inset-0 w-screen h-[100dvh] overflow-hidden select-none font-body transition-colors duration-500" style={{ backgroundColor: activeTheme.pageBg }}>
+    <main className="fixed inset-0 w-screen h-[100dvh] overflow-hidden select-none font-body transition-colors duration-500">
       <FontFace />
       <ThemeToggle />
       <DesktopHero carousel={carousel} theme={activeTheme} />

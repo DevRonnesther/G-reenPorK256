@@ -3,13 +3,13 @@ import React, { createContext, useState, useEffect, useContext, useCallback } fr
 const ThemeContext = createContext();
 
 export const ThemeProvider = ({ children }) => {
-    // Check localStorage for saved theme, default to 'dark' since you wanted black
+    // Default to 'warm' (bright food colors) instead of 'dark'
     const [theme, setTheme] = useState(() => {
         if (typeof window !== "undefined") {
             const savedTheme = localStorage.getItem("theme");
-            return savedTheme ? savedTheme : "dark";
+            return savedTheme ? savedTheme : "warm";
         }
-        return "dark";
+        return "warm";
     });
 
     useEffect(() => {
@@ -21,12 +21,11 @@ export const ThemeProvider = ({ children }) => {
             root.classList.remove("dark");
         }
 
-        // Save to localStorage
         localStorage.setItem("theme", theme);
     }, [theme]);
 
     const toggleTheme = useCallback(() => {
-        setTheme((prevTheme) => (prevTheme === "dark" ? "light" : "dark"));
+        setTheme((prevTheme) => (prevTheme === "dark" ? "warm" : "dark"));
     }, []);
 
     return (
