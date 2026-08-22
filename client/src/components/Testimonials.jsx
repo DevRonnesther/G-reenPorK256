@@ -2,20 +2,46 @@ import React from "react";
 import { motion } from "framer-motion";
 import { MessageSquareQuote, Star, Check } from "lucide-react";
 
-const CTA_COLOR = "#D4FF00";
-const GOLD = "#facc15";
+// ─── Centralized GreenPork Design Tokens ──────────────────────────────────────
+const BRAND = {
+  red: "#D90404",       // --brand-red
+  lime: "#D4FF00",      // --brand-lime
+  white: "#FFFFFF",     // --brand-white
+  dark: "#2E0101",      // --brand-dark
+};
 
 const DEFAULT_THEME = {
-  text: "#000000",
-  textSoft: "#333333",
-  textFaint: "#666666",
-  border: "#000000",
-  bg: "#ffffff",
+  text: BRAND.dark,
+  textSoft: "rgba(46,1,1,0.8)",
+  textFaint: "rgba(46,1,1,0.6)",
+  border: BRAND.dark,
+  bg: BRAND.white,
+};
+
+// ─── GSAP-like Stagger Config ─────────────────────────────────────────────────
+const ease = [0.22, 1, 0.36, 1];
+
+const containerStagger = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: { staggerChildren: 0.15, delayChildren: 0.1 }
+  }
+};
+
+const itemReveal = {
+  hidden: { opacity: 0, y: 50, clipPath: "inset(100% 0 0 0)" },
+  show: {
+    opacity: 1,
+    y: 0,
+    clipPath: "inset(0% 0 0 0)",
+    transition: { duration: 0.9, ease }
+  }
 };
 
 const Eyebrow = ({ theme }) => (
   <span className="inline-flex items-center gap-3 text-xs font-display font-bold uppercase tracking-widest mb-6" style={{ color: theme.textFaint }}>
-    <span className="h-2 w-2" style={{ backgroundColor: CTA_COLOR }} />
+    <span className="h-2 w-2" style={{ backgroundColor: BRAND.lime }} />
     Customer Reviews
   </span>
 );
@@ -45,25 +71,39 @@ const Testimonials = ({ theme = DEFAULT_THEME }) => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
 
           {/* LEFT COLUMN: STICKY BRAND OVERVIEW & TRUST BADGE */}
-          <div className="lg:col-span-5 lg:sticky lg:top-32 space-y-8 mb-8 lg:mb-0">
-            <div>
+          <motion.div
+            variants={containerStagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+            className="lg:col-span-5 lg:sticky lg:top-32 space-y-8 mb-8 lg:mb-0"
+          >
+            <motion.div variants={itemReveal}>
               <Eyebrow theme={theme} />
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tighter leading-[0.9]" style={{ color: theme.text }}>
                 What Our Valued Clients <br />Say About Us
               </h2>
-            </div>
+            </motion.div>
 
-            <p className="text-base leading-relaxed max-w-md font-body" style={{ color: theme.textSoft }}>
+            <motion.p
+              variants={itemReveal}
+              className="text-base leading-relaxed max-w-md font-body"
+              style={{ color: theme.textSoft }}
+            >
               Trusted by food lovers, chefs, and families who enjoy premium taste, quality service, and unforgettable culinary experiences across the country.
-            </p>
+            </motion.p>
 
             {/* Trust Metric Card */}
-            <div className="p-6 max-w-md flex items-center gap-6 border-2" style={{ borderColor: theme.border }}>
+            <motion.div
+              variants={itemReveal}
+              className="p-6 max-w-md flex items-center gap-6 border-2"
+              style={{ borderColor: theme.border }}
+            >
               <div className="text-center shrink-0">
                 <span className="text-5xl font-display font-black leading-none" style={{ color: theme.text }}>4.9</span>
                 <div className="flex items-center gap-1 mt-2 justify-center">
                   {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={12} className="fill-[#facc15] text-[#facc15]" />
+                    <Star key={i} size={12} className="fill-[#D90404] text-[#D90404]" />
                   ))}
                 </div>
               </div>
@@ -71,23 +111,30 @@ const Testimonials = ({ theme = DEFAULT_THEME }) => {
               <p className="text-xs leading-normal font-body font-medium" style={{ color: theme.textSoft }}>
                 Based on 1,500+ direct client reviews and local catering experiences.
               </p>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* RIGHT COLUMN: ASYMMETRIC STAGGERED DECK */}
-          <div className="lg:col-span-7 space-y-8 pb-6">
-            
+          <motion.div
+            variants={containerStagger}
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, margin: "-80px" }}
+            className="lg:col-span-7 space-y-8 pb-6"
+          >
+
             {/* 1. Featured Testimonial */}
             <motion.div
+              variants={itemReveal}
               whileHover={{ y: -4 }}
-              className="p-8 md:p-12 border-2 border-black text-black shadow-2xl"
-              style={{ backgroundColor: CTA_COLOR }}
+              className="p-8 md:p-12 border-2 border-[#2E0101] text-[#2E0101] shadow-2xl"
+              style={{ backgroundColor: BRAND.lime }}
             >
               <div className="flex items-center justify-between mb-8">
-                <div className="w-12 h-12 flex items-center justify-center border-2 border-black">
+                <div className="w-12 h-12 flex items-center justify-center border-2 border-[#2E0101]">
                   <MessageSquareQuote size={18} strokeWidth={2.5} />
                 </div>
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 text-[10px] font-display font-black tracking-widest uppercase border-2 border-black bg-black text-[#D4FF00]">
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 text-[10px] font-display font-black tracking-widest uppercase border-2 border-[#2E0101] bg-[#2E0101] text-[#D4FF00]">
                   <Check size={12} strokeWidth={3} /> Featured
                 </span>
               </div>
@@ -96,8 +143,8 @@ const Testimonials = ({ theme = DEFAULT_THEME }) => {
                 "{testimonials[0].quote}"
               </p>
 
-              <div className="flex items-center gap-4 pt-4 border-t-2 border-black/20">
-                <img src={testimonials[0].image} alt={testimonials[0].author} className="w-14 h-14 object-cover border-2 border-black" />
+              <div className="flex items-center gap-4 pt-4 border-t-2 border-[#2E0101]/20">
+                <img src={testimonials[0].image} alt={testimonials[0].author} className="w-14 h-14 object-cover border-2 border-[#2E0101]" />
                 <div>
                   <h4 className="text-lg font-display font-black leading-none">{testimonials[0].author}</h4>
                   <p className="text-xs font-ui font-bold mt-1 opacity-70 uppercase tracking-wide">{testimonials[0].title}</p>
@@ -110,6 +157,7 @@ const Testimonials = ({ theme = DEFAULT_THEME }) => {
               {[testimonials[1], testimonials[2]].map((t, i) => (
                 <motion.div
                   key={t.author}
+                  variants={itemReveal}
                   whileHover={{ y: -4 }}
                   className={`p-8 border-2 ${i === 1 ? "md:translate-y-8" : ""}`}
                   style={{ borderColor: theme.border, backgroundColor: theme.bg }}
@@ -136,7 +184,7 @@ const Testimonials = ({ theme = DEFAULT_THEME }) => {
               ))}
             </div>
 
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>

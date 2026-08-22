@@ -1,9 +1,10 @@
 import React, { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Heart, Star, Clock, Truck, ShieldCheck, Salad, Minus, Plus, X,
+  Heart, Star, Clock, Truck, ShieldCheck, Minus, Plus, X,
   ShoppingBasket, ShoppingBag, ArrowRight, ArrowLeft, Beef, Drumstick,
-  Sandwich, Pizza as PizzaIcon, Trash2, ChevronDown, Check, Utensils, Flame
+  Sandwich, Pizza as PizzaIcon, Trash2, ChevronDown, Check, Utensils, Flame,
+  Sparkles, ChevronUp
 } from "lucide-react";
 import { useCart } from "../components/cart/CartContext.jsx";
 
@@ -17,7 +18,7 @@ import Chicken from "../assets/fullchicken.png";
 
 const WHATSAPP_NUMBER = "256776464823";
 const BRAND_NAME = "GreenPork";
-const CTA_COLOR = "#D4FF00"; // Punchy Chartreuse matching the Hero
+const CTA_COLOR = "#D7FF00";
 
 const fmt = (n) => Number(n).toLocaleString();
 const pct = (price, anchoring) => {
@@ -25,6 +26,8 @@ const pct = (price, anchoring) => {
   if (!a || a <= price) return 0;
   return Math.round((1 - price / a) * 100);
 };
+
+const FREE_DELIVERY_THRESHOLD = 50000;
 
 const CATEGORIES = [
   { key: "all", label: "All Items", icon: Utensils },
@@ -49,7 +52,6 @@ const cardVariants = {
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 150, damping: 20 } },
 };
 
-// ─── SHARED BRUTALIST CTA ────────────────────────────────
 const MagicCTA = ({ onClick, href, children, className = "" }) => {
   const Comp = href ? motion.a : motion.button;
   const props = href ? { href, target: "_blank", rel: "noopener noreferrer" } : { onClick };
@@ -68,23 +70,365 @@ const MagicCTA = ({ onClick, href, children, className = "" }) => {
 
 const FontFace = () => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600;700;800&family=Fraunces:ital,wght@1,500;1,600&display=swap');
     .font-display { font-family: 'Archivo', sans-serif; letter-spacing: -0.04em; }
     .font-body { font-family: 'Inter', sans-serif; }
     .font-accent { font-family: 'Fraunces', serif; font-style: italic; }
     .custom-scroll::-webkit-scrollbar { width: 4px; }
     .custom-scroll::-webkit-scrollbar-thumb { background: #333; }
+    .cart-scroll::-webkit-scrollbar { width: 3px; }
+    .cart-scroll::-webkit-scrollbar-track { background: transparent; }
+    .cart-scroll::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.08); border-radius: 10px; }
+    @keyframes shimmer {
+      0% { background-position: -200% 0; }
+      100% { background-position: 200% 0; }
+    }
+    .shimmer-btn {
+      background-size: 200% 100%;
+      background-image: linear-gradient(110deg, #D4FF00 0%, #D4FF00 40%, #E8FF66 50%, #D4FF00 60%, #D4FF00 100%);
+    }
+    .shimmer-btn:hover {
+      animation: shimmer 1.2s ease-in-out;
+    }
   `}</style>
 );
+
+/* ═══════════════════════════════════════════════════════════
+   FLOATING PILL CART — expands upward into a panel
+   ═══════════════════════════════════════════════════════════ */
+
+function FloatingPillCart({
+  expanded,
+  onToggle,
+  cartItems, totalItems, subtotal, tax, shipping, total,
+  addToCart, decreaseQuantity, removeFromCart
+}) {
+  const panelRef = useRef(null);
+  const deliveryProgress = Math.min((subtotal / FREE_DELIVERY_THRESHOLD) * 100, 100);
+  const deliveryRemaining = Math.max(FREE_DELIVERY_THRESHOLD - subtotal, 0);
+  const freeDeliveryEarned = subtotal >= FREE_DELIVERY_THRESHOLD;
+
+  // Close on outside click
+  useEffect(() => {
+    if (!expanded) return;
+    const handler = (e) => {
+      if (panelRef.current && !panelRef.current.contains(e.target)) {
+        onToggle();
+      }
+    };
+    // Delay to prevent the pill click itself from closing it
+    const timer = setTimeout(() => document.addEventListener("mousedown", handler), 0);
+    return () => { clearTimeout(timer); document.removeEventListener("mousedown", handler); };
+  }, [expanded, onToggle]);
+
+  // ESC to close
+  useEffect(() => {
+    if (!expanded) return;
+    const esc = (e) => { if (e.key === "Escape") onToggle(); };
+    window.addEventListener("keydown", esc);
+    return () => window.removeEventListener("keydown", esc);
+  }, [expanded, onToggle]);
+
+  const checkoutHref = useMemo(() => {
+    if (cartItems.length === 0) return null;
+    const lines = cartItems.map((i) => `• ${i.name} (x${i.quantity}) — UGX ${fmt(i.price * i.quantity)}`).join("\n");
+    const message = `Hello ${BRAND_NAME}! I'd like to order:\n\n${lines}\n\nSubtotal: UGX ${fmt(subtotal)}\nTax: UGX ${fmt(tax)}\nDelivery: ${shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`}\nTotal: UGX ${fmt(total)}`;
+    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
+  }, [cartItems, subtotal, tax, shipping, total]);
+
+  // Get the first item's image for the pill thumbnail
+  const lastAddedImage = cartItems.length > 0 ? cartItems[cartItems.length - 1].image : null;
+
+  return (
+    <div
+      ref={panelRef}
+      className="fixed bottom-6 right-6 z-[90] flex flex-col items-end"
+      style={{ width: expanded ? 420 : "auto", maxWidth: "calc(100vw - 48px)" }}
+    >
+      {/* ── EXPANDED PANEL ── */}
+      <AnimatePresence>
+        {expanded && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 16, scale: 0.97 }}
+            transition={{ type: "spring", stiffness: 320, damping: 30 }}
+            className="w-full rounded-t-[28px]/// rounded-b-none overflow-hidden origin-bottom-right mb-[-2px]"
+            style={{
+              background: "#D4FF00",
+              boxShadow: "0 -8px 40px rgba(0,0,0,0.12), 0 -2px 12px rgba(212,255,0,0.15)"
+            }}
+          >
+            {/* Panel header */}
+            <div className="px-6 pt-5 pb-3 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 rounded-full bg-black/10 flex items-center justify-center">
+                  <ShoppingBag size={15} className="text-black" />
+                </div>
+                <div>
+                  <h3 className="font-display font-black text-base tracking-tight text-black leading-none">Your Cart</h3>
+                  {totalItems > 0 && (
+                    <p className="text-[10px] font-semibold text-black/50 mt-0.5">{totalItems} item{totalItems !== 1 ? "s" : ""}</p>
+                  )}
+                </div>
+              </div>
+              <button
+                onClick={(e) => { e.stopPropagation(); onToggle(); }}
+                className="w-8 h-8 rounded-full// bg-black/10 hover:bg-black/20 flex items-center justify-center transition-colors text-black/60 hover:text-black"
+              >
+                <X size={14} strokeWidth={2.5} />
+              </button>
+            </div>
+
+            {/* Free delivery progress */}
+            {cartItems.length > 0 && (
+              <div className="px-6 pb-3">
+                {!freeDeliveryEarned ? (
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="text-[9px] font-display font-bold uppercase tracking-widest text-black/40">
+                        Free delivery
+                      </span>
+                      <span className="text-[9px] font-bold text-black/50 tabular-nums">
+                        UGX {fmt(deliveryRemaining)} to go
+                      </span>
+                    </div>
+                    <div className="h-1.5 rounded-full bg-black/10 overflow-hidden">
+                      <motion.div
+                        className="h-full rounded-full bg-black"
+                        initial={{ width: 0 }}
+                        animate={{ width: `${deliveryProgress}%` }}
+                        transition={{ type: "spring", stiffness: 120, damping: 20 }}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center gap-1.5 bg-black/8 rounded-lg px-3 py-1.5"
+                  >
+                    <Sparkles size={11} className="text-black/70" />
+                    <span className="text-[10px] font-display font-bold text-black/70">Free delivery unlocked!</span>
+                  </motion.div>
+                )}
+              </div>
+            )}
+
+            {/* Items list */}
+            <div className="px-4">
+              <div className="bg-white rounded-2xl/// overflow-hidden" style={{ boxShadow: "inset 0 2px 8px rgba(0,0,0,0.04)" }}>
+                <div className="max-h-[280px] overflow-y-auto cart-scroll">
+                  {!cartItems.length ? (
+                    <div className="py-12 flex flex-col items-center justify-center text-center px-6">
+                      <div className="w-14 h-14 rounded-2xl bg-gray-50 flex items-center justify-center mb-3">
+                        <ShoppingBag size={24} className="text-gray-300" />
+                      </div>
+                      <p className="font-display font-bold text-sm text-gray-800">Cart is empty</p>
+                      <p className="text-[11px] text-gray-400 mt-1">Add items from the menu</p>
+                    </div>
+                  ) : (
+                    <AnimatePresence mode="popLayout">
+                      {cartItems.map((item) => (
+                        <motion.div
+                          key={item.id}
+                          layout
+                          initial={{ opacity: 0, x: 20 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.2, layout: { duration: 0.2 } }}
+                          className="flex items-center gap-3 px-4 py-3 border-b border-gray-100 last:border-0"
+                        >
+                          {/* Thumbnail */}
+                          <div className="w-12 h-12 shrink-0 rounded-xl bg-gray-50 flex items-center justify-center p-1.5">
+                            <img src={item.image} alt={item.name} className="h-full w-full object-contain" />
+                          </div>
+
+                          {/* Info */}
+                          <div className="flex-1 min-w-0">
+                            <h4 className="font-display font-bold text-[12px] leading-tight truncate text-gray-900">{item.name}</h4>
+                            <div className="flex items-center justify-between mt-1.5">
+                              {/* Qty controls */}
+                              <div className="flex items-center rounded-lg bg-gray-100 overflow-hidden">
+                                <button
+                                  onClick={() => decreaseQuantity(item.id)}
+                                  className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-200 transition-colors"
+                                >
+                                  <Minus size={10} />
+                                </button>
+                                <span className="w-7 text-center text-[11px] font-display font-bold tabular-nums text-gray-800">{item.quantity}</span>
+                                <button
+                                  onClick={() => addToCart({ id: item.id, name: item.name, price: item.price, image: item.image, category: item.category })}
+                                  className="w-7 h-7 flex items-center justify-center text-gray-400 hover:text-black hover:bg-gray-200 transition-colors"
+                                >
+                                  <Plus size={10} />
+                                </button>
+                              </div>
+                              {/* Price */}
+                              <span className="font-display font-bold text-[12px] tabular-nums text-gray-900">
+                                UGX {fmt(item.price * item.quantity)}
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Delete */}
+                          <button
+                            onClick={() => removeFromCart(item.id)}
+                            className="shrink-0 p-1 text-gray-300 hover:text-red-500 transition-colors self-start mt-0.5"
+                          >
+                            <Trash2 size={12} />
+                          </button>
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Summary + Checkout */}
+            {cartItems.length > 0 && (
+              <div className="px-6 pt-4 pb-5 space-y-3">
+                <div className="space-y-1.5 text-[11px] text-black/45 font-medium">
+                  <div className="flex justify-between">
+                    <span>Subtotal</span>
+                    <span className="font-bold text-black/70 tabular-nums">UGX {fmt(subtotal)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Tax (18%)</span>
+                    <span className="font-bold text-black/70 tabular-nums">UGX {fmt(tax)}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Delivery</span>
+                    {shipping === 0 ? (
+                      <span className="font-bold tabular-nums text-black/70">Free</span>
+                    ) : (
+                      <span className="font-bold text-black/70 tabular-nums">UGX {fmt(shipping)}</span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex items-end justify-between pt-2.5 border-t border-black/10">
+                  <span className="font-display font-bold uppercase text-[10px] tracking-widest text-black/35">Total</span>
+                  <span className="font-display font-black text-xl tracking-tight tabular-nums text-black leading-none">
+                    UGX {fmt(total)}
+                  </span>
+                </div>
+                <motion.a
+                  href={checkoutHref}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  whileHover={{ scale: 1.015 }}
+                  whileTap={{ scale: 0.985 }}
+                  className="shimmer-btn/// bg-black flex items-center justify-center gap-2.5 w-full py-3.5 rounded-2xl/// font-display font-black text-[13px] uppercase tracking-wider text-white focus:outline-none"
+                  // style={{ boxShadow: "0 4px 16px rgba(0,0,0,0.1)" }}
+                  style={{ clipPath: "polygon(0 0, 100% 0, 96% 100%, 0% 100%)" }}
+                >
+                  Proceed to Checkout <ArrowRight size={14} className="ml-0.5" />
+                </motion.a>
+              </div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ── PILL BUTTON (always visible) ── */}
+      <motion.button
+        onClick={onToggle}
+        whileHover={{ scale: 1.04, y: -2 }}
+        whileTap={{ scale: 0.97 }}
+        className="relative flex items-center gap-3 pl-2.5 pr-4 py-2 rounded-full// cursor-pointer select-none overflow-hidden"
+        style={{
+          backgroundColor: "#D4FF00",
+          boxShadow: expanded
+            ? "0 4px 20px rgba(212,255,0,0.3)"
+            : "0 6px 28px rgba(212,255,0,0.35), 0 2px 8px rgba(0,0,0,0.08)"
+        }}
+        style={{ backgroundColor: CTA_COLOR, clipPath: "polygon(0 0, 100% 0, 96% 100%, 0% 100%)" }}
+      >
+        {/* Subtle inner glow */}
+        <div
+          className="absolute hidden inset-0 rounded-full pointer-events-none"
+          style={{
+            background: "radial-gradient(ellipse at 30% 50%, rgba(255,255,255,0.25) 0%, transparent 60%)"
+          }}
+        />
+
+        {/* Product thumbnail — partially overlapping left edge */}
+        {lastAddedImage && totalItems > 0 && (
+          <motion.div
+            layout
+            initial={{ scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 400, damping: 22 }}
+            className="relative z-10 w-11 h-11 rounded-full bg-white flex items-center justify-center p-1.5 shrink-0"
+            style={{ boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}
+          >
+            <img src={lastAddedImage} alt="" className="w-full h-full object-contain" />
+          </motion.div>
+        )}
+
+        {/* Text content */}
+        <div className="relative z-10 flex flex-col items-start">
+          <span className="font-display font-black text-[13px] tracking-tight text-black leading-none">
+            {totalItems > 0 ? "View Cart" : "Cart"}
+          </span>
+          {totalItems > 0 && (
+            <motion.span
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-[9px] font-semibold text-black/50 leading-none mt-0.5"
+            >
+              {totalItems} item{totalItems !== 1 ? "s" : ""} · UGX {fmt(total)}
+            </motion.span>
+          )}
+        </div>
+
+        {/* Right circle with icon + badge */}
+        <div className="relative z-10 w-10 h-10 rounded-full flex items-center justify-center shrink-0 ml-1"
+          style={{ backgroundColor: "rgba(0,0,0,0.08)" }}
+          
+        >
+          {expanded ? (
+            <ChevronUp size={17} className="text-black" strokeWidth={2.5} />
+          ) : (
+            <ShoppingBag size={16} className="text-black" strokeWidth={2.5} />
+          )}
+          {totalItems > 0 && (
+            <motion.span
+              key={totalItems}
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 500, damping: 20 }}
+              className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-black text-white text-[9px] font-display font-black flex items-center justify-center"
+              style={{ boxShadow: "0 1px 4px rgba(0,0,0,0.2)" }}
+            >
+              {totalItems}
+            </motion.span>
+          )}
+        </div>
+      </motion.button>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════
+   MAIN PAGE
+   ═══════════════════════════════════════ */
 
 export default function Products() {
   const { cartItems, addToCart, decreaseQuantity, removeFromCart, totalItems, subtotal, shipping, tax, total } = useCart();
   const [activeCategory, setActiveCategory] = useState("all");
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [liked, setLiked] = useState(new Set());
-  const [cartOpen, setCartOpen] = useState(false);
+  const [cartExpanded, setCartExpanded] = useState(false);
   const [modal, setModal] = useState(null);
   const dropdownRef = useRef(null);
+
+  // Auto-collapse cart when modal opens
+  useEffect(() => {
+    if (modal) setCartExpanded(false);
+  }, [modal]);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -110,29 +454,22 @@ export default function Products() {
 
   const cartCountMap = useMemo(() => cartItems.reduce((acc, item) => { acc[item.id] = item.quantity; return acc; }, {}), [cartItems]);
 
-  const checkoutHref = useMemo(() => {
-    if (cartItems.length === 0) return null;
-    const lines = cartItems.map((i) => `• ${i.name} (x${i.quantity}) — UGX ${fmt(i.price * i.quantity)}`).join("\n");
-    const message = `Hello ${BRAND_NAME}! I'd like to order:\n\n${lines}\n\nSubtotal: UGX ${fmt(subtotal)}\nTax: UGX ${fmt(tax)}\nDelivery: ${shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`}\nTotal: UGX ${fmt(total)}`;
-    return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
-  }, [cartItems, subtotal, tax, shipping, total]);
-
   return (
-    <div className="min-h-screen relative absolute top-20 font-body text-black select-none bg-white flex flex-col lg:flex-row">
+    <div className="min-h-screen relative absolute top-20 font-body text-black select-none bg-white pb-28">
       <FontFace />
 
-      {/* ── MAIN CONTENT AREA (Left/Top) ── */}
-      <div className="flex-1 min-w-0 lg:h-screen lg:overflow-y-auto custom-scroll pb-24 lg:pb-0">
+      {/* ── MAIN CONTENT AREA ── */}
+      <div className="lg:h-screen lg:overflow-y-auto custom-scroll">
 
         {/* Ambient Background Glow */}
-        <div className="fixed top-0 left-0 w-[50rem] h-[50rem] rounded-full pointer-events-none blur-3xl -z-10 opacity-30" style={{ background: `radial-gradient(circle, ${CTA_COLOR} 0%, transparent 70%)` }} />
+        <div className="fixed top-0 hidden left-0 w-[50rem] h-[50rem] rounded-full pointer-events-none blur-3xl -z-10 opacity-30" style={{ background: `radial-gradient(circle, ${CTA_COLOR} 0%, transparent 70%)` }} />
 
-        {/* Brutalist Header */}
+        {/* Header — removed the old cart button from here */}
         <header className="sticky top-0 z-30 bg-white/80 backdrop-blur-md border-b border-black/10 px-6 md:px-12 py-6 flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div className="flex items-end gap-4">
             <div className="h-12 w-3 bg-black" />
             <div>
-              <span className="font-accent text-sm text-slate-500">{BRAND_NAME} Menu</span>
+              <span className="font-accent text-xs text-slate-500">{BRAND_NAME} Menu</span>
               <h1 className="font-display text-5xl md:text-6xl font-black tracking-tighter leading-none mt-1">
                 {activeCategoryObj.label.toUpperCase()}
               </h1>
@@ -157,12 +494,6 @@ export default function Products() {
                 )}
               </AnimatePresence>
             </div>
-
-            {/* Mobile Cart Toggle */}
-            <button onClick={() => setCartOpen(true)} className="relative h-12 w-12 flex items-center justify-center bg-black text-white lg:hidden">
-              <ShoppingBasket size={18} />
-              {totalItems > 0 && <span className="absolute -top-2 -right-2 w-6 h-6 flex items-center justify-center text-[10px] font-black bg-[#D4FF00] text-black rounded-full">{totalItems}</span>}
-            </button>
           </div>
         </header>
 
@@ -172,7 +503,8 @@ export default function Products() {
           {spotlightItem && (
             <motion.div
               initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-              className="relative bg-[#D4FF00] p-8 md:p-12 -rotate-1 overflow-hidden shadow-2xl"
+              onClick={() => setModal(spotlightItem)}
+              className="relative bg-[#D4FF00] p-8 md:p-12 -rotate-1 overflow-hidden shadow-2xl cursor-pointer"
             >
               <Watermark className="absolute -right-10 -bottom-20 opacity-[0.1] pointer-events-none" size={400} strokeWidth={1} />
               <div className="grid md:grid-cols-2 gap-8 items-center relative z-10">
@@ -185,7 +517,7 @@ export default function Products() {
                       <p className="text-[10px] uppercase tracking-widest font-bold opacity-60">From</p>
                       <p className="font-display text-3xl font-black">UGX {fmt(spotlightItem.price)}</p>
                     </div>
-                    <MagicCTA onClick={() => setModal(spotlightItem)} className="!bg-black !text-white">
+                    <MagicCTA onClick={(e) => { e.stopPropagation(); setModal(spotlightItem); }} className="!bg-black !text-white">
                       View <ArrowRight size={14} />
                     </MagicCTA>
                   </div>
@@ -193,7 +525,7 @@ export default function Products() {
                 <div className="relative h-48 md:h-72 flex items-center justify-center">
                   <motion.img
                     src={spotlightItem.image} alt={spotlightItem.name}
-                    className="w-full max-w-[280px] object-contain drop-shadow-2xl"
+                    className="w-full max-w-[450px] object-contain drop-shadow-2xl"
                     animate={{ y: [0, -15, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                   />
                 </div>
@@ -212,11 +544,11 @@ export default function Products() {
                 onClick={() => setModal(item)} role="button" tabIndex={0}
                 className="group cursor-pointer flex flex-col"
               >
-                <div className="relative bg-slate-100 h-64 flex items-center justify-center overflow-hidden mb-4">
+                <div className="relative bg-[#D4FF00]/5 h-64 flex items-center justify-center overflow-hidden mb-4">
                   <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500" style={{ background: `radial-gradient(circle, ${CTA_COLOR}33 0%, transparent 70%)` }} />
                   <motion.img
                     src={item.image} alt={item.name}
-                    className="w-40 h-40 object-contain relative z-10 drop-shadow-xl transition-transform duration-500 group-hover:scale-110"
+                    className="w-60 h-60 object-contain relative z-10 drop-shadow-xl transition-transform duration-500 group-hover:scale-110"
                   />
                   {pct(item.price, item.anchoring) > 0 && (
                     <span className="absolute top-4 left-4 bg-black text-white text-[10px] font-display font-black uppercase px-2 py-1">
@@ -264,67 +596,6 @@ export default function Products() {
           </motion.div>
         </div>
       </div>
-
-      {/* ── DESKTOP DARK CART SIDEBAR ── */}
-      <aside className="hidden lg:flex flex-col w-[420px] flex-shrink-0 bg-zinc-950 text-white h-screen sticky top-0 border-l border-white/10">
-        <div className="p-8 border-b border-white/10 flex items-center justify-between">
-          <div>
-            <span className="font-accent text-sm text-white/50">Active Order</span>
-            <h2 className="text-3xl font-display font-black tracking-tighter mt-1">Your Cart</h2>
-          </div>
-          <div className="text-right">
-            <p className="text-[10px] uppercase tracking-widest text-white/50">Items</p>
-            <p className="text-2xl font-display font-black">{totalItems}</p>
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-y-auto p-8 space-y-6 custom-scroll">
-          {cartItems.length === 0 ? (
-            <div className="h-full flex flex-col items-center justify-center text-center opacity-60 pb-20">
-              <ShoppingBag size={48} className="mb-4" />
-              <p className="font-display font-black text-lg">Cart is empty</p>
-              <p className="font-body text-xs mt-1 text-white/50">Add items from the menu</p>
-            </div>
-          ) : (
-            cartItems.map((item) => (
-              <div key={item.id} className="flex gap-4 border-b border-white/10 pb-4">
-                <img src={item.image} alt={item.name} className="h-16 w-16 object-contain bg-white/5 p-1" />
-                <div className="flex-1 flex flex-col justify-between">
-                  <div className="flex justify-between items-start">
-                    <h3 className="font-display font-bold text-sm leading-tight">{item.name}</h3>
-                    <button onClick={() => removeFromCart(item.id)} className="text-white/30 hover:text-[#D4FF00] transition-colors"><Trash2 size={14} /></button>
-                  </div>
-                  <div className="flex items-center justify-between mt-2">
-                    <div className="flex items-center gap-2 font-display font-bold">
-                      <button onClick={() => decreaseQuantity(item.id)} className="w-6 h-6 flex items-center justify-center border border-white/20 hover:bg-white/10"><Minus size={10} /></button>
-                      <span>{item.quantity}</span>
-                      <button onClick={() => addToCart({ id: item.id, name: item.name, price: item.price, image: item.image, category: item.category })} className="w-6 h-6 flex items-center justify-center border border-white/20 hover:bg-white/10"><Plus size={10} /></button>
-                    </div>
-                    <p className="font-display font-black text-sm">UGX {fmt(item.price * item.quantity)}</p>
-                  </div>
-                </div>
-              </div>
-            ))
-          )}
-        </div>
-
-        {cartItems.length > 0 && (
-          <div className="p-8 bg-black border-t border-white/10 space-y-4">
-            <div className="space-y-2 text-xs font-body text-white/60">
-              <div className="flex justify-between"><span>Subtotal</span><span className="font-bold text-white">UGX {fmt(subtotal)}</span></div>
-              <div className="flex justify-between"><span>Tax (18%)</span><span className="font-bold text-white">UGX {fmt(tax)}</span></div>
-              <div className="flex justify-between items-center"><span>Delivery</span><span className="font-bold text-white">{shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`}</span></div>
-            </div>
-            <div className="flex justify-between items-end pt-4 border-t border-white/10">
-              <p className="font-display font-bold uppercase text-sm">Total</p>
-              <p className="text-3xl font-display font-black">UGX {fmt(total)}</p>
-            </div>
-            <MagicCTA href={checkoutHref} className="w-full !py-5 mt-2">
-              Checkout <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-            </MagicCTA>
-          </div>
-        )}
-      </aside>
 
       {/* ── PRODUCT DETAILS MODAL ── */}
       <AnimatePresence>
@@ -387,7 +658,7 @@ export default function Products() {
                 </div>
 
                 <div className="p-8 md:p-12 bg-black">
-                  <MagicCTA onClick={() => { handleAddToCart(modal); setModal(null); setCartOpen(true); }} className="w-full !text-lg">
+                  <MagicCTA onClick={() => { handleAddToCart(modal); setModal(null); }} className="w-full !text-lg">
                     Add to Cart <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
                   </MagicCTA>
                 </div>
@@ -397,69 +668,20 @@ export default function Products() {
         )}
       </AnimatePresence>
 
-      {/* ── MOBILE CART DRAWER ── */}
-      <AnimatePresence>
-        {cartOpen && (
-          <>
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setCartOpen(false)} className="fixed inset-0 bg-black/80 backdrop-blur-md z-[70] lg:hidden" />
-            <motion.aside
-              initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }} transition={{ type: "spring", stiffness: 220, damping: 30 }}
-              className="fixed top-0 right-0 h-full w-full max-w-md z-[80] flex flex-col bg-zinc-950 text-white lg:hidden"
-            >
-              <div className="p-6 flex items-center justify-between border-b border-white/10">
-                <h2 className="text-2xl font-display font-black tracking-tighter">Your Cart</h2>
-                <button onClick={() => setCartOpen(false)} className="w-10 h-10 flex items-center justify-center bg-white/10 hover:bg-white/20 transition-colors"><X size={18} /></button>
-              </div>
-
-              <div className="flex-1 overflow-y-auto p-6 space-y-4 custom-scroll">
-                {cartItems.length === 0 ? (
-                  <div className="h-full flex flex-col items-center justify-center text-center opacity-60 pb-20">
-                    <ShoppingBag size={48} className="mb-4" />
-                    <p className="font-display font-black text-lg">Cart is empty</p>
-                  </div>
-                ) : (
-                  cartItems.map((item) => (
-                    <div key={item.id} className="flex gap-4 border-b border-white/10 pb-4">
-                      <img src={item.image} alt={item.name} className="h-16 w-16 object-contain bg-white/5 p-1" />
-                      <div className="flex-1 flex flex-col justify-between">
-                        <div className="flex justify-between items-start">
-                          <h3 className="font-display font-bold text-sm">{item.name}</h3>
-                          <button onClick={() => removeFromCart(item.id)} className="text-white/30 hover:text-[#D4FF00]"><Trash2 size={14} /></button>
-                        </div>
-                        <div className="flex items-center justify-between mt-2">
-                          <div className="flex items-center gap-2 font-display font-bold">
-                            <button onClick={() => decreaseQuantity(item.id)} className="w-6 h-6 flex items-center justify-center border border-white/20"><Minus size={10} /></button>
-                            <span>{item.quantity}</span>
-                            <button onClick={() => addToCart({ id: item.id, name: item.name, price: item.price, image: item.image, category: item.category })} className="w-6 h-6 flex items-center justify-center border border-white/20"><Plus size={10} /></button>
-                          </div>
-                          <p className="font-display font-black text-sm">UGX {fmt(item.price * item.quantity)}</p>
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
-
-              {cartItems.length > 0 && (
-                <div className="p-6 bg-black border-t border-white/10 space-y-4">
-                  <div className="space-y-2 text-xs font-body text-white/60">
-                    <div className="flex justify-between"><span>Subtotal</span><span className="font-bold text-white">UGX {fmt(subtotal)}</span></div>
-                    <div className="flex justify-between"><span>Tax</span><span className="font-bold text-white">UGX {fmt(tax)}</span></div>
-                    <div className="flex justify-between"><span>Delivery</span><span className="font-bold text-white">{shipping === 0 ? "Free" : `UGX ${fmt(shipping)}`}</span></div>
-                  </div>
-                  <div className="flex justify-between items-end pt-4 border-t border-white/10">
-                    <p className="font-display font-bold uppercase text-sm">Total</p>
-                    <p className="text-2xl font-display font-black">UGX {fmt(total)}</p>
-                  </div>
-                  <MagicCTA href={checkoutHref} className="w-full !py-5 mt-2">
-                    Checkout <ArrowRight size={16} className="group-hover:translate-x-1 transition-transform" />
-                  </MagicCTA>
-                </div>
-              )}
-            </motion.aside>
-          </>
-        )}
-      </AnimatePresence>
+      {/* ── FLOATING PILL CART ── */}
+      <FloatingPillCart
+        expanded={cartExpanded}
+        onToggle={() => setCartExpanded(p => !p)}
+        cartItems={cartItems}
+        totalItems={totalItems}
+        subtotal={subtotal}
+        tax={tax}
+        shipping={shipping}
+        total={total}
+        addToCart={addToCart}
+        decreaseQuantity={decreaseQuantity}
+        removeFromCart={removeFromCart}
+      />
     </div>
   );
 }

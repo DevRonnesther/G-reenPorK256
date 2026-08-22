@@ -8,7 +8,7 @@ import {
 } from "lucide-react";
 import GreenPorkIcon from "../../assets/favicon.png";
 
-const BRAND_GREEN = "#D4FF00"; // Match Hero CTA color
+const BRAND_GREEN = "#D7FF00"; // Match Hero CTA color
 const BRAND_NAME = "GREENPORK";
 const WHATSAPP_NUMBER = "256776464823";
 const PHONE_DISPLAY = "+256 776 464 823";
@@ -53,44 +53,7 @@ export default function Navbar() {
       <header className="fixed top-0 left-0 right-0 z-50 w-full px-6 md:px-10 py-5 pointer-events-none select-none font-ui">
         <div className="max-w-[1500px] mx-auto flex items-center justify-between pointer-events-auto">
 
-          {/* ── Premium Brand Lockup ── */}
-          <Link
-            to="/"
-            className="group relative flex items-center gap-3 select-none"
-            aria-label={`${BRAND_NAME} homepage`}
-          >
-            {/* Icon Container with Hover Glow */}
-            <div className="relative">
-              <div
-                className="absolute inset-0 rounded-sm blur-md opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none"
-                style={{ backgroundColor: BRAND_GREEN }}
-              />
-              <div className="relative flex items-center justify-center overflow-hidden">
-                <img
-                  src={GreenPorkIcon}
-                  alt="GreenPork Logo"
-                  className="h-9 w-9 object-contain pointer-events-none transition-transform duration-500 group-hover:scale-110"
-                  draggable={false}
-                />
-              </div>
-            </div>
-
-            {/* Text Wordmark & Slogan */}
-            <div className="flex flex-col leading-none">
-              <div className="flex items-baseline gap-1">
-                <span className="font-display text-2xl md:text-3xl font-black tracking-tighter text-white drop-shadow-md">
-                  Green
-                </span>
-                <span className="font-display text-xl md:text-2xl font-black tracking-[0.1em] text-[#D4FF00] drop-shadow-md uppercase">
-                  Pork
-                </span>
-                <span className="h-1.5 w-1.5 rounded-full bg-[#D4FF00] ml-0.5 mb-1"></span>
-              </div>
-              <span className="font-ui text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 mt-1">
-                Great Food. Good Mood.
-              </span>
-            </div>
-          </Link>
+          
 
           {/* ── Desktop Nav Links ── */}
           <nav className="hidden lg:flex items-center gap-1 border border-white/20 backdrop-blur-md bg-black/30 p-1" aria-label="Primary Navigation">
@@ -117,6 +80,45 @@ export default function Navbar() {
               </NavLink>
             ))}
           </nav>
+
+          {/* ── Premium Brand Lockup ── */}
+          <Link
+            to="/"
+            className="group relative flex items-center gap-3 select-none"
+            aria-label={`${BRAND_NAME} homepage`}
+          >
+            {/* Icon Container with Hover Glow */}
+            <div className="relative">
+              <div
+                className="absolute inset-0 rounded-sm blur-md opacity-0 group-hover:opacity-60 transition-opacity duration-300 pointer-events-none"
+                style={{ backgroundColor: BRAND_GREEN }}
+              />
+              <div className="relative flex items-center justify-center overflow-hidden">
+                <img
+                  src={GreenPorkIcon}
+                  alt="GreenPork Logo"
+                  className="h-12 w-12 object-contain pointer-events-none transition-transform duration-500 group-hover:scale-110"
+                  draggable={false}
+                />
+              </div>
+            </div>
+
+            {/* Text Wordmark & Slogan */}
+            <div className="flex flex-col leading-none">
+              <div className="flex items-baseline gap-1">
+                <span className="font-display text-2xl md:text-3xl font-black tracking-tighter text-white drop-shadow-md">
+                  Green
+                </span>
+                <span className="font-display text-xl md:text-2xl font-black tracking-[0.1em] text-[#D4FF00] drop-shadow-md uppercase">
+                  Pork
+                </span>
+                <span className="h-1.5 w-1.5 rounded-full bg-[#D4FF00] ml-0.5 mb-1"></span>
+              </div>
+              <span className="font-ui text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] text-black/50 mt-1">
+                Great Food. Good Mood.
+              </span>
+            </div>
+          </Link>
 
           {/* ── Desktop Action Buttons ── */}
           <div className="hidden lg:flex items-center gap-4">

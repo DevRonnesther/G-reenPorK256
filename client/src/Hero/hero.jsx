@@ -23,35 +23,42 @@ const FEATURES = [
   { key: "quality", icon: ShieldCheck, label: "Premium Choice", sub: "Hygienic Prep" },
 ];
 
-// ─── Design Tokens ──────────────────────────────────────
+// ─── Centralized GreenPork Design Tokens ──────────────────────────────────────
 const BRAND = {
-  amber: "#FFC400",
-  cta: "#D4FF00",         // Punchy Chartreuse
-  ctaText: "#0A0A0A",     // Black text on green
+  red: "#D90404",       // --brand-red
+  lime: "#D7FF00",      // --brand-lime
+  white: "#FFFFFF",     // --brand-white
+  dark: "#2E0101",      // --brand-dark
+
+  // Aliases for component logic
+  cta: "#D4FF00",         // Brand Lime
+  ctaText: "#2E0101",     // Brand Dark
   ctaGlow: "rgba(212,255,0,0.4)",
 };
 
-// ─── Themes ────────────────────────────────────────────────
+// ─── Themes ──────────────────────────────────────────────────────────────────
 const warmTheme = {
   mode: "warm",
-  text: "#FFFFFF",
+  text: BRAND.white,
   textSoft: "rgba(255,255,255,.95)",
   textFaint: "rgba(255,255,255,.75)",
   panel: "rgba(255,255,255,.18)",
   panelStrong: "rgba(255,255,255,.30)",
-  vignette: "rgba(0,0,0,0.5)", // Darker vignette to keep text readable on bright bg
+  vignette: "rgba(46,1,1,0.7)", // Brand Dark based vignette
   watermarkOpacity: 0.08,
+  accent: BRAND.lime,
 };
 
 const darkTheme = {
   mode: "dark",
-  text: "#FFFFFF",
+  text: BRAND.white,
   textSoft: "rgba(255,255,255,.95)",
-  textFaint: "rgba(255,255,255,.65)",
-  panel: "rgba(255,255,255,.12)",
-  panelStrong: "rgba(255,255,255,.25)",
-  vignette: "rgba(0,0,0,0.85)", // Deep black vignette
+  textFaint: "rgba(255,255,255,.80)", // Brighter for visibility on Red
+  panel: "rgba(255,255,255,.15)",
+  panelStrong: "rgba(255,255,255,.30)",
+  vignette: "rgba(46,1,1,0.95)", // Deep Brand Dark vignette around edges
   watermarkOpacity: 0.05,
+  accent: BRAND.lime, // Brand Lime accent for dark mode (pops on red)
 };
 
 const SLIDES = [
@@ -148,10 +155,11 @@ function useQuantity(id) { const [q, setQ] = useState(1); useEffect(() => setQ(1
 
 // --- DYNAMIC COLOR EXTRACTION (Returns RGB strings for easy opacity control) ---
 function useDynamicWarmColors(src) {
+  // Default state updated to GreenPork Brand Red and Dark
   const [colors, setColors] = useState({
-    bgFrom: "217, 119, 6",
-    bgTo: "124, 45, 18",
-    glow: "251, 191, 36"
+    bgFrom: "217, 4, 4",    // Brand Red (#D90404)
+    bgTo: "46, 1, 1",       // Brand Dark (#2E0101)
+    glow: "212, 255, 0"     // Brand Lime (#D4FF00)
   });
 
   useEffect(() => {
@@ -215,6 +223,14 @@ const FontFace = React.memo(function FontFace() {
   return (
     <style>{`
       @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600&family=Fraunces:ital,wght@1,500;1,600&display=swap');
+      
+      :root {
+        --brand-red: #D90404;
+        --brand-lime: #D4FF00;
+        --brand-white: #FFFFFF;
+        --brand-dark: #2E0101;
+      }
+      
       .font-display { font-family: 'Archivo', sans-serif; letter-spacing: -0.04em; }
       .font-ui { font-family: 'Inter', sans-serif; }
       .font-body { font-family: 'Inter', sans-serif; }
@@ -232,9 +248,9 @@ const DynamicBackground = React.memo(function DynamicBackground({ slide, dynamic
   const Watermark = slide.watermark;
   const isDark = theme.mode === "dark";
 
-  // If Dark Mode: solid black bg. If Warm Mode: Vibrant Gradient bg.
+  // If Dark Mode: solid Brand Red bg. If Warm Mode: Vibrant Gradient bg.
   const bgStyle = isDark
-    ? { backgroundColor: "#000000" }
+    ? { backgroundColor: BRAND.red } // Replaced black with Brand Red
     : { background: `linear-gradient(155deg, rgb(${dynamicColors.bgFrom}) 0%, rgb(${dynamicColors.bgTo}) 100%)` };
 
   // Control opacity of glows based on theme
@@ -328,9 +344,9 @@ const AddToCartButton = React.memo(function AddToCartButton({ onClick, className
   return (
     <motion.button
       type="button" onClick={onClick}
-      whileHover={{ scale: 1.02, backgroundColor: "#E4FF4D", boxShadow: `0 10px 30px -5px ${BRAND.ctaGlow}` }}
+      whileHover={{ scale: 1.02, backgroundColor: BRAND.lime, boxShadow: `0 10px 30px -5px ${BRAND.ctaGlow}` }}
       whileTap={{ scale: 0.98 }}
-      className={cx("group relative inline-flex items-center justify-between gap-4 font-display font-black text-sm uppercase tracking-wide py-4 px-6 text-black shadow-2xl focus:outline-none", className)}
+      className={cx("group relative inline-flex items-center justify-between gap-4 font-display font-black text-sm uppercase tracking-wide py-4 px-6 shadow-2xl focus:outline-none", className)}
       style={{ backgroundColor: BRAND.cta, color: BRAND.ctaText, clipPath: "polygon(0 0, 100% 0, 95% 100%, 0% 100%)" }}
     >
       <ShoppingBasket size={18} strokeWidth={2.5} />
@@ -345,7 +361,7 @@ const TrustFeatures = React.memo(function TrustFeatures({ slide, theme }) {
     <div className="flex flex-col gap-4 mt-8 border-l-2 pl-6" style={{ borderColor: theme.panelStrong }}>
       {FEATURES.map(({ key, icon: Icon, label, sub }) => (
         <div key={key} className="flex items-center gap-3">
-          <Icon size={20} strokeWidth={2} style={{ color: BRAND.amber }} />
+          <Icon size={20} strokeWidth={2} style={{ color: theme.accent }} />
           <div className="leading-none font-body">
             <p className="text-sm font-bold tracking-wide" style={{ color: theme.text }}>{label}</p>
             <p className="text-[10px] uppercase tracking-widest mt-1" style={{ color: theme.textFaint }}>{sub}</p>
@@ -361,7 +377,7 @@ const IngredientTags = React.memo(function IngredientTags({ tags, theme }) {
     <div className="flex items-center gap-3 flex-wrap mt-4">
       {tags.map((tag) => (
         <span key={tag} className="font-display font-bold uppercase text-[10px] tracking-widest flex items-center gap-2" style={{ color: theme.text }}>
-          <span className="h-1.5 w-1.5 rounded-full" style={{ background: BRAND.amber }} />
+          <span className="h-1.5 w-1.5 rounded-full" style={{ background: theme.accent }} />
           {tag}
         </span>
       ))}
@@ -373,7 +389,7 @@ const ThumbnailRail = React.memo(function ThumbnailRail({ current, onSelect, onP
   return (
     <nav className="flex items-center gap-4" aria-label="Product selector">
       <motion.button type="button" onClick={onPrev} aria-label="Previous" whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}
-        className="h-10 w-10 flex items-center justify-center transition-colors border hover:bg-white hover:text-black"
+        className="h-10 w-10 flex items-center justify-center transition-colors border hover:bg-[#D4FF00] hover:text-[#2E0101]"
         style={{ color: theme.text, borderColor: theme.panelStrong }}>
         <ChevronLeft size={18} strokeWidth={2.5} />
       </motion.button>
@@ -387,7 +403,7 @@ const ThumbnailRail = React.memo(function ThumbnailRail({ current, onSelect, onP
         ))}
       </div>
       <motion.button type="button" onClick={onNext} aria-label="Next" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.85 }}
-        className="h-10 w-10 flex items-center justify-center transition-all border hover:bg-white hover:text-black"
+        className="h-10 w-10 flex items-center justify-center transition-all border hover:bg-[#D4FF00] hover:text-[#2E0101]"
         style={{ color: theme.text, borderColor: theme.panelStrong }}>
         <ChevronRight size={18} strokeWidth={2.5} />
       </motion.button>
@@ -435,8 +451,8 @@ const LeftColumn = React.memo(function LeftColumn({ slide, theme }) {
 
       <AnimatePresence mode="wait">
         <motion.div key={`e-${slide.id}`} {...fadeUp(0)} className="flex items-center gap-3 mb-4">
-          <span className="h-3 w-3 rounded-full" style={{ background: BRAND.cta, boxShadow: `0 0 12px ${BRAND.cta}` }} />
-          <span className="font-accent text-lg" style={{ color: theme.text }}>{slide.eyebrow}</span>
+          <span className="h-3 w-3 hidden rounded-full" style={{ background: BRAND.cta, boxShadow: `0 0 12px ${BRAND.cta}` }} />
+          <span className="font-accent hidden text-lg" style={{ color: theme.text }}>{slide.eyebrow}</span>
         </motion.div>
       </AnimatePresence>
 
@@ -509,7 +525,7 @@ const RightColumn = React.memo(function RightColumn({ slide, onAddToCart, theme 
 
         <div className="flex items-center gap-6 font-body text-xs uppercase tracking-widest" style={{ color: theme.textSoft }}>
           <span className="flex items-center gap-2"><Clock size={14} strokeWidth={2} /> {slide.prepTime}</span>
-          <span className="flex items-center gap-2"><Star size={14} strokeWidth={2} style={{ fill: BRAND.amber, color: BRAND.amber }} /> {slide.rating}</span>
+          <span className="flex items-center gap-2"><Star size={14} strokeWidth={2} style={{ fill: theme.accent, color: theme.accent }} /> {slide.rating}</span>
         </div>
 
         <div className="w-full h-px my-2" style={{ backgroundColor: theme.panelStrong }} />
@@ -577,8 +593,8 @@ const MobileHero = React.memo(function MobileHero({ carousel, theme }) {
 
         <div className="flex justify-between items-start mb-4">
           <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full" style={{ background: BRAND.cta }} />
-            <span className="font-accent text-sm" style={{ color: theme.text }}>{slide.eyebrow}</span>
+            <span className="h-2 w-2 hidden rounded-full" style={{ background: BRAND.cta }} />
+            <span className="font-accent hidden text-sm" style={{ color: theme.text }}>{slide.eyebrow}</span>
           </div>
           <span className="font-display text-[10px] font-bold uppercase tracking-widest px-2 py-1 text-black" style={{ backgroundColor: BRAND.cta }}>
             Save {savings}%
@@ -643,7 +659,7 @@ const MobileHero = React.memo(function MobileHero({ carousel, theme }) {
           </div>
           <AddToCartButton onClick={addToCartHandler} className="flex-1" />
           <motion.button type="button" onClick={next} aria-label="Next" whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.85 }}
-            className="h-14 w-14 flex items-center justify-center transition-colors flex-shrink-0 border-2 hover:bg-white hover:text-black"
+            className="h-14 w-14 flex items-center justify-center transition-colors flex-shrink-0 border-2 hover:bg-[#D4FF00] hover:text-[#2E0101]"
             style={{ color: theme.text, borderColor: theme.text }}>
             <ChevronRight size={20} strokeWidth={2.5} />
           </motion.button>
