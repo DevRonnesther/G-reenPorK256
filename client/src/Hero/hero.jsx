@@ -137,26 +137,26 @@ const fadeUp = (d = 0) => ({
 const imgVar = {
   enter: (d) => ({
     opacity: 0,
-    x: d === "right" ? 60 : -60,
-    scale: 0.8,
-    rotate: d === "right" ? -6 : 6,
-    filter: "blur(8px)"
+    x: d === "right" ? 80 : -80,
+    scale: 0.7,
+    rotate: d === "right" ? -8 : 8,
+    filter: "blur(12px)"
   }),
   center: {
     opacity: 1,
     x: 0,
     scale: 1,
-    rotate: -4,
+    rotate: -3,
     filter: "blur(0px)",
-    transition: { duration: 0.75, ease: [0.16, 1, 0.3, 1] }
+    transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] }
   },
   exit: (d) => ({
     opacity: 0,
-    x: d === "right" ? -50 : 50,
-    scale: 0.88,
-    rotate: d === "right" ? 4 : -4,
-    filter: "blur(8px)",
-    transition: { duration: 0.35, ease: [0.4, 0, 1, 1] }
+    x: d === "right" ? -60 : 60,
+    scale: 0.8,
+    rotate: d === "right" ? 6 : -6,
+    filter: "blur(12px)",
+    transition: { duration: 0.4, ease: [0.4, 0, 1, 1] }
   }),
 };
 
@@ -225,7 +225,7 @@ const DynamicBackground = React.memo(function DynamicBackground({ slide, activeT
           style={bgStyle}
         >
           <motion.div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[45rem] lg:w-[80rem] h-[45rem] lg:h-[80rem] rounded-full pointer-events-none blur-[140px]"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[45rem] lg:w-[80rem] h-[45rem] lg:h-[80rem] pointer-events-none blur-[140px]"
             style={{ background: `radial-gradient(circle, rgba(${activeTheme.glow}, 0.55) 0%, rgba(0,0,0,0) 70%)` }}
             animate={{ scale: [1, 1.15, 1], opacity: [0.45, 0.7, 0.45] }}
             transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
@@ -245,12 +245,12 @@ const DynamicBackground = React.memo(function DynamicBackground({ slide, activeT
 
 const ColorThemeToggleMode = React.memo(function ColorThemeToggleMode({ isAutoMatch, setIsAutoMatch, activeThemeName, setActiveThemeName }) {
   return (
-    <div className="absolute hidden/// top-20 right-3 lg:top-20 lg:right-8 z-50 flex items-center gap-2 bg-black/40 backdrop-blur-xl p-1.5 rounded-full">
+    <div className="absolute hidden/// top-20 right-3 lg:top-20 lg:right-8 z-50 flex items-center gap-2 bg-black/40 backdrop-blur-xl p-1.5">
       <button
         type="button"
         onClick={() => setIsAutoMatch(!isAutoMatch)}
         className={cx(
-          "text-[10px] font-display uppercase tracking-wider px-3.5 py-1.5 rounded-full transition-all cursor-pointer flex items-center gap-1.5",
+          "text-[10px] font-display uppercase tracking-wider px-3.5 py-1.5 transition-all cursor-pointer flex items-center gap-1.5",
           isAutoMatch ? "bg-white text-black font-bold" : "text-white/70 hover:text-white"
         )}
       >
@@ -268,7 +268,7 @@ const ColorThemeToggleMode = React.memo(function ColorThemeToggleMode({ isAutoMa
                 onClick={() => setActiveThemeName(key)}
                 title={t.name}
                 className={cx(
-                  "w-5 h-5 rounded-full transition-transform cursor-pointer",
+                  "w-5 h-5 transition-transform cursor-pointer",
                   isSelected ? "scale-125 opacity-100" : "opacity-50 hover:opacity-100"
                 )}
                 style={{ backgroundColor: t.primary }}
@@ -311,8 +311,8 @@ const AddToCartButton = React.memo(function AddToCartButton({ onClick, className
     <motion.button
       type="button"
       onClick={onClick}
-      whileHover={{ scale: 1.03, backgroundColor: primaryHoverColor }}
-      whileTap={{ scale: 0.97 }}
+      whileHover={{ scale: 1.02, backgroundColor: primaryHoverColor }}
+      whileTap={{ scale: 0.98 }}
       transition={butterySpring}
       className={cx("group relative inline-flex items-center justify-between gap-2 lg:gap-4 font-display font-black text-xs uppercase tracking-wider py-3 px-4 lg:py-3.5 lg:px-6 focus:outline-none cursor-pointer overflow-hidden", className)}
       style={{ backgroundColor: primaryColor, color: "#FFFFFF", clipPath: "polygon(0 0, 100% 0, 95% 100%, 0% 100%)" }}
@@ -327,20 +327,19 @@ const AddToCartButton = React.memo(function AddToCartButton({ onClick, className
 
 const TrustFeatures = React.memo(function TrustFeatures({ accentColor }) {
   return (
-    <div className="hidden lg:flex flex-col gap-3 mt-6 pl-6 relative">
-      <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-white/15" />
+    <div className="hidden lg:flex flex-row gap-6 mt-6 relative">
       {FEATURES.map(({ key, icon: Icon, label, sub }) => (
         <motion.div
           key={key}
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
           className="flex items-center gap-2.5"
         >
-          <Icon size={15} strokeWidth={2.2} style={{ color: accentColor }} />
+          <Icon size={18} strokeWidth={2.2} style={{ color: accentColor }} />
           <div className="leading-tight font-body">
-            <p className="text-xs font-bold tracking-wide text-white">{label}</p>
-            <p className="text-[9px] uppercase tracking-widest text-white/70">{sub}</p>
+            <p className="text-sm font-bold tracking-wide text-white">{label}</p>
+            <p className="text-[10px] uppercase tracking-widest text-white/70">{sub}</p>
           </div>
         </motion.div>
       ))}
@@ -352,8 +351,8 @@ const IngredientTags = React.memo(function IngredientTags({ tags, accentColor })
   return (
     <div className="flex items-center gap-2.5 flex-wrap mt-2 lg:mt-3">
       {tags.map((tag) => (
-        <span key={tag} className="font-display font-bold uppercase text-[9px] lg:text-[10px] tracking-widest flex items-center gap-1.5 text-white">
-          <span className="h-1.5 w-1.5 rounded-full" style={{ background: accentColor }} />
+        <span key={tag} className="font-display font-bold uppercase text-[10px] lg:text-[11px] tracking-widest flex items-center gap-1.5 text-white bg-white/5 backdrop-blur-md py-1 px-2.5">
+          <span className="h-1.5 w-1.5" style={{ background: accentColor }} />
           {tag}
         </span>
       ))}
@@ -365,11 +364,11 @@ const ThumbnailRail = React.memo(function ThumbnailRail({ current, onSelect, onP
   return (
     <nav className="flex items-center justify-between gap-2 lg:gap-6 w-full" aria-label="Product selector">
       <motion.button type="button" onClick={onPrev} aria-label="Previous" whileHover={{ scale: 1.15, color: accentColor }} whileTap={{ scale: 0.85 }} transition={butterySpring}
-        className="h-8 w-8 lg:h-10 lg:w-10 flex items-center justify-center transition-colors bg-black/30 backdrop-blur-md text-white rounded-md cursor-pointer shrink-0">
+        className="h-8 w-8 lg:h-10 lg:w-10 flex items-center justify-center transition-colors bg-black/30 backdrop-blur-md text-white cursor-pointer shrink-0">
         <ChevronLeft size={16} strokeWidth={2.5} />
       </motion.button>
 
-      <div className="flex items-center gap-2.5 lg:gap-4 overflow-x-auto py-2 no-scrollbar">
+      <div className="flex items-center gap-2.5 lg:gap-4 overflow-x-auto py-1 no-scrollbar">
         {SLIDES.map((s, i) => {
           const isActive = current === i;
           return (
@@ -377,23 +376,23 @@ const ThumbnailRail = React.memo(function ThumbnailRail({ current, onSelect, onP
               key={s.id}
               type="button"
               onClick={() => onSelect(i)}
-              whileHover={{ scale: isActive ? 1.2 : 1.1, y: -2 }}
+              whileHover={{ scale: isActive ? 1.1 : 1.05, y: -2 }}
               whileTap={{ scale: 0.92 }}
               animate={{
-                scale: isActive ? 1.12 : 0.85,
+                scale: isActive ? 1.1 : 0.8,
                 opacity: isActive ? 1 : 0.4,
               }}
               transition={butterySpring}
               aria-label={`Show ${s.category}`}
               className={cx(
-                "relative h-9 w-9 lg:h-16 lg:w-16 rounded-xl cursor-pointer border-none outline-none bg-transparent shrink-0 overflow-hidden",
+                "relative h-8 w-8 lg:h-14 lg:w-14 cursor-pointer outline-none bg-transparent shrink-0 overflow-hidden",
                 isActive ? "z-10" : ""
               )}
             >
               <motion.img
                 src={s.image}
                 alt=""
-                className="h-full w-full object-cover rounded-xl border-none outline-none bg-transparent"
+                className="h-full w-full object-cover outline-none bg-transparent"
               />
             </motion.button>
           );
@@ -401,7 +400,7 @@ const ThumbnailRail = React.memo(function ThumbnailRail({ current, onSelect, onP
       </div>
 
       <motion.button type="button" onClick={onNext} aria-label="Next" whileHover={{ scale: 1.15, color: accentColor }} whileTap={{ scale: 0.85 }} transition={butterySpring}
-        className="h-8 w-8 lg:h-10 lg:w-10 flex items-center justify-center transition-all bg-black/30 backdrop-blur-md text-white rounded-md cursor-pointer shrink-0">
+        className="h-8 w-8 lg:h-10 lg:w-10 flex items-center justify-center transition-all bg-black/30 backdrop-blur-md text-white cursor-pointer shrink-0">
         <ChevronRight size={16} strokeWidth={2.5} />
       </motion.button>
     </nav>
@@ -448,7 +447,8 @@ export default function Hero() {
     <section
       aria-roledescription="carousel"
       aria-label="Artisanal food gallery"
-      className="relative w-full h-[100dvh] max-h-[100dvh] flex flex-col justify-between overflow-hidden select-none px-4 lg:px-12 py-3 lg:py-2"
+      // Added pt-20 lg:pt-24 to push content below the fixed Navbar
+      className="relative w-full h-[100dvh] max-h-[100dvh] flex flex-col justify-center overflow-hidden select-none px-4 lg:px-12 pt-20 lg:pt-24 pb-4"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -461,107 +461,138 @@ export default function Hero() {
       />
       <DynamicBackground slide={slide} activeTheme={activeTheme} />
 
-      <div className="relative flex-1 grid grid-cols-1 lg:grid-cols-[1.1fr_1.3fr_1.1fr] max-w-[1500px] w-full mx-auto items-center min-h-0 my-auto">
-        {/* Left Column */}
-        <div className="flex flex-col justify-center h-full lg:pl-6 lg:pr-8 relative order-2 lg:order-1 pt-1 lg:pt-0">
-          <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 -rotate-90 origin-left">
-            <span className="font-display font-bold text-[9px] tracking-[0.4em] uppercase text-white/65">
-              {slide.category}
-            </span>
+      {/* Main Layout Grid */}
+      <div className="relative flex-1 grid grid-cols-1 lg:grid-cols-2 max-w-[1600px] w-full mx-auto items-center gap-y-6 lg:gap-x-12 min-h-0 my-auto">
+
+        {/* LEFT COLUMN: MASSIVE PRODUCT IMAGE */}
+        <div className="relative w-full h-full min-h-0 flex items-center justify-center order-1 lg:order-1">
+
+          {/* Magical Ghost Typography behind image */}
+          <motion.span
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 0.04, scale: 1 }}
+            transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+            className="absolute pointer-events-none font-display font-black text-[24vw] lg:text-[18rem] text-white tracking-tighter select-none whitespace-nowrap z-0"
+          >
+            {slide.title[1]}
+          </motion.span>
+
+          {/* Floating Rating Badge */}
+          <motion.div
+            className="absolute top-2 right-2 lg:top-8 lg:right-8 z-20 bg-black/40 backdrop-blur-xl px-3 py-2 flex items-center gap-2"
+            animate={{ y: [0, -8, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+          >
+            <Star size={16} strokeWidth={2} style={{ fill: activeTheme.accent, color: activeTheme.accent }} />
+            <span className="text-white text-xs font-display font-bold">{slide.rating}</span>
+          </motion.div>
+
+          {/* Floating Prep Time Badge */}
+          <motion.div
+            className="absolute bottom-2 left-2 lg:bottom-12 lg:left-8 z-20 bg-black/40 backdrop-blur-xl px-3 py-2 flex items-center gap-2"
+            animate={{ y: [0, 8, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+          >
+            <Clock size={16} strokeWidth={2} style={{ color: activeTheme.accent }} />
+            <span className="text-white text-xs font-display font-bold">{slide.prepTime}</span>
+          </motion.div>
+
+          {/* The Big, Bold Image */}
+          <AnimatePresence mode="popLayout" custom={direction}>
+            <motion.div
+              key={slide.id}
+              custom={direction}
+              variants={imgVar}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="relative z-10 w-[65vw] sm:w-[55vw] lg:w-full max-w-[40rem] h-full flex items-center justify-center"
+            >
+              <motion.img
+                src={slide.image}
+                alt={slide.category}
+                animate={reducedMotion ? {} : { y: [0, -12, 0], rotate: [-3, 0, -3] }}
+                transition={reducedMotion ? {} : { duration: 7, repeat: Infinity, ease: "easeInOut" }}
+                className="w-full h-full object-contain pointer-events-none"
+                style={{
+                  filter: `drop-shadow(0 20px 30px rgba(0,0,0,0.6)) drop-shadow(0 0 35px rgba(${activeTheme.glow}, 0.5))`
+                }}
+              />
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* RIGHT COLUMN: DETAILS & ACTIONS */}
+        <div className="relative w-full flex flex-col justify-center gap-3 lg:gap-4 order-2 lg:order-2 px-2 lg:px-0 pb-2">
+
+          <div className="flex flex-col gap-2 lg:gap-3">
+            <AnimatePresence mode="wait">
+              <motion.div key={`hdr-${slide.id}`} {...fadeUp(0.02)}>
+                <span className="font-display text-[10px] font-bold tracking-[0.3em] uppercase mb-1 px-3 py-1 inline-block text-black" style={{ backgroundColor: activeTheme.accent }}>
+                  {slide.eyebrow}
+                </span>
+                <h1 className="select-none mt-2">
+                  <span className="block font-display text-3xl sm:text-4xl lg:text-6xl font-black leading-[0.9] tracking-tighter text-white">
+                    {slide.title[1]} <span className="text-white/90">{slide.title[2]}</span>
+                  </span>
+                </h1>
+              </motion.div>
+            </AnimatePresence>
+
+            <AnimatePresence mode="wait">
+              <motion.p key={`d-${slide.id}`} {...fadeUp(0.06)} className="font-body leading-relaxed max-w-md text-xs lg:text-sm text-white/90 line-clamp-2 lg:line-clamp-none">
+                {slide.description}
+              </motion.p>
+            </AnimatePresence>
+
+            <AnimatePresence mode="wait">
+              <motion.div key={`tg-${slide.id}`} {...fadeUp(0.1)}>
+                <IngredientTags tags={slide.tags} accentColor={activeTheme.accent} />
+              </motion.div>
+            </AnimatePresence>
           </div>
 
-          <AnimatePresence mode="wait">
-            <motion.h1 key={`t-${slide.id}`} {...fadeUp(0.04)} className="mb-1.5 lg:mb-4 select-none">
-              <span className="block font-display text-2xl sm:text-3xl lg:text-[5.5rem] font-black leading-[0.9] lg:leading-[0.85] tracking-tighter text-white">
-                {slide.title[1]}
+          {/* Pricing & Add to Cart Block */}
+          <div className="mt-2 lg:mt-4 flex flex-col sm:flex-row items-start sm:items-end gap-4 sm:gap-6 w-full max-w-md">
+            <div className="flex flex-col gap-1">
+              <span className="font-display text-[10px] font-bold tracking-[0.3em] uppercase text-white/70">
+                Save {savePct(slide.price, slide.oldPrice)}% Today
               </span>
-              <span className="block font-display text-lg sm:text-xl lg:text-5xl font-black tracking-tighter mt-0.5 text-white/95" style={{ color: "transparent", WebkitTextStroke: `1.5px rgba(255,255,255,0.95)` }}>
-                {slide.title[2]}
-              </span>
-            </motion.h1>
-          </AnimatePresence>
+              <div className="flex items-baseline gap-3">
+                <span className="font-display text-3xl lg:text-5xl font-black leading-none text-white">{fmt(slide.price)}</span>
+                <span className="font-body text-base line-through text-white/50">{fmt(slide.oldPrice)}</span>
+              </div>
+              <span className="font-body text-[10px] font-bold tracking-[0.3em] uppercase text-white/70">UGX</span>
+            </div>
 
-          <AnimatePresence mode="wait">
-            <motion.p key={`d-${slide.id}`} {...fadeUp(0.08)} className="font-body leading-relaxed max-w-sm text-xs lg:text-sm text-white/90 line-clamp-2 lg:line-clamp-none">
-              {slide.description}
-            </motion.p>
-          </AnimatePresence>
+            <div className="flex flex-col gap-2 w-full sm:flex-1 sm:max-w-[180px]">
+              <div className="flex items-center justify-between w-full bg-white/5 backdrop-blur-md py-2 px-3">
+                <span className="font-display text-[10px] font-bold uppercase tracking-[0.2em] text-white/70">Qty</span>
+                <QuantityStepper quantity={quantity} onDec={dec} onInc={inc} accentColor={activeTheme.accent} />
+              </div>
+            </div>
+          </div>
 
-          <AnimatePresence mode="wait">
-            <motion.div key={`tg-${slide.id}`} {...fadeUp(0.12)}>
-              <IngredientTags tags={slide.tags} accentColor={activeTheme.accent} />
-            </motion.div>
-          </AnimatePresence>
+          <AddToCartButton
+            onClick={() => addToCartHandler(quantity)}
+            className="w-full sm:w-auto sm:min-w-[280px] mt-1"
+            primaryColor={activeTheme.primary}
+            primaryHoverColor={activeTheme.primaryHover}
+          />
 
           <TrustFeatures accentColor={activeTheme.accent} />
-        </div>
 
-        {/* Center Column */}
-        <div className="relative h-[200px] sm:h-[240px] lg:h-full overflow-visible flex items-center justify-center order-1 lg:order-2 my-1 lg:my-0">
-          <AnimatePresence mode="popLayout" custom={direction}>
-            <motion.div key={slide.id} custom={direction} variants={imgVar} initial="enter" animate="center" exit="exit"
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10 w-[16rem] h-[16rem] sm:w-[20rem] sm:h-[20rem] lg:w-[38rem] lg:h-[38rem]">
-              <motion.img src={slide.image} alt={slide.category}
-                animate={reducedMotion ? {} : { y: [0, -12, 0], rotate: [-4, -1, -4] }}
-                transition={reducedMotion ? {} : { duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                className="w-full h-full object-contain pointer-events-none" />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Right Column */}
-        <div className="flex flex-col justify-center h-full lg:pl-8 lg:pr-6 relative order-3 pb-1 lg:pb-0">
-          <div className="ml-0 lg:ml-auto flex flex-col items-start gap-2.5 lg:gap-5 w-full max-w-full lg:max-w-[18rem] bg-black/0 backdrop-blur-xl// p-5 lg:p-6 rounded-3xl">
-
-            <div className="flex flex-col items-start">
-              <span className="font-display text-[9px] font-bold tracking-[0.2em] uppercase mb-1 px-2 py-0.5 text-black rounded-sm" style={{ backgroundColor: activeTheme.accent }}>
-                Save {savePct(slide.price, slide.oldPrice)}%
-              </span>
-              <AnimatePresence mode="popLayout">
-                <motion.div
-                  key={slide.id}
-                  initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex items-baseline gap-2.5"
-                >
-                  <span className="font-display text-2xl sm:text-3xl lg:text-4xl font-black leading-none text-white">{fmt(slide.price)}</span>
-                  <span className="font-body text-xs line-through text-white/60">{fmt(slide.oldPrice)}</span>
-                </motion.div>
-              </AnimatePresence>
-              <span className="font-body text-[9px] font-bold tracking-[0.3em] uppercase mt-0.5 text-white/70">UGX</span>
-            </div>
-
-            <div className="flex items-center gap-5 font-body text-[11px] uppercase tracking-widest text-white/95">
-              <span className="flex items-center gap-1.5"><Clock size={13} strokeWidth={2} style={{ color: activeTheme.accent }} /> {slide.prepTime}</span>
-              <span className="flex items-center gap-1.5"><Star size={13} strokeWidth={2} style={{ fill: activeTheme.accent, color: activeTheme.accent }} /> {slide.rating}</span>
-            </div>
-
-            <div className="w-full h-[1px] bg-white/10 my-0.5" />
-
-            <div className="flex items-center justify-between w-full">
-              <span className="font-display text-[9px] font-bold uppercase tracking-[0.2em] text-white/70">Quantity</span>
-              <QuantityStepper quantity={quantity} onDec={dec} onInc={inc} accentColor={activeTheme.accent} />
-            </div>
-
-            <AddToCartButton
-              onClick={() => addToCartHandler(quantity)}
-              className="w-full mt-0.5"
-              primaryColor={activeTheme.primary}
-              primaryHoverColor={activeTheme.primaryHover}
-            />
-
-            <div className="flex lg:hidden w-full pt-1">
-              <ThumbnailRail current={current} onSelect={goTo} onPrev={prev} onNext={next} accentColor={activeTheme.accent} />
-            </div>
+          {/* Mobile Thumbnail Rail */}
+          <div className="flex lg:hidden w-full pt-1">
+            <ThumbnailRail current={current} onSelect={goTo} onPrev={prev} onNext={next} accentColor={activeTheme.accent} />
           </div>
         </div>
       </div>
 
-      <div className="relative z-20 flex flex-row items-center justify-between max-w-[1500px] w-full mx-auto pt-2 shrink-0">
+      {/* Footer Navigation (Desktop Thumbnails + Socials) */}
+      <div className="relative z-20 hidden lg:flex flex-row items-center justify-between max-w-[1600px] w-full mx-auto pt-2 shrink-0">
         <SocialFooter accentColor={activeTheme.accent} />
-        <div className="hidden lg:flex">
+        <div className="flex">
           <ThumbnailRail current={current} onSelect={goTo} onPrev={prev} onNext={next} accentColor={activeTheme.accent} />
         </div>
       </div>
