@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 // ─── Centralized GreenPork Design Tokens ──────────────────────────────────────
 const BRAND = {
-    red: "#D90404",       // --brand-red
+    red: "#D90404",      // --brand-red
     lime: "#D4FF00",      // --brand-lime
     white: "#FFFFFF",     // --brand-white
     dark: "#2E0101",      // --brand-dark
@@ -43,7 +43,6 @@ export function Staff({
         text: BRAND.dark,
         textSoft: "rgba(46,1,1,0.8)",
         textFaint: "rgba(46,1,1,0.6)",
-        border: BRAND.dark,
         bg: BRAND.white
     }
 }) {
@@ -79,15 +78,15 @@ export function Staff({
             viewport={{ once: true, margin: "-80px" }}
         >
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-                {team.map((member, i) => (
+                {team.map((member) => (
                     <motion.div
                         key={member.name}
                         variants={item}
-                        className="group border-2 cursor-pointer transition-colors duration-300 overflow-hidden relative"
-                        style={{ borderColor: theme.border, backgroundColor: theme.bg, color: theme.text }}
+                        className="group cursor-pointer transition-colors duration-300 overflow-hidden relative shadow-sm hover:shadow-2xl"
+                        style={{ backgroundColor: theme.bg, color: theme.text }}
                         whileHover={{ backgroundColor: theme.text, color: theme.bg }}
                     >
-                        <div className="relative overflow-hidden aspect-[4/5] border-b-2" style={{ borderColor: theme.border }}>
+                        <div className="relative overflow-hidden aspect-[4/5]">
                             <motion.img
                                 variants={imgReveal}
                                 src={member.image}

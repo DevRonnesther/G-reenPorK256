@@ -4,7 +4,7 @@ import { X } from "lucide-react";
 
 // ─── Centralized GreenPork Design Tokens ──────────────────────────────────────
 const BRAND = {
-    red: "#D90404",       // --brand-red
+    red: "#D90404",      // --brand-red
     lime: "#D4FF00",      // --brand-lime
     white: "#FFFFFF",     // --brand-white
     dark: "#2E0101",      // --brand-dark
@@ -93,7 +93,7 @@ const Gallery = () => {
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 bg-[#2E0101] flex items-center justify-center z-50 p-4 md:p-8"
+                        className="fixed inset-0 bg-[#2E0101]/90 backdrop-blur-sm flex items-center justify-center z-50 p-4 md:p-8"
                         onClick={() => setSelectedImage(null)}
                     >
                         <motion.div
@@ -114,7 +114,7 @@ const Gallery = () => {
                             <img
                                 src={selectedImage}
                                 alt="Culinary view enlarged"
-                                className="w-full h-full max-w-full max-h-[85vh] object-contain"
+                                className="w-full h-full max-w-full max-h-[85vh] object-contain shadow-2xl"
                                 onClick={(e) => e.stopPropagation()}
                             />
                         </motion.div>

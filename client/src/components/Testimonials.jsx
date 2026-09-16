@@ -4,7 +4,7 @@ import { MessageSquareQuote, Star, Check } from "lucide-react";
 
 // ─── Centralized GreenPork Design Tokens ──────────────────────────────────────
 const BRAND = {
-  red: "#D90404",       // --brand-red
+  red: "#D90404",      // --brand-red
   lime: "#D4FF00",      // --brand-lime
   white: "#FFFFFF",     // --brand-white
   dark: "#2E0101",      // --brand-dark
@@ -14,7 +14,6 @@ const DEFAULT_THEME = {
   text: BRAND.dark,
   textSoft: "rgba(46,1,1,0.8)",
   textFaint: "rgba(46,1,1,0.6)",
-  border: BRAND.dark,
   bg: BRAND.white,
 };
 
@@ -96,8 +95,8 @@ const Testimonials = ({ theme = DEFAULT_THEME }) => {
             {/* Trust Metric Card */}
             <motion.div
               variants={itemReveal}
-              className="p-6 max-w-md flex items-center gap-6 border-2"
-              style={{ borderColor: theme.border }}
+              className="p-6 max-w-md flex items-center gap-6 shadow-sm"
+              style={{ backgroundColor: theme.bg }}
             >
               <div className="text-center shrink-0">
                 <span className="text-5xl font-display font-black leading-none" style={{ color: theme.text }}>4.9</span>
@@ -107,7 +106,7 @@ const Testimonials = ({ theme = DEFAULT_THEME }) => {
                   ))}
                 </div>
               </div>
-              <div className="h-12 w-px shrink-0" style={{ backgroundColor: theme.border }} />
+              <div className="h-12 w-px shrink-0 bg-stone-200" />
               <p className="text-xs leading-normal font-body font-medium" style={{ color: theme.textSoft }}>
                 Based on 1,500+ direct client reviews and local catering experiences.
               </p>
@@ -127,14 +126,14 @@ const Testimonials = ({ theme = DEFAULT_THEME }) => {
             <motion.div
               variants={itemReveal}
               whileHover={{ y: -4 }}
-              className="p-8 md:p-12 border-2 border-[#2E0101] text-[#2E0101] shadow-2xl"
+              className="p-8 md:p-12 text-[#2E0101] shadow-2xl"
               style={{ backgroundColor: BRAND.lime }}
             >
               <div className="flex items-center justify-between mb-8">
-                <div className="w-12 h-12 flex items-center justify-center border-2 border-[#2E0101]">
+                <div className="w-12 h-12 flex items-center justify-center bg-[#2E0101] text-[#D4FF00]">
                   <MessageSquareQuote size={18} strokeWidth={2.5} />
                 </div>
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 text-[10px] font-display font-black tracking-widest uppercase border-2 border-[#2E0101] bg-[#2E0101] text-[#D4FF00]">
+                <span className="inline-flex items-center gap-2 px-3 py-1.5 text-[10px] font-display font-black tracking-widest uppercase bg-[#2E0101] text-[#D4FF00]">
                   <Check size={12} strokeWidth={3} /> Featured
                 </span>
               </div>
@@ -144,7 +143,7 @@ const Testimonials = ({ theme = DEFAULT_THEME }) => {
               </p>
 
               <div className="flex items-center gap-4 pt-4 border-t-2 border-[#2E0101]/20">
-                <img src={testimonials[0].image} alt={testimonials[0].author} className="w-14 h-14 object-cover border-2 border-[#2E0101]" />
+                <img src={testimonials[0].image} alt={testimonials[0].author} className="w-14 h-14 object-cover" />
                 <div>
                   <h4 className="text-lg font-display font-black leading-none">{testimonials[0].author}</h4>
                   <p className="text-xs font-ui font-bold mt-1 opacity-70 uppercase tracking-wide">{testimonials[0].title}</p>
@@ -159,22 +158,22 @@ const Testimonials = ({ theme = DEFAULT_THEME }) => {
                   key={t.author}
                   variants={itemReveal}
                   whileHover={{ y: -4 }}
-                  className={`p-8 border-2 ${i === 1 ? "md:translate-y-8" : ""}`}
-                  style={{ borderColor: theme.border, backgroundColor: theme.bg }}
+                  className={`p-8 shadow-lg ${i === 1 ? "md:translate-y-8" : ""}`}
+                  style={{ backgroundColor: theme.bg }}
                 >
                   <div className="flex items-center justify-between mb-6">
-                    <div className="w-10 h-10 flex items-center justify-center border-2" style={{ borderColor: theme.border, color: theme.text }}>
+                    <div className="w-10 h-10 flex items-center justify-center" style={{ color: theme.text }}>
                       <MessageSquareQuote size={16} strokeWidth={2.5} />
                     </div>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[9px] font-display font-bold tracking-widest uppercase border" style={{ borderColor: theme.border, color: theme.text }}>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[9px] font-display font-bold tracking-widest uppercase" style={{ color: theme.text }}>
                       <Check size={10} strokeWidth={3} /> Verified
                     </span>
                   </div>
 
                   <p className="leading-relaxed text-sm mb-6 font-body" style={{ color: theme.textSoft }}>"{t.quote}"</p>
 
-                  <div className="flex items-center gap-3 pt-4 border-t-2" style={{ borderColor: theme.border }}>
-                    <img src={t.image} alt={t.author} className="w-12 h-12 object-cover border-2" style={{ borderColor: theme.border }} />
+                  <div className="flex items-center gap-3 pt-4 border-t border-stone-200">
+                    <img src={t.image} alt={t.author} className="w-12 h-12 object-cover" />
                     <div>
                       <h4 className="text-base font-display font-black leading-none" style={{ color: theme.text }}>{t.author}</h4>
                       <p className="text-[11px] font-ui font-bold mt-1 uppercase tracking-wide" style={{ color: theme.textFaint }}>{t.title}</p>
