@@ -28,7 +28,7 @@ const CONFIG = {
   HOURS: "10:00 AM – 10:00 PM",
 };
 
-// Reverted Modal Background to White
+// Solid White Background for Modal
 const MODAL_BG = {
   bg: "#FFFFFF",
   text: "#2E0101",
@@ -40,7 +40,7 @@ const MODAL_BG = {
 const NAV_LINKS = [
   { label: "Home", to: "/", desc: "Main landing page", icon: Home },
   { label: "Menu", to: "/Products", desc: "Our signature roasted pork & fast food", icon: Store },
-  { label: "About", to: "/aboutUs", desc: "The Green Eats story", icon: Info },
+  { label: "About", to: "/aboutUs", desc: "The Green Pork story", icon: Info },
   { label: "Contact", to: "/contactUs", desc: "Get in touch with us", icon: Phone },
 ];
 
@@ -83,7 +83,7 @@ const BrandLogo = memo(({ isScrolled = false }) => (
 BrandLogo.displayName = "BrandLogo";
 
 const ActionButton = ({ to, onClick, label, children }) => {
-  // Removed all border classes, relying purely on glassmorphism blur
+  // No borders, pure glass blur
   const baseStyle = `h-10 w-10 md:h-11 md:w-11 flex items-center justify-center backdrop-blur-xl transition-all duration-300 relative group focus:outline-none bg-white/5 hover:bg-white/10 text-white`;
   const buttonStyle = { clipPath: "polygon(0 0, 100% 0, 90% 100%, 0% 100%)" };
 
@@ -169,7 +169,7 @@ export default function Navbar() {
 
           {/* Desktop Center Navigation Links */}
           <nav
-            className="hidden lg:flex items-center gap-8 backdrop-blur-xl px-6 py-2.5 transition-colors duration-300 shadow-lg bg-white/5"
+            className="hidden lg:flex/// items-center gap-8 backdrop-blur-xl px-6 py-2.5 transition-colors duration-300 shadow-lg bg-white/5"
             style={{ clipPath: "polygon(0 0, 100% 0, 95% 100%, 5% 100%)" }}
           >
             {NAV_LINKS.map(({ label, to }) => {
@@ -208,7 +208,7 @@ export default function Navbar() {
               )}
             </ActionButton>
 
-            <ActionButton to="/account" label="Account">
+            <ActionButton to="/register" label="Account">
               <UserCircle size={18} className="md:w-5 md:h-5 transition-transform group-hover:scale-110 text-white" />
             </ActionButton>
 

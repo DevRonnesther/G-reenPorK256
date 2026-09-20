@@ -21,10 +21,10 @@ import { useCart } from "../../components/cart/CartContext.jsx";
 import { useTheme } from "../../components/ThemeContext/ThemeContext.jsx";
 
 // ═══════════════════════════════════════════════════════════
-// BRAND COLOR SYSTEM — Electric Lime Signature System
+// BRAND COLOR SYSTEM — Pure White, High Contrast, Big Typography
 // ═══════════════════════════════════════════════════════════
 const BRAND = {
-  primary: "#D4FF00",       // Official Electric Lime Signature
+  primary: "#D9FF00",       // Official Electric Lime Signature
   primaryText: "#2E0101",   // Deep Contrast Text for Lime elements
   dark: "#2E0101",          // Deep Brand Dark
   redAccent: "#D90404",     // Controlled Strategic Accent
@@ -36,6 +36,7 @@ const SPRING_TRANSITION = { type: "spring", stiffness: 220, damping: 26, mass: 1
 const SMOOTH_TRANSITION = { duration: 0.8, ease: [0.16, 1, 0.3, 1] };
 const cx = (...c) => c.filter(Boolean).join(" ");
 const formatCurrency = (n) => Number(n).toLocaleString();
+
 const REGIONS = [
   "Kampala (Central)",
   "Kira",
@@ -52,10 +53,9 @@ const WHATSAPP_NUMBER = "256776464823";
 
 const FontStyles = React.memo(() => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,700&family=Poppins:wght@600;700;800;900&display=swap');
-    
-    .font-display { font-family: 'Poppins', sans-serif; letter-spacing: -0.03em; }
-    .font-body { font-family: 'Montserrat', sans-serif; }
+    @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600&display=swap');
+    .font-display { font-family: 'Archivo', sans-serif; letter-spacing: -0.04em; }
+    .font-body { font-family: 'Inter', sans-serif; }
   `}</style>
 ));
 
@@ -64,7 +64,7 @@ const CtaButton = React.memo(({ href, disabled, children, className, small }) =>
     return (
       <div className="text-center w-full">
         <div
-          className="flex items-center justify-center gap-2 font-display font-black text-xs uppercase tracking-widest px-7 py-5 cursor-not-allowed select-none w-full bg-slate-100 border border-slate-200 text-slate-400 shadow-none"
+          className="flex items-center justify-center gap-2 font-display font-black text-xs uppercase tracking-widest px-7 py-5 cursor-not-allowed select-none w-full bg-slate-100 text-slate-400 shadow-none"
           style={{ clipPath: "polygon(0 0, 100% 0, 94% 100%, 0% 100%)" }}
         >
           Checkout Locked
@@ -81,11 +81,11 @@ const CtaButton = React.memo(({ href, disabled, children, className, small }) =>
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
+      whileHover={{ scale: 1.02 }}
+      whileTap={{ scale: 0.98 }}
       transition={SPRING_TRANSITION}
       className={cx(
-        "group relative inline-flex items-center justify-center gap-2.5 font-display font-black text-xs uppercase tracking-widest focus:outline-none overflow-hidden cursor-pointer shadow-none border-0 w-full",
+        "group relative inline-flex items-center justify-center gap-2.5 font-display font-black text-xs uppercase tracking-widest focus:outline-none overflow-hidden cursor-pointer shadow-lg w-full",
         small ? "text-xs py-4 px-6" : "text-sm py-5 px-8",
         className
       )}
@@ -114,7 +114,7 @@ const ErrorMessage = ({ show, children }) => (
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: "auto" }}
         exit={{ opacity: 0, height: 0 }}
-        className="text-[10px] text-[#D90404] font-display font-bold tracking-tight overflow-hidden mt-1.5"
+        className="text-[11px] text-[#D90404] font-display font-bold tracking-tight overflow-hidden mt-1.5"
       >
         {children}
       </motion.p>
@@ -125,9 +125,9 @@ const ErrorMessage = ({ show, children }) => (
 const FormFieldLabel = ({ icon: Icon, required, children, htmlFor }) => (
   <label
     htmlFor={htmlFor}
-    className="flex items-center gap-2 text-[11px] font-display font-extrabold uppercase tracking-wider mb-2.5 text-[#2E0101] cursor-pointer"
+    className="flex items-center gap-2 text-xs font-display font-extrabold uppercase tracking-wider mb-2.5 text-[#2E0101] cursor-pointer"
   >
-    {Icon && <Icon size={13} strokeWidth={3} style={{ color: BRAND.dark }} />}
+    {Icon && <Icon size={14} strokeWidth={3} style={{ color: BRAND.dark }} />}
     {children}
     {required && <span style={{ color: BRAND.redAccent }}>*</span>}
   </label>
@@ -179,18 +179,22 @@ export default function Cart() {
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
   }, [cartItems, subtotal, tax, shipping, total, form]);
 
-  const inputStyles = "w-full h-13 px-5 text-sm font-body font-medium outline-none transition-all bg-white border border-slate-200 text-[#2E0101] placeholder-slate-400 focus:border-[#2E0101] focus:ring-1 focus:ring-[#2E0101] shadow-none";
+  // Removed borders, using background tint to define input fields
+  const inputStyles = "w-full h-14 px-5 py-4 text-sm font-body font-medium outline-none transition-all bg-slate-100 text-[#2E0101] placeholder-slate-400 focus:bg-slate-200/70 shadow-none";
 
-  // ── EMPTY STATE ──
+  // ── EMPTY STATE (Pure White & Big Typography) ──
   if (!cartItems.length) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center px-6 py-24 text-center font-body relative overflow-hidden select-none bg-white text-[#2E0101] selection:bg-[#D4FF00] selection:text-[#2E0101]">
+      <div className="min-h-screen flex flex-col items-center justify-center px-6 py-24 text-center font-body relative overflow-hidden select-none bg-white text-[#2E0101] selection:bg-[#D9FF00] selection:text-[#2E0101]">
         <FontStyles />
+
+        {/* Background Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[45rem] h-[45rem] pointer-events-none blur-[140px]" style={{ background: `radial-gradient(circle, rgba(217, 255, 0, 0.2) 0%, rgba(0,0,0,0) 70%)` }} />
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ ...SMOOTH_TRANSITION, delay: 0.05 }}
-          className="w-28 h-28 flex items-center justify-center mb-8 text-[#2E0101] shadow-none border-0"
+          className="w-28 h-28 flex items-center justify-center mb-8 text-[#2E0101] shadow-2xl relative z-10"
           style={{ backgroundColor: BRAND.primary, clipPath: "polygon(0 0, 100% 0, 92% 100%, 0% 100%)" }}
         >
           <ShoppingBag size={36} strokeWidth={2.5} />
@@ -200,7 +204,7 @@ export default function Cart() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...SMOOTH_TRANSITION, delay: 0.1 }}
-          className="text-4xl font-display font-black tracking-tight uppercase"
+          className="text-5xl md:text-7xl font-display font-black tracking-tighter uppercase relative z-10"
         >
           Your cart is empty
         </motion.h2>
@@ -209,7 +213,7 @@ export default function Cart() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...SMOOTH_TRANSITION, delay: 0.14 }}
-          className="text-sm mt-3 max-w-xs leading-relaxed font-body font-medium text-slate-500"
+          className="text-base mt-4 max-w-xs leading-relaxed font-body font-medium text-slate-500 relative z-10"
         >
           You haven't added anything delicious yet. Explore our farm-to-table menu.
         </motion.p>
@@ -218,11 +222,11 @@ export default function Cart() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ ...SMOOTH_TRANSITION, delay: 0.18 }}
-          className="mt-8"
+          className="mt-10 relative z-10"
         >
           <Link
             to="/Products"
-            className="group relative inline-flex items-center justify-center gap-2.5 py-4 px-8 font-display font-black text-xs uppercase tracking-widest cursor-pointer overflow-hidden shadow-none border-0"
+            className="group relative inline-flex items-center justify-center gap-2.5 py-5 px-10 font-display font-black text-sm uppercase tracking-widest cursor-pointer overflow-hidden shadow-xl"
             style={{ backgroundColor: BRAND.primary, color: BRAND.primaryText, clipPath: "polygon(0 0, 100% 0, 94% 100%, 0% 100%)" }}
           >
             Browse Menu
@@ -232,9 +236,9 @@ export default function Cart() {
     );
   }
 
-  // ── ACTIVE CART ──
+  // ── ACTIVE CART (Pure White & Big Typography) ──
   return (
-    <div className="min-h-screen font-body pb-36 lg:pb-16 relative overflow-hidden select-none bg-white text-[#2E0101] selection:bg-[#D4FF00] selection:text-[#2E0101]">
+    <div className="min-h-screen font-body pb-36 lg:pb-16 relative overflow-hidden select-none bg-white text-[#2E0101] selection:bg-[#D9FF00] selection:text-[#2E0101]">
       <FontStyles />
 
       <div className="max-w-7xl mx-auto px-6 md:px-12 py-28 md:py-36 relative z-10">
@@ -243,16 +247,16 @@ export default function Cart() {
           initial={{ opacity: 0, y: 15 }}
           animate={{ opacity: 1, y: 0 }}
           transition={SMOOTH_TRANSITION}
-          className="flex items-end justify-between gap-6 mb-14 pb-8 border-b border-slate-100"
+          className="flex items-end justify-between gap-6 mb-14 pb-8"
         >
           <div className="flex items-end gap-4">
-            <div className="h-10 w-2.5" style={{ backgroundColor: BRAND.primary }} />
+            <div className="h-14 w-3" style={{ backgroundColor: BRAND.primary }} />
             <div>
               <span className="font-display text-xs font-bold text-slate-400 tracking-widest uppercase">GreenPork Checkout</span>
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tight uppercase mt-0.5">
+              <h1 className="text-6xl md:text-8xl lg:text-9xl font-display font-black tracking-tighter uppercase mt-1 leading-none">
                 Checkout
               </h1>
-              <p className="text-xs mt-3 font-body uppercase tracking-widest font-bold text-slate-400">
+              <p className="text-sm mt-4 font-body uppercase tracking-widest font-bold text-slate-400">
                 {cartItems.length} item{cartItems.length !== 1 ? "s" : ""} awaiting dispatch
               </p>
             </div>
@@ -261,7 +265,7 @@ export default function Cart() {
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} transition={SPRING_TRANSITION}>
             <Link
               to="/Products"
-              className="hidden sm:flex items-center gap-2 text-xs font-display font-black uppercase tracking-widest px-5 py-3.5 transition-colors bg-white text-[#2E0101] hover:bg-[#2E0101] hover:text-[#D4FF00] shadow-none border-0"
+              className="hidden sm:flex items-center gap-2 text-xs font-display font-black uppercase tracking-widest px-5 py-3.5 transition-colors bg-slate-100 text-[#2E0101] hover:bg-[#2E0101] hover:text-[#D9FF00] shadow-none"
               style={{ clipPath: "polygon(0 0, 100% 0, 94% 100%, 0% 100%)" }}
             >
               <ArrowLeft size={15} strokeWidth={3} /> Continue Shopping
@@ -275,7 +279,7 @@ export default function Cart() {
             <div>
               <div className="flex items-center gap-2.5 mb-5">
                 <span className="h-2 w-2" style={{ backgroundColor: BRAND.primary }} />
-                <span className="text-xs font-display font-extrabold uppercase tracking-widest text-[#2E0101]">
+                <span className="text-sm font-display font-extrabold uppercase tracking-widest text-[#2E0101]">
                   Delivery Details
                 </span>
               </div>
@@ -284,7 +288,7 @@ export default function Cart() {
                 initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ ...SMOOTH_TRANSITION, delay: 0.06 }}
-                className="text-sm font-body max-w-md mb-8 font-medium text-slate-500"
+                className="text-base font-body max-w-md mb-8 font-medium text-slate-500"
               >
                 Provide details for swift, contactless dispatch.
               </motion.p>
@@ -307,7 +311,7 @@ export default function Cart() {
                     placeholder="e.g. John Doe"
                     className={cx(
                       inputStyles,
-                      touched.fullName && form.fullName.trim().length < 2 && "ring-1 ring-[#D90404] border-[#D90404] bg-red-50/30"
+                      touched.fullName && form.fullName.trim().length < 2 && "bg-red-50 text-[#D90404]"
                     )}
                   />
                   <ErrorMessage show={touched.fullName && form.fullName.trim().length < 2}>
@@ -327,7 +331,7 @@ export default function Cart() {
                     placeholder="e.g. 0776464823"
                     className={cx(
                       inputStyles,
-                      touched.phone && form.phone.trim().length < 9 && "ring-1 ring-[#D90404] border-[#D90404] bg-red-50/30"
+                      touched.phone && form.phone.trim().length < 9 && "bg-red-50 text-[#D90404]"
                     )}
                   />
                   <ErrorMessage show={touched.phone && form.phone.trim().length < 9}>
@@ -382,7 +386,7 @@ export default function Cart() {
                     placeholder="Street name, landmark, gate details, or plot number"
                     className={cx(
                       inputStyles,
-                      touched.address && form.address.trim().length <= 3 && "ring-1 ring-[#D90404] border-[#D90404] bg-red-50/30"
+                      touched.address && form.address.trim().length <= 3 && "bg-red-50 text-[#D90404]"
                     )}
                   />
                   <ErrorMessage show={touched.address && form.address.trim().length <= 3}>
@@ -393,7 +397,7 @@ export default function Cart() {
                 <div className="space-y-1.5 md:col-span-2">
                   <label
                     htmlFor="notes"
-                    className="text-[11px] font-display font-extrabold uppercase tracking-wider mb-2.5 block text-[#2E0101] cursor-pointer"
+                    className="text-xs font-display font-extrabold uppercase tracking-wider mb-2.5 block text-[#2E0101] cursor-pointer"
                   >
                     Delivery Notes (Optional)
                   </label>
@@ -409,7 +413,7 @@ export default function Cart() {
                 </div>
               </motion.div>
 
-              {/* GUARANTEE CARDS */}
+              {/* GUARANTEE CARDS (Borderless) */}
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-8">
                 {[
                   { icon: ShieldCheck, label: "100% Fresh", sub: "Farm Sourced" },
@@ -421,9 +425,9 @@ export default function Cart() {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.4, delay: i * 0.05 }}
-                    className="flex items-center gap-3.5 p-4 bg-white border border-slate-100 shadow-none"
+                    className="flex items-center gap-3.5 p-4 bg-slate-50 shadow-sm"
                   >
-                    <div className="p-2.5 bg-slate-50 border border-slate-100 text-[#2E0101] shrink-0">
+                    <div className="p-2.5 bg-white text-[#2E0101] shrink-0 shadow-sm">
                       <Icon size={16} strokeWidth={2.5} />
                     </div>
                     <div className="leading-tight">
@@ -440,71 +444,71 @@ export default function Cart() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: WHITE ORDER BAG SUMMARY WITH LIME BRAND COLORS */}
+          {/* RIGHT COLUMN: FLOATING ORDER BAG SUMMARY (Pure White Card) */}
           <div className="lg:col-span-5 lg:sticky lg:top-28">
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={SPRING_TRANSITION}
-              className="bg-white text-[#2E0101] border border-slate-200 shadow-sm flex flex-col overflow-hidden"
+              className="bg-slate-50 text-[#2E0101] shadow-2xl shadow-black/5 flex flex-col overflow-hidden"
             >
-              {/* HEADER - LIME BACKGROUND */}
-              <div className="flex items-center justify-between p-5 border-b border-slate-100" style={{ backgroundColor: BRAND.primary }}>
+              {/* HEADER - CLEAN WHITE / SLATE DIVIDER */}
+              <div className="flex items-center justify-between p-5 bg-white">
                 <div className="flex items-center gap-2">
-                  <ShoppingBag size={18} strokeWidth={2.5} style={{ color: BRAND.dark }} />
-                  <h3 className="font-display font-black text-sm uppercase tracking-wider text-[#2E0101]">
+                  <ShoppingBag size={20} strokeWidth={2.5} style={{ color: BRAND.dark }} />
+                  <h3 className="font-display font-black text-2xl uppercase tracking-tight">
                     Your Order Bag
                   </h3>
                 </div>
-                <Link to="/Products" className="text-[11px] font-display font-black uppercase tracking-wider text-[#2E0101]/70 hover:text-[#2E0101] transition-colors">
+                <Link to="/Products" className="text-xs font-display font-black uppercase tracking-wider text-slate-400 hover:text-[#2E0101] transition-colors">
                   Edit
                 </Link>
               </div>
 
               {/* FREE DELIVERY TRACKER - LIME PROGRESS BAR */}
               {subtotal < FREE_DELIVERY_THRESHOLD ? (
-                <div className="p-4 bg-slate-50 border-b border-slate-100">
-                  <p className="text-[11px] font-body font-medium text-slate-700">
+                <div className="p-4 bg-slate-100/50">
+                  <p className="text-xs font-body font-medium text-slate-700">
                     Add <span className="font-display font-black text-[#2E0101]">UGX {formatCurrency(FREE_DELIVERY_THRESHOLD - subtotal)}</span> more for <span className="font-display font-black uppercase text-[#2E0101]">Free Delivery!</span>
                   </p>
-                  <div className="w-full bg-slate-200 h-1.5 mt-2 overflow-hidden rounded-full">
+                  <div className="w-full bg-slate-200 h-1.5 mt-2 overflow-hidden">
                     <div
-                      className="h-full transition-all duration-500 rounded-full"
+                      className="h-full transition-all duration-500"
                       style={{ backgroundColor: BRAND.primary, width: `${Math.min(100, (subtotal / FREE_DELIVERY_THRESHOLD) * 100)}%` }}
                     />
                   </div>
                 </div>
               ) : (
-                <div className="p-4 bg-slate-50 border-b border-slate-100">
-                  <p className="text-[11px] font-body font-bold text-[#2E0101] flex items-center gap-1.5">
+                <div className="p-4 bg-slate-100/50">
+                  <p className="text-xs font-body font-bold text-[#2E0101] flex items-center gap-1.5">
                     <Truck size={14} strokeWidth={2.5} style={{ color: BRAND.dark }} /> You've unlocked Free Delivery!
                   </p>
                 </div>
               )}
 
-              {/* ITEMS LIST - LIME QUANTITY STEPPERS */}
+              {/* ITEMS LIST */}
               <div className="flex-grow overflow-y-auto p-5 space-y-4 max-h-64 cart-scroll">
                 {cartItems.map((item) => (
-                  <div key={item.id} className="flex items-center justify-between gap-3 pb-4 border-b border-slate-100 last:border-none last:pb-0">
-                    <img src={item.image} alt={item.name} className="w-14 h-14 object-contain bg-slate-50 p-1.5 flex-shrink-0 border border-slate-100" />
+                  <div key={item.id} className="flex items-center justify-between gap-3 pb-4 last:pb-0">
+                    <img src={item.image} alt={item.name} className="w-14 h-14 object-contain bg-white p-1.5 flex-shrink-0 shadow-sm" />
                     <div className="flex-grow min-w-0">
-                      <h4 className="font-display font-black text-xs uppercase truncate text-[#2E0101]">{item.name}</h4>
-                      <span className="text-[11px] text-slate-500 font-medium">UGX {formatCurrency(item.price)} each</span>
+                      <h4 className="font-display font-black text-sm uppercase truncate text-[#2E0101]">{item.name}</h4>
+                      <span className="text-xs text-slate-500 font-medium">UGX {formatCurrency(item.price)} each</span>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
-                      <div className="flex items-center bg-white border border-slate-200 p-0.5">
+                      <div className="flex items-center bg-white p-0.5 shadow-sm">
                         <button
                           type="button"
                           onClick={() => decreaseQuantity(item.id)}
-                          className="w-6 h-6 flex items-center justify-center hover:bg-slate-100 transition-colors cursor-pointer border-0 text-[#2E0101]"
+                          className="w-6 h-6 flex items-center justify-center hover:bg-slate-100 transition-colors cursor-pointer text-[#2E0101]"
                         >
                           <Minus size={10} strokeWidth={3} />
                         </button>
-                        <span className="w-6 text-center font-display font-black text-xs text-[#2E0101]">{item.quantity}</span>
+                        <span className="w-6 text-center font-display font-black text-sm text-[#2E0101]">{item.quantity}</span>
                         <button
                           type="button"
                           onClick={() => increaseQuantity(item.id)}
-                          className="w-6 h-6 flex items-center justify-center hover:bg-slate-100 transition-colors cursor-pointer border-0 text-[#2E0101]"
+                          className="w-6 h-6 flex items-center justify-center hover:bg-slate-100 transition-colors cursor-pointer text-[#2E0101]"
                         >
                           <Plus size={10} strokeWidth={3} />
                         </button>
@@ -512,7 +516,7 @@ export default function Cart() {
                       <button
                         type="button"
                         onClick={() => removeFromCart(item.id)}
-                        className="w-6 h-6 flex items-center justify-center text-[#D90404] hover:bg-red-50 transition-colors cursor-pointer border-0"
+                        className="w-6 h-6 flex items-center justify-center text-[#D90404] hover:bg-red-50 transition-colors cursor-pointer"
                       >
                         <Trash2 size={12} />
                       </button>
@@ -522,16 +526,16 @@ export default function Cart() {
               </div>
 
               {/* PRICING SUMMARY */}
-              <div className="p-5 space-y-3 border-t border-slate-100">
-                <div className="flex justify-between items-center text-xs font-body">
+              <div className="p-5 space-y-3 bg-white">
+                <div className="flex justify-between items-center text-sm font-body">
                   <span className="text-slate-500 font-medium">Subtotal</span>
                   <span className="font-display font-black text-[#2E0101]">UGX {formatCurrency(subtotal)}</span>
                 </div>
-                <div className="flex justify-between items-center text-xs font-body">
+                <div className="flex justify-between items-center text-sm font-body">
                   <span className="text-slate-500 font-medium">Tax (18%)</span>
                   <span className="font-display font-black text-[#2E0101]">UGX {formatCurrency(tax)}</span>
                 </div>
-                <div className="flex justify-between items-center text-xs font-body">
+                <div className="flex justify-between items-center text-sm font-body">
                   <span className="text-slate-500 font-medium">Delivery Fee</span>
                   <span className="font-display font-black text-[#2E0101]">
                     {shipping === 0 ? "FREE" : `UGX ${formatCurrency(shipping)}`}
@@ -540,15 +544,15 @@ export default function Cart() {
               </div>
 
               {/* TOTAL & CHECKOUT CTA - LIME TOTAL TEXT */}
-              <div className="p-5 space-y-4 border-t border-slate-100 bg-white">
+              <div className="p-5 space-y-4 bg-slate-50 shadow-[0_-10px_30px_-15px_rgba(0,0,0,0.05)]">
                 <div className="flex justify-between items-center pt-2">
-                  <span className="font-display font-black text-sm uppercase tracking-wider text-[#2E0101]">Total</span>
-                  <span className="font-display font-black text-2xl text-[#2E0101] tabular-nums">
+                  <span className="font-display font-black text-lg uppercase tracking-wider text-[#2E0101]">Total</span>
+                  <span className="font-display font-black text-4xl text-[#2E0101] tabular-nums">
                     UGX {formatCurrency(total)}
                   </span>
                 </div>
-                
-                <CtaButton href={whatsappHref} disabled={!isFormValid} className="w-full !py-4 text-sm shadow-none">
+
+                <CtaButton href={whatsappHref} disabled={!isFormValid} className="w-full !py-4 text-sm shadow-lg">
                   {isFormValid ? "Checkout via WhatsApp" : "Checkout Locked"}
                 </CtaButton>
               </div>
@@ -557,22 +561,22 @@ export default function Cart() {
         </div>
       </div>
 
-      {/* MOBILE CHECKOUT BAR */}
+      {/* MOBILE CHECKOUT BAR (Pure White Glass) */}
       <motion.div
         initial={{ y: 50 }}
         animate={{ y: 0 }}
         transition={{ ...SMOOTH_TRANSITION, delay: 0.3 }}
         className="fixed bottom-4 left-4 right-4 z-30 lg:hidden"
       >
-        <div 
-          className="bg-[#2E0101] shadow-2xl backdrop-blur-xl flex items-center justify-between gap-4 py-4 px-6 border border-[#D4FF00]/10 overflow-hidden"
+        <div
+          className="bg-white/95 backdrop-blur-2xl shadow-2xl flex items-center justify-between gap-4 py-4 px-6 overflow-hidden"
           style={{ clipPath: "polygon(0 0, 100% 0, 96% 100%, 0% 100%)" }}
         >
           <div className="flex flex-col text-left relative z-10">
-            <span className="font-display font-black text-xs uppercase tracking-wider text-[#D4FF00]">
+            <span className="font-display font-black text-sm uppercase tracking-wider text-[#2E0101]">
               {cartItems.length} Item{cartItems.length !== 1 ? "s" : ""}
             </span>
-            <span className="font-body text-[10px] text-white/60 font-medium">
+            <span className="font-body text-xs text-slate-500 font-bold">
               UGX {formatCurrency(total)}
             </span>
           </div>
