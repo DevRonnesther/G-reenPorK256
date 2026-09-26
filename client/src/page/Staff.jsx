@@ -1,133 +1,88 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-// ─── Centralized GreenPork Design Tokens ──────────────────────────────────────
-const BRAND = {
-    red: "#D90404",      // --brand-red
-    lime: "#D4FF00",      // --brand-lime
-    white: "#FFFFFF",     // --brand-white
-    dark: "#2E0101",      // --brand-dark
-};
+/* ═══════════════════════════════════════════════════════════
+   STANDARD DESIGN TOKENS
+   ═══════════════════════════════════════════════════════════ */
+const BRAND_COLOR = "#D9FF00"; // Primary Action / Highlight
+const DARK = "#4A0A0A";       // Primary Dark / Text
+const ALERT_COLOR = "#E11D1D"; // Alert / Active states
 
-// ─── GSAP-like Stagger Config ─────────────────────────────────────────────────
-const ease = [0.22, 1, 0.36, 1];
+const ease = [0.16, 1, 0.3, 1];
 
-const container = {
-    hidden: { opacity: 0 },
-    show: {
-        opacity: 1,
-        transition: { staggerChildren: 0.15, delayChildren: 0.1 }
-    }
-};
+function Reveal({ children, delay = 0, className = "" }) {
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+            whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.7, ease, delay }}
+            className={className}
+        >
+            {children}
+        </motion.div>
+    );
+}
 
-const item = {
-    hidden: { opacity: 0, y: 50, clipPath: "inset(100% 0 0 0)" },
-    show: {
-        opacity: 1,
-        y: 0,
-        clipPath: "inset(0% 0 0 0)",
-        transition: { duration: 0.9, ease }
-    }
-};
-
-const imgReveal = {
-    hidden: { scale: 1.3 },
-    show: {
-        scale: 1,
-        transition: { duration: 1.2, ease }
-    }
-};
-
-export function Staff({
-    theme = {
-        text: BRAND.dark,
-        textSoft: "rgba(46,1,1,0.8)",
-        textFaint: "rgba(46,1,1,0.6)",
-        bg: BRAND.white
-    }
-}) {
+export function Staff() {
     const team = [
         {
-            name: "Green Ronnie", role: "Founder & CEO",
+            name: "Green Ronnie",
+            role: "Founder & CEO",
             image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80",
-            bio: "Leading GreenPork with a vision for premium food experiences and modern service.",
+            bio: "Leading Green Pork with a vision for premium food experiences and modern service.",
         },
         {
-            name: "Ella Stella", role: "Operations Manager",
+            name: "Ella Stella",
+            role: "Operations Manager",
             image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80",
             bio: "Ensures smooth daily operations, quality control, and fast customer delivery.",
         },
         {
-            name: "Sarah Johnson", role: "Creative Director",
+            name: "Sarah Johnson",
+            role: "Creative Director",
             image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80",
-            bio: "Creates the brand experience and visual identity behind GreenPork.",
+            bio: "Creates the brand experience and visual identity behind Green Pork.",
         },
         {
-            name: "Robert Williams", role: "Head Chef",
+            name: "Robert Williams",
+            role: "Head Chef",
             image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80",
             bio: "Crafting bold flavors and premium meals with passion and creativity.",
         },
     ];
 
     return (
-        <motion.section
-            className="font-body"
-            variants={container}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-80px" }}
-        >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
-                {team.map((member) => (
-                    <motion.div
-                        key={member.name}
-                        variants={item}
-                        className="group cursor-pointer transition-colors duration-300 overflow-hidden relative shadow-sm hover:shadow-2xl"
-                        style={{ backgroundColor: theme.bg, color: theme.text }}
-                        whileHover={{ backgroundColor: theme.text, color: theme.bg }}
-                    >
-                        <div className="relative overflow-hidden aspect-[4/5]">
-                            <motion.img
-                                variants={imgReveal}
+        <div className="grid grid-cols-1 gap-4 selection:bg-[#D9FF00] selection:text-[#4A0A0A] sm:grid-cols-2 md:gap-6 lg:grid-cols-4">
+            {team.map((member, i) => (
+                <Reveal key={member.name} delay={i * 0.1}>
+                    {/* Clean card with solid color hover swap instead of gradients/borders */}
+                    <div className="group h-full cursor-pointer overflow-hidden rounded-3xl bg-white shadow-lg transition-colors duration-300 hover:bg-[#4A0A0A]">
+                        <div className="relative aspect-[4/5] overflow-hidden">
+                            <img
                                 src={member.image}
                                 alt={member.name}
-                                className="w-full h-full object-cover grayscale-[30%] group-hover:grayscale-0 group-hover:scale-105 transition-all duration-500 ease-out"
+                                className="h-full w-full object-cover grayscale-[30%] transition-all duration-500 ease-out group-hover:scale-105 group-hover:grayscale-0"
                             />
-
-                            {/* Premium scroll/hover overlay wipe */}
-                            <div
-                                className="absolute inset-0 z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex items-end p-6"
-                                style={{ background: `linear-gradient(to top, ${BRAND.dark} 10%, transparent 100%)` }}
-                            >
-                                <p className="text-sm font-body text-[#FFFFFF] translate-y-4 group-hover:translate-y-0 transition-transform duration-500 ease-out delay-100">
-                                    {member.bio}
-                                </p>
-                            </div>
+                            {/* Solid dark overlay on hover instead of a gradient */}
+                            <div className="absolute inset-0 bg-[#4A0A0A]/60 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
                         </div>
 
-                        <div className="p-6 relative z-20">
-                            <h3 className="text-2xl font-display font-black tracking-tighter mb-2">
+                        <div className="p-6">
+                            <h3 className="mb-1 text-xl font-black uppercase leading-none tracking-tight text-[#4A0A0A] transition-colors duration-300 group-hover:text-white">
                                 {member.name}
                             </h3>
-                            <p className="font-display font-bold text-[10px] uppercase tracking-widest mb-4 transition-colors" style={{ color: theme.textFaint }}>
-                                <span
-                                    className="transition-colors duration-300"
-                                    style={{ ['--tw-text-opacity']: 1 }}
-                                >
-                                    <span className="group-hover:text-[#D4FF00] transition-colors duration-300">
-                                        {member.role}
-                                    </span>
-                                </span>
+                            {/* Role uses standard alert color by default, switches to brand color on hover */}
+                            <p className="mb-4 text-[11px] font-black uppercase tracking-widest transition-colors duration-300 group-hover:text-[#D9FF00]" style={{ color: ALERT_COLOR }}>
+                                {member.role}
                             </p>
-
-                            {/* Desktop Bio (always visible) */}
-                            <p className="leading-relaxed text-sm font-body opacity-80 lg:hidden">
+                            <p className="text-sm font-medium leading-relaxed text-[#4A0A0A]/70 transition-colors duration-300 group-hover:text-white/70">
                                 {member.bio}
                             </p>
                         </div>
-                    </motion.div>
-                ))}
-            </div>
-        </motion.section>
+                    </div>
+                </Reveal>
+            ))}
+        </div>
     );
 }

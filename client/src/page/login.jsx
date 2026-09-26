@@ -1,18 +1,36 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-
+import { motion } from "framer-motion";
 import {
-  PiggyBankIcon,
-  Eye,
-  EyeOff,
-  ArrowRight,
-  ShieldCheck,
+  Eye, EyeOff, Mail, Lock, ArrowRight, ShieldCheck, Check, Flame,
 } from "lucide-react";
+import BgImage from "../assets/pngwing.com (19).png";
 
-import bgImage from "../assets/pexels-pedrofurtadoo-30500753.jpg";
+const BRAND = "Green Pork";
 
-const Login = () => {
+// Standardized Colors
+const BRAND_COLOR = "#D9FF00";
+const DARK = "#4A0A0A";
+const RED = "#E11D1D";
+const WORD_RED = "#FFC2B3";
+
+const ease = [0.16, 1, 0.3, 1];
+
+function Reveal({ children, delay = 0, className = "" }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      transition={{ duration: 0.6, ease, delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+export default function Login() {
   const {
     register,
     handleSubmit,
@@ -27,27 +45,16 @@ const Login = () => {
 
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
       setLoading(true);
-
-      const response = await fetch(
-        "http://localhost:3001/login-user",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
-
-      if (response.ok) {
-        navigate("/layout");
-      }
+      console.log("LOGIN DATA:", data);
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      navigate("/layout");
     } catch (error) {
       console.error(error);
     } finally {
@@ -55,278 +62,197 @@ const Login = () => {
     }
   };
 
+  const inputBaseClass = "w-full pl-12 pr-12 py-3.5 bg-[#4A0A0A]/[0.03] rounded-2xl text-[#4A0A0A] placeholder:text-[#4A0A0A]/30 font-medium text-sm outline-none transition-all duration-300 focus:bg-white focus:ring-4 focus:ring-[#E11D1D]/20";
+  const errorClass = "ring-4 ring-[#E11D1D]/20 bg-[#E11D1D]/5";
+  const normalClass = "focus:ring-[#4A0A0A]/10";
+
   return (
-    <div className="relative min-h-screen h-full bg-[#FAFAFA] overflow-hidden flex items-center justify-center lg:px-4 lg:py-10">
+    <div className="font-display flex h-[100dvh] w-full select-none overflow-hidden bg-white selection:bg-[#D9FF00] selection:text-[#4A0A0A]">
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&display=swap');
+        .font-display { font-family: 'Archivo', sans-serif; }
+      `}</style>
 
-      {/* PREMIUM BACKGROUND */}
-      <div className="absolute inset-0 -z-10">
+      {/* LEFT VERTICAL PANEL */}
+      <aside className="relative hidden h-full w-[40%] flex-col justify-between overflow-hidden p-10 text-white lg:flex xl:w-[35%] xl:p-12" style={{ backgroundColor: DARK }}>
+        <motion.img
+          initial={{ scale: 1.2 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 15, ease: "linear" }}
+          src={BgImage}
+          alt="Premium wood-smoked roasted pork"
+          className="absolute inset-0 h-full w-full object-cover brightness-[0.45]"
+        />
 
-        <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-red-100 blur-[140px]" />
+        <div className="pointer-events-none absolute left-1/4 top-1/4 h-96 w-96 rounded-full opacity-20 blur-[120px]" style={{ backgroundColor: RED }} />
 
-        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-orange-100 blur-[140px]" />
-      </div>
-
-      {/* MAIN CARD */}
-      <div className="w-full min-h-screen lg:min-h-0 lg:max-w-7xl bg-white lg:border lg:border-gray-200 rounded-none lg:rounded-[40px] overflow-hidden lg:shadow-2xl grid grid-cols-1 lg:grid-cols-2">
-
-        {/* LEFT SIDE — desktop only */}
-        <div className="relative hidden lg:flex overflow-hidden">
-
-          <img
-            src={bgImage}
-            alt="GreenPork"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-
-          {/* OVERLAY */}
-          <div className="absolute inset-0 bg-gradient-to-br from-black/80 via-red-900/50 to-red-600/40" />
-
-          {/* CONTENT */}
-          <div className="relative z-10 flex flex-col justify-between p-14 text-white w-full">
-
-            {/* TOP */}
-            <div>
-
-              <div className="w-16 h-16 rounded-2xl bg-white/10 backdrop-blur-xl border border-white/20 flex items-center justify-center mb-8">
-
-                <PiggyBankIcon className="w-8 h-8 text-white" />
+        <div className="relative z-10 flex h-full flex-col justify-between">
+          {/* Top Branding */}
+          <div className="space-y-6">
+            <Link to="/" className="group flex w-fit items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-xs font-black backdrop-blur-md transition-transform group-hover:scale-105">
+                GP
               </div>
+              <span className="text-sm font-black uppercase tracking-[0.15em] text-white">
+                {BRAND}
+              </span>
+            </Link>
 
-              <p className="uppercase tracking-[4px] text-sm text-red-200 font-bold mb-5">
-                Welcome Back
-              </p>
+            <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-[11px] font-bold uppercase tracking-wide backdrop-blur-md">
+              <ShieldCheck size={13} strokeWidth={2.5} />
+              Premium Farm Fresh
+            </span>
+          </div>
 
-              <h1 className="text-6xl font-black leading-tight">
+          {/* Middle Call To Action */}
+          <div className="my-auto space-y-4">
+            <h2 className="text-3xl font-black uppercase leading-[0.85] tracking-[-0.04em] xl:text-4xl">
+              One Bite.<br />
+              <span style={{ color: WORD_RED }}>Good Mood.</span>
+            </h2>
+            <p className="max-w-xs text-xs font-medium leading-relaxed text-white/70 xl:text-sm">
+              Crafted for sharing, feasting, and instant good vibes. Continue your culinary journey.
+            </p>
+          </div>
 
-                Premium Food
-                <span className="block text-red-400">
-                  Experience
+          {/* Bottom Stats */}
+          <div className="space-y-4 pt-6">
+            <div className="h-px w-full bg-white/15" />
+            {[
+              { value: "10K+", label: "Active Customers" },
+              { value: "30m", label: "Lightning Dispatch" },
+              { value: "4.9★", label: "Avg. User Rating" },
+            ].map((stat) => (
+              <div key={stat.label} className="group flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-widest text-white/50">
+                  {stat.label}
                 </span>
-              </h1>
-
-              <p className="mt-8 text-white/80 text-lg leading-relaxed max-w-md">
-                Login to continue ordering fresh meals,
-                premium pork dishes, and fast delivery
-                from GreenPork.
-              </p>
-            </div>
-
-            {/* BOTTOM FEATURES */}
-            <div className="space-y-5">
-
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl p-4">
-
-                <div className="w-12 h-12 rounded-xl bg-red-500/20 flex items-center justify-center">
-                  <ShieldCheck className="w-6 h-6 text-red-300" />
-                </div>
-
-                <div>
-                  <h4 className="font-bold text-lg">
-                    Secure Login
-                  </h4>
-
-                  <p className="text-white/70 text-sm">
-                    Your information is always protected.
-                  </p>
-                </div>
+                <span className="text-xl font-black tracking-tight transition-transform duration-300 group-hover:translate-x-1 xl:text-2xl">
+                  {stat.value}
+                </span>
               </div>
-
-              <div className="flex items-center gap-4 bg-white/10 backdrop-blur-xl border border-white/10 rounded-2xl p-4">
-
-                <div className="w-12 h-12 rounded-xl bg-orange-400/20 flex items-center justify-center">
-                  <ArrowRight className="w-6 h-6 text-orange-300" />
-                </div>
-
-                <div>
-                  <h4 className="font-bold text-lg">
-                    Fast Ordering
-                  </h4>
-
-                  <p className="text-white/70 text-sm">
-                    Continue where you left off instantly.
-                  </p>
-                </div>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
+      </aside>
 
-        {/* RIGHT SIDE / MOBILE FORM SCREEN */}
-        <div className="flex flex-col min-h-screen lg:min-h-0 lg:items-center lg:justify-center px-6 py-8 sm:px-10 lg:p-14">
+      {/* RIGHT FORM CANVAS */}
+      <main className="relative flex h-full flex-1 flex-col justify-center overflow-hidden p-6 sm:p-10 xl:p-16">
+        {/* Floating Decorative Background Text */}
+        <div className="pointer-events-none absolute right-0 top-0 select-none opacity-[0.03]" style={{ color: DARK }}>
+          <span className="font-black text-[12rem] leading-none tracking-tighter xl:text-[16rem]">
+            LOGIN
+          </span>
+        </div>
 
-          {/* MOBILE-ONLY COMPACT BRAND STRIP — fills the identity the hidden left panel carries on desktop */}
-          <div className="flex lg:hidden items-center gap-3 mb-8">
-            <div className="w-11 h-11 rounded-xl bg-red-600 flex items-center justify-center flex-shrink-0 shadow-lg shadow-red-200">
-              <PiggyBankIcon className="text-white w-5 h-5" />
-            </div>
-            <div>
-              <p className="text-[11px] font-bold uppercase tracking-[2px] text-red-500">Welcome Back</p>
-              <p className="text-sm font-bold text-gray-900 -mt-0.5">GreenPork</p>
-            </div>
-          </div>
-
-          <form
-            onSubmit={handleSubmit(onSubmit)}
-            className="w-full max-w-md mx-auto flex-1 lg:flex-none flex flex-col justify-center"
-          >
-
-            {/* HEADER */}
+        <div className="relative z-10 mx-auto w-full max-w-3xl">
+          {/* HEADER */}
+          <Reveal delay={0.1}>
             <div className="mb-8 lg:mb-10">
-
-              <div className="hidden lg:flex justify-center mb-6">
-
-                <div className="w-16 h-16 rounded-2xl bg-red-600 flex items-center justify-center shadow-xl">
-
-                  <PiggyBankIcon className="text-white w-8 h-8" />
-                </div>
-              </div>
-
-              <h2 className="text-3xl lg:text-4xl font-black text-gray-900 text-center lg:text-center">
-                Sign In
+              <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#4A0A0A]/10 px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-[#4A0A0A]">
+                <Flame size={13} strokeWidth={2.5} />
+                Access Account
+              </span>
+              <h2 className="font-black uppercase leading-[0.85] tracking-[-0.04em]" style={{ color: DARK, fontSize: "clamp(2.2rem, 5vw, 4rem)" }}>
+                Welcome<br />
+                <span style={{ color: RED }}>Back.</span>
               </h2>
-
-              <p className="text-center text-gray-500 mt-3 lg:mt-4 text-base lg:text-lg">
-                Welcome back to GreenPork
+              <p className="mt-3 max-w-sm text-xs font-medium leading-relaxed text-[#4A0A0A]/60 sm:text-sm">
+                Sign in to continue ordering premium cuts.
               </p>
             </div>
+          </Reveal>
 
+          {/* FORM GRID */}
+          <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-4 gap-x-6 sm:grid-cols-2">
             {/* EMAIL */}
-            <div className="mb-5 lg:mb-6">
-
-              <label className="text-sm font-bold text-gray-700 mb-3 block">
+            <Reveal delay={0.15} className="sm:col-span-2">
+              <label className="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-[#4A0A0A]/80">
                 Email Address
               </label>
-
-              <input
-                type="email"
-                placeholder="you@example.com"
-                {...register("email", {
-                  required: "Email is required",
-                })}
-                className={`w-full px-5 py-4 rounded-2xl border bg-gray-50 outline-none transition-all duration-300 focus:ring-4 focus:ring-red-100 focus:border-red-500 ${errors.email
-                  ? "border-red-500"
-                  : "border-gray-200"
-                  }`}
-              />
-
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-2">
-                  {errors.email.message}
-                </p>
-              )}
-            </div>
+              <div className="relative">
+                <Mail className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#4A0A0A]/30" size={18} strokeWidth={2.2} />
+                <input
+                  type="email"
+                  placeholder="you@example.com"
+                  {...register("email", { required: "Email is required" })}
+                  className={`${inputBaseClass} ${errors.email ? errorClass : normalClass}`}
+                />
+              </div>
+              {errors.email && <p className="mt-1.5 text-xs font-medium" style={{ color: RED }}>{errors.email.message}</p>}
+            </Reveal>
 
             {/* PASSWORD */}
-            <div className="mb-5">
-
-              <label className="text-sm font-bold text-gray-700 mb-3 block">
+            <Reveal delay={0.2} className="sm:col-span-2">
+              <label className="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-[#4A0A0A]/80">
                 Password
               </label>
-
               <div className="relative">
-
+                <Lock className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#4A0A0A]/30" size={18} strokeWidth={2.2} />
                 <input
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
-                  {...register("password", {
-                    required: "Password is required",
-                  })}
-                  className={`w-full px-5 py-4 rounded-2xl border bg-gray-50 outline-none transition-all duration-300 focus:ring-4 focus:ring-red-100 focus:border-red-500 ${errors.password
-                    ? "border-red-500"
-                    : "border-gray-200"
-                    }`}
+                  {...register("password", { required: "Password is required" })}
+                  className={`${inputBaseClass} ${errors.password ? errorClass : normalClass}`}
                 />
-
                 <button
                   type="button"
-                  onClick={() =>
-                    setShowPassword(!showPassword)
-                  }
-                  className="absolute right-5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-red-600 transition-colors"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#4A0A0A]/40 transition-colors hover:text-[#4A0A0A]"
+                  aria-label="Toggle password visibility"
                 >
-                  {showPassword ? (
-                    <EyeOff size={20} />
-                  ) : (
-                    <Eye size={20} />
-                  )}
+                  {showPassword ? <EyeOff size={18} strokeWidth={2.2} /> : <Eye size={18} strokeWidth={2.2} />}
                 </button>
               </div>
+              {errors.password && <p className="mt-1.5 text-xs font-medium" style={{ color: RED }}>{errors.password.message}</p>}
+            </Reveal>
 
-              {errors.password && (
-                <p className="text-red-500 text-sm mt-2">
-                  {errors.password.message}
+            {/* ACTION ROW */}
+            <Reveal delay={0.25} className="mt-2 flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-end sm:col-span-2">
+              <div className="flex w-full items-start gap-3 sm:w-auto">
+                <button
+                  type="button"
+                  onClick={() => setRememberMe(!rememberMe)}
+                  className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md transition-all duration-300 ${rememberMe ? "bg-[#D9FF00]" : "bg-[#4A0A0A]/10 hover:bg-[#4A0A0A]/20"}`}
+                  aria-pressed={rememberMe}
+                >
+                  {rememberMe && <Check size={12} strokeWidth={3} className="text-[#4A0A0A]" />}
+                </button>
+                <p className="text-xs font-medium leading-relaxed text-[#4A0A0A]/60">
+                  Remember me on this device
                 </p>
-              )}
-            </div>
-
-            {/* OPTIONS */}
-            <div className="flex items-center justify-between mb-8 flex-wrap gap-3">
-
-              <label className="flex items-center gap-3 text-gray-500 text-sm">
-
-                <input
-                  type="checkbox"
-                  className="accent-red-600 w-4 h-4"
-                />
-
-                Remember me
-              </label>
-
-              <Link
-                to="/forgot-password"
-                className="text-red-600 hover:text-red-700 font-semibold text-sm transition-colors"
-              >
-                Forgot Password?
-              </Link>
-            </div>
-
-            {/* BUTTON */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 rounded-2xl transition-all duration-300 shadow-xl hover:shadow-red-300/40 hover:scale-[1.01] disabled:opacity-60 flex items-center justify-center gap-3"
-            >
-              {loading ? (
-                "Logging in..."
-              ) : (
-                <>
-                  Login
-                  <ArrowRight className="w-5 h-5" />
-                </>
-              )}
-            </button>
-
-            {/* DIVIDER */}
-            <div className="relative my-8">
-
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
               </div>
 
-              <div className="relative flex justify-center">
-                <span className="bg-white px-4 text-gray-400 text-sm">
-                  GreenPork
-                </span>
-              </div>
-            </div>
-
-            {/* SIGNUP */}
-            <p className="text-center text-gray-500 text-sm pb-2 lg:pb-0">
-
-              Don’t have an account?{" "}
-
-              <Link
-                to="/Register"
-                className="text-red-600 font-bold hover:text-red-700 transition-colors"
+              <motion.button
+                type="submit"
+                disabled={loading}
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={{ type: "spring", stiffness: 220, damping: 26 }}
+                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-3.5 px-6 text-xs font-black uppercase tracking-wide shadow-lg disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:min-w-[240px]"
+                style={{ backgroundColor: BRAND_COLOR, color: DARK }}
               >
+                {loading ? "Authenticating..." : "Sign In"}
+                {!loading && <ArrowRight size={14} strokeWidth={2.5} />}
+              </motion.button>
+            </Reveal>
+          </form>
+
+          {/* FOOTER LINKS */}
+          <Reveal delay={0.3} className="mt-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
+            <div className="h-px w-full bg-[#4A0A0A]/10 sm:hidden" />
+            <p className="text-center text-xs font-medium text-[#4A0A0A]/60 sm:text-left">
+              Don't have an account?{" "}
+              <Link to="/Register" className="ml-1 font-black uppercase tracking-wider underline text-[#4A0A0A]">
                 Create Account
               </Link>
             </p>
-          </form>
+            <Link to="/forgot-password" className="font-black uppercase tracking-widest text-[#4A0A0A]/60 text-xs underline transition-colors hover:text-[#E11D1D]">
+              Forgot Password?
+            </Link>
+          </Reveal>
         </div>
-      </div>
+      </main>
     </div>
   );
-};
-
-export default Login;
+}

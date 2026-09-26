@@ -1,11 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import {
-  ChevronLeft, ChevronRight, PiggyBank, ShoppingBasket, Leaf, Truck, ShieldCheck,
-  Star, Clock, Drumstick, Minus, Plus, ArrowRight, Pizza as PizzaIcon,
-  Instagram, Facebook, Music2, Twitter, Youtube, Hamburger, Palette, Check
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingBasket, Check, Clock, Star } from "lucide-react";
 import { useCart } from "../components/cart/CartContext";
 
 import PorkStake from "../assets/ChatGPT Image Jun 18, 2026, 03_34_25 PM.png";
@@ -15,633 +11,307 @@ import Chicken from "../assets/fullchicken.png";
 
 const BRAND_NAME = "Green Pork";
 const AUTOPLAY_MS = 5500;
-
-const SOCIALS = [Instagram, Facebook, Music2, Twitter, Youtube];
-const FEATURES = [
-  { key: "fresh", icon: Leaf, label: "100% Organic", sub: "Farm Sourced" },
-  { key: "delivery", icon: Truck, label: "Express Delivery", sub: "Hot & Fresh" },
-  { key: "quality", icon: ShieldCheck, label: "Premium Choice", sub: "Hygienic Prep" },
-];
-
-const PRODUCT_THEMES = {
-  "pork-skewer": {
-    name: "Pork Red",
-    primary: "#D90404",
-    primaryHover: "#B80303",
-    accent: "#D9FF00",
-    bgFrom: "46, 1, 1",
-    bgTo: "217, 4, 4",
-    glow: "217, 4, 4",
-  },
-  "angus-burger": {
-    name: "Burger Amber",
-    primary: "#D97706",
-    primaryHover: "#B45309",
-    accent: "#FEF08A",
-    bgFrom: "69, 26, 3",
-    bgTo: "217, 119, 6",
-    glow: "245, 158, 11",
-  },
-  "chicken-pizza": {
-    name: "Pizza Crust",
-    primary: "#C2410C",
-    primaryHover: "#9A3412",
-    accent: "#FED7AA",
-    bgFrom: "67, 20, 7",
-    bgTo: "194, 65, 12",
-    glow: "234, 88, 12",
-  },
-  "roasted-chicken": {
-    name: "Golden Roast",
-    primary: "#CA8A04",
-    primaryHover: "#A16207",
-    accent: "#FEF9C3",
-    bgFrom: "54, 39, 4",
-    bgTo: "202, 138, 4",
-    glow: "234, 179, 8",
-  }
-};
+const BRAND_COLOR = "#D9FF00"; // Standardized Brand Color
+const SUCCESS_COLOR = "#059669"; // Standardized Success Color
 
 const SLIDES = [
   {
     id: "pork-skewer",
-    eyebrow: "Chef's Signature",
-    title: ["Slow-Roasted Perfection", "SMOKY", "PORK SKEWERS"],
+    short: "Skewers",
+    words: ["SMOKY", "PORK"],
     category: "Premium Wood-Fired Pork Skewers",
     image: PorkStake,
     price: 6000,
     oldPrice: 8000,
     rating: 4.9,
     prepTime: "12 min",
-    description: "Juicy, flame-grilled pork skewers marinated in our signature spices and served with fresh salad, soft chapati, and sweet roasted bananas.",
-    tags: ["Wood-Fired", "Farm Fresh"],
-    watermark: PiggyBank,
+    tags: ["extra cassava", "salads"],
+    bg: "#E11D1D",
+    word: "#FFC2B3",
+    dark: "#4A0A0A",
   },
   {
     id: "angus-burger",
-    eyebrow: "Customer Favorite",
-    title: ["Flame-Grilled", "CHEESY", "ANGUS BURGER"],
+    short: "Burger",
+    words: ["CHEESY", "BURGER"],
     category: "Premium Angus Beef Burger",
     image: Burger,
     price: 10000,
     oldPrice: 12000,
     rating: 4.9,
     prepTime: "10 min",
-    description: "A juicy Angus beef patty layered with melted cheddar, crisp lettuce, vine-ripened tomatoes, caramelized onions, and our signature burger sauce.",
-    tags: ["100% Angus", "Melted Cheddar"],
-    watermark: Hamburger,
+    tags: ["100% Angus", "Extra Cheese"],
+    bg: "#F5A31A",
+    word: "#FFF1BF",
+    dark: "#4A2508",
   },
   {
     id: "chicken-pizza",
-    eyebrow: "Stone Oven Fresh",
-    title: ["Stone-Baked", "FIRED", "CHICKEN PIZZA"],
+    short: "Pizza",
+    words: ["FIRED", "PIZZA"],
     category: "Premium Chicken Pizza",
     image: Pizza,
     price: 10000,
     oldPrice: 12000,
     rating: 4.8,
     prepTime: "18 min",
-    description: "Hand-stretched artisan dough topped with smoked chicken, creamy mozzarella, fresh herbs, and rich slow-cooked tomato sauce.",
     tags: ["Stone-Baked", "Fresh Mozzarella"],
-    watermark: PizzaIcon,
+    bg: "#E8590C",
+    word: "#FFD6B0",
+    dark: "#4A1A05",
   },
   {
     id: "roasted-chicken",
-    eyebrow: "Family Feast",
-    title: ["Golden Crispy", "FIRE ROASTED", "WHOLE CHICKEN"],
+    short: "Chicken",
+    words: ["GOLDEN", "CHICKEN"],
     category: "Premium Fire-Roasted Chicken",
     image: Chicken,
     price: 55000,
     oldPrice: 78000,
     rating: 4.9,
     prepTime: "25 min",
-    description: "Whole chicken slow-roasted over open flames until perfectly crisp outside and irresistibly juicy inside, seasoned with our signature herb blend.",
     tags: ["Fire Roasted", "Farm Fresh"],
-    watermark: Drumstick,
-  }
+    bg: "#E0A100",
+    word: "#FFF4B8",
+    dark: "#3D2C04",
+  },
 ];
 
 const fmt = (v) => Number(v).toLocaleString();
 const savePct = (p, o) => Math.round(((o - p) / o) * 100);
-const cx = (...c) => c.filter(Boolean).join(" ");
 
-const butterySpring = { type: "spring", stiffness: 220, damping: 26, mass: 1 };
-const smoothTransition = { duration: 0.8, ease: [0.16, 1, 0.3, 1] };
+const spring = { type: "spring", stiffness: 220, damping: 26 };
 
 const fadeUp = (d = 0) => ({
-  initial: { opacity: 0, y: 15, filter: "blur(6px)" },
-  animate: { opacity: 1, y: 0, filter: "blur(0px)", transition: { ...smoothTransition, delay: d } },
-  exit: { opacity: 0, y: -10, filter: "blur(6px)", transition: { duration: 0.25, ease: [0.4, 0, 1, 1] } },
+  initial: { opacity: 0, y: 20, filter: "blur(6px)" },
+  animate: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: d } },
+  exit: { opacity: 0, y: -12, filter: "blur(6px)", transition: { duration: 0.25 } },
 });
 
 const imgVar = {
-  enter: (d) => ({
-    opacity: 0,
-    x: d === "right" ? 80 : -80,
-    scale: 0.7,
-    rotate: d === "right" ? -8 : 8,
-    filter: "blur(12px)"
-  }),
-  center: {
-    opacity: 1,
-    x: 0,
-    scale: 1,
-    rotate: -3,
-    filter: "blur(0px)",
-    transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] }
-  },
-  exit: (d) => ({
-    opacity: 0,
-    x: d === "right" ? -60 : 60,
-    scale: 0.8,
-    rotate: d === "right" ? 6 : -6,
-    filter: "blur(12px)",
-    transition: { duration: 0.4, ease: [0.4, 0, 1, 1] }
-  }),
+  enter: (d) => ({ opacity: 0, x: d === "right" ? 90 : -90, scale: 0.7, rotate: d === "right" ? -8 : 8, filter: "blur(12px)" }),
+  center: { opacity: 1, x: 0, scale: 1, rotate: 0, filter: "blur(0px)", transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] } },
+  exit: (d) => ({ opacity: 0, x: d === "right" ? -70 : 70, scale: 0.8, rotate: d === "right" ? 6 : -6, filter: "blur(12px)", transition: { duration: 0.4 } }),
 };
 
-function useSlideCarousel() {
+export default function Hero() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState("right");
   const [isPaused, setIsPaused] = useState(false);
-  const total = SLIDES.length;
-
-  const goTo = useCallback((i) => { setDirection(i > current ? "right" : "left"); setCurrent(i); }, [current]);
-  const next = useCallback(() => { setDirection("right"); setCurrent((p) => (p + 1) % total); }, [total]);
-  const prev = useCallback(() => { setDirection("left"); setCurrent((p) => (p === 0 ? total - 1 : p - 1)); }, [total]);
-
-  const reducedMotion = useMemo(() => typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches, []);
-
-  useEffect(() => {
-    if (isPaused || reducedMotion) return;
-    const t = setTimeout(next, AUTOPLAY_MS);
-    return () => clearTimeout(t);
-  }, [isPaused, reducedMotion, next, current]);
-
-  useEffect(() => {
-    const handleKey = (e) => {
-      if (e.key === "ArrowLeft") prev();
-      if (e.key === "ArrowRight") next();
-    };
-    window.addEventListener("keydown", handleKey);
-    return () => window.removeEventListener("keydown", handleKey);
-  }, [prev, next]);
-
-  return { current, direction, isPaused, reducedMotion, setIsPaused, goTo, next, prev, slide: SLIDES[current], total };
-}
-
-function useQuantity(id) {
-  const [q, setQ] = useState(1);
-  useEffect(() => setQ(1), [id]);
-  return { quantity: q, dec: () => setQ((v) => Math.max(1, v - 1)), inc: () => setQ((v) => v + 1) };
-}
-
-const FontFace = React.memo(function FontFace() {
-  return (
-    <style>{`
-      @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;700;900&family=Inter:wght@400;500;600&display=swap');
-      
-      .font-display { font-family: 'Archivo', sans-serif; letter-spacing: -0.04em; }
-      .font-ui, .font-body { font-family: 'Inter', sans-serif; }
-      
-      .film-grain {
-        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/filter%3E%3C/svg%3E");
-      }
-
-      .no-scrollbar::-webkit-scrollbar { display: none; }
-      .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    `}</style>
-  );
-});
-
-const DynamicBackground = React.memo(function DynamicBackground({ slide, activeTheme }) {
-  const Watermark = slide.watermark;
-
-  const bgStyle = {
-    background: `linear-gradient(155deg, rgb(${activeTheme.bgFrom}) 0%, rgb(${activeTheme.bgTo}) 100%)`
-  };
-
-  return (
-    <div className="absolute inset-0 -z-10 overflow-hidden" style={{ backgroundColor: `rgb(${activeTheme.bgTo})` }}>
-      <AnimatePresence mode="popLayout">
-        <motion.div
-          key={`${slide.id}-${activeTheme.bgFrom}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-          className="absolute inset-0 transition-all"
-          style={bgStyle}
-        >
-          <motion.div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[45rem] lg:w-[80rem] h-[45rem] lg:h-[80rem] pointer-events-none blur-[140px]"
-            style={{ background: `radial-gradient(circle, rgba(${activeTheme.glow}, 0.55) 0%, rgba(0,0,0,0) 70%)` }}
-            animate={{ scale: [1, 1.15, 1], opacity: [0.45, 0.7, 0.45] }}
-            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-          />
-
-          <div className="absolute right-0 top-1/2 -translate-x-1 -translate-y-1/2 pointer-events-none opacity-10 transition-all duration-700 flex items-center justify-center">
-            <Watermark className="text-white" size={480} strokeWidth={1} />
-          </div>
-
-          <div className="absolute inset-0 film-grain opacity-[0.04] pointer-events-none mix-blend-overlay"></div>
-          <div className="absolute inset-0 pointer-events-none" style={{ background: `radial-gradient(circle, transparent 35%, rgba(10, 2, 2, 0.75) 100%)` }}></div>
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-});
-
-const ColorThemeToggleMode = React.memo(function ColorThemeToggleMode({ isAutoMatch, setIsAutoMatch, activeThemeName, setActiveThemeName }) {
-  return (
-    <div className="absolute hidden lg:flex top-24 right-6 z-50 items-center gap-1 bg-black/40 backdrop-blur-xl p-1 rounded-full border border-white/10">
-      <button
-        type="button"
-        onClick={() => setIsAutoMatch(!isAutoMatch)}
-        className={cx(
-          "text-[10px] font-display uppercase tracking-wider px-3 py-1.5 rounded-full transition-all cursor-pointer flex items-center gap-1.5",
-          isAutoMatch ? "bg-white text-black font-bold" : "text-white/70 hover:text-white"
-        )}
-      >
-        <Palette size={12} /> Auto-Match
-      </button>
-      {!isAutoMatch && (
-        <div className="flex items-center gap-1.5 pl-1 pr-2">
-          {Object.keys(PRODUCT_THEMES).map((key) => {
-            const t = PRODUCT_THEMES[key];
-            const isSelected = activeThemeName === key;
-            return (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setActiveThemeName(key)}
-                title={t.name}
-                className={cx(
-                  "w-5 h-5 rounded-full transition-all cursor-pointer",
-                  isSelected ? "scale-110 ring-2 ring-white" : "opacity-50 hover:opacity-100"
-                )}
-                style={{ backgroundColor: t.primary }}
-              />
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
-});
-
-const QuantityStepper = React.memo(function QuantityStepper({ quantity, onDec, onInc, accentColor }) {
-  return (
-    <div className="flex items-center gap-3 font-display font-bold text-sm lg:text-base text-white">
-      <motion.button type="button" onClick={onDec} whileTap={{ scale: 0.75 }} whileHover={{ scale: 1.15, color: accentColor }} transition={butterySpring} aria-label="Reduce quantity" className="transition-all p-1 text-white/80 hover:text-white cursor-pointer">
-        <Minus size={14} strokeWidth={3} />
-      </motion.button>
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span
-          key={quantity}
-          initial={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          exit={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-          transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-          className="w-5 text-center inline-block text-white"
-        >
-          {quantity}
-        </motion.span>
-      </AnimatePresence>
-      <motion.button type="button" onClick={onInc} whileTap={{ scale: 0.75 }} whileHover={{ scale: 1.15, color: accentColor }} transition={butterySpring} aria-label="Increase quantity" className="transition-all p-1 text-white/80 hover:text-white cursor-pointer">
-        <Plus size={14} strokeWidth={3} />
-      </motion.button>
-    </div>
-  );
-});
-
-const AddToCartButton = React.memo(function AddToCartButton({ onClick, className, primaryColor, primaryHoverColor, isAdded }) {
-  return (
-    <motion.button
-      type="button"
-      onClick={onClick}
-      whileHover={{ scale: 1.02, backgroundColor: isAdded ? "#10b981" : primaryHoverColor }}
-      whileTap={{ scale: 0.98 }}
-      transition={butterySpring}
-      className={cx("group relative inline-flex items-center justify-between gap-2 lg:gap-4 font-display font-black text-xs uppercase tracking-wider py-3 px-4 lg:py-3.5 lg:px-6 focus:outline-none cursor-pointer overflow-hidden", className)}
-      style={{ backgroundColor: isAdded ? "#10b981" : primaryColor, color: "#FFFFFF", clipPath: "polygon(0 0, 100% 0, 95% 100%, 0% 100%)" }}
-    >
-      <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-400 ease-[cubic-bezier(0.16,1,0.3,1)] pointer-events-none" />
-
-      <AnimatePresence mode="wait" initial={false}>
-        {isAdded ? (
-          <motion.div
-            key="added"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="flex items-center gap-2 w-full"
-          >
-            <Check size={15} strokeWidth={3} />
-            <span className="flex-1 text-left relative z-10">Added to Cart</span>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="add"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            className="flex items-center gap-2 w-full"
-          >
-            <ShoppingBasket size={15} strokeWidth={2.5} />
-            <span className="flex-1 text-left relative z-10">Add to Cart</span>
-            <ArrowRight size={15} strokeWidth={2.5} className="transition-transform duration-400 group-hover:translate-x-2 relative z-10" />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.button>
-  );
-});
-
-const TrustFeatures = React.memo(function TrustFeatures({ accentColor }) {
-  return (
-    <div className="hidden lg:flex flex-col gap-3 mt-6 pl-6 relative">
-      <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-white/15" />
-      {FEATURES.map(({ key, icon: Icon, label, sub }) => (
-        <motion.div
-          key={key}
-          initial={{ opacity: 0, x: -10 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-          className="flex items-center gap-2.5"
-        >
-          <Icon size={15} strokeWidth={2.2} style={{ color: accentColor }} />
-          <div className="leading-tight font-body">
-            <p className="text-xs font-bold tracking-wide text-white">{label}</p>
-            <p className="text-[9px] uppercase tracking-widest text-white/70">{sub}</p>
-          </div>
-        </motion.div>
-      ))}
-    </div>
-  );
-});
-
-const IngredientTags = React.memo(function IngredientTags({ tags, accentColor }) {
-  return (
-    <div className="flex items-center gap-2.5 flex-wrap mt-2 lg:mt-3 justify-center lg:justify-start">
-      {tags.map((tag) => (
-        <span key={tag} className="font-display font-bold uppercase text-[9px] lg:text-[10px] tracking-widest flex items-center gap-1.5 text-white bg-white/5 backdrop-blur-md py-1 px-2.5 rounded-full border border-white/10">
-          <span className="h-1.5 w-1.5 rounded-full" style={{ background: accentColor }} />
-          {tag}
-        </span>
-      ))}
-    </div>
-  );
-});
-
-const ThumbnailRail = React.memo(function ThumbnailRail({ current, onSelect, onPrev, onNext, accentColor }) {
-  return (
-    <nav className="flex items-center justify-between gap-2 lg:gap-6 w-full" aria-label="Product selector">
-      <motion.button
-        type="button"
-        onClick={onPrev}
-        aria-label="Previous"
-        whileHover={{ scale: 1.15, color: accentColor }}
-        whileTap={{ scale: 0.85 }}
-        transition={butterySpring}
-        className="h-8 w-8 lg:h-10 lg:w-10 flex items-center justify-center transition-colors bg-black/30 backdrop-blur-md text-white cursor-pointer shrink-0 rounded-full"
-      >
-        <ChevronLeft size={16} strokeWidth={2.5} />
-      </motion.button>
-
-      <div className="flex items-center gap-2.5 lg:gap-4 overflow-x-auto py-1 no-scrollbar">
-        {SLIDES.map((s, i) => {
-          const isActive = current === i;
-          return (
-            <motion.button
-              key={s.id}
-              type="button"
-              onClick={() => onSelect(i)}
-              whileHover={{ scale: isActive ? 1.1 : 1.05, y: -2 }}
-              whileTap={{ scale: 0.92 }}
-              animate={{
-                scale: isActive ? 1.1 : 0.8,
-                opacity: isActive ? 1 : 0.4,
-              }}
-              transition={butterySpring}
-              aria-label={`Show ${s.category}`}
-              className={cx(
-                "relative h-10 w-10 lg:h-20 lg:w-20 cursor-pointer outline-none bg-transparent shrink-0 overflow-hidden rounded-xl",
-                isActive ? "z-10" : ""
-              )}
-            >
-              <motion.img
-                src={s.image}
-                alt=""
-                className="h-full w-full object-cover outline-none bg-transparent"
-              />
-            </motion.button>
-          );
-        })}
-      </div>
-
-      <motion.button
-        type="button"
-        onClick={onNext}
-        aria-label="Next"
-        whileHover={{ scale: 1.15, color: accentColor }}
-        whileTap={{ scale: 0.85 }}
-        transition={butterySpring}
-        className="h-8 w-8 lg:h-10 lg:w-10 flex items-center justify-center transition-all bg-black/30 backdrop-blur-md text-white cursor-pointer shrink-0 rounded-full"
-      >
-        <ChevronRight size={16} strokeWidth={2.5} />
-      </motion.button>
-    </nav>
-  );
-});
-
-const SocialFooter = React.memo(function SocialFooter({ accentColor }) {
-  const yr = useMemo(() => new Date().getFullYear(), []);
-  return (
-    <footer className="flex flex-col lg:flex-row items-start lg:items-center gap-2 lg:gap-6 z-20">
-      <div className="flex items-center gap-2.5 text-white/80">
-        {SOCIALS.map((Icon, i) => (
-          <motion.a key={i} href={`#social-${i}`} whileHover={{ scale: 1.25, color: accentColor, y: -2 }} transition={butterySpring}>
-            <Icon size={15} strokeWidth={1.8} />
-          </motion.a>
-        ))}
-      </div>
-      <div className="flex items-center gap-3 text-[9px] lg:text-[10px] uppercase tracking-widest font-ui text-white/70">
-        <p>© {yr} {BRAND_NAME}</p>
-        <Link to="/returnPolicy" className="font-bold transition-colors text-white" onMouseEnter={(e) => (e.currentTarget.style.color = accentColor)} onMouseLeave={(e) => (e.currentTarget.style.color = "")}>Return Policy</Link>
-      </div>
-    </footer>
-  );
-});
-
-export default function Hero() {
-  const carousel = useSlideCarousel();
-  const { current, direction, reducedMotion, slide, goTo, next, prev, setIsPaused } = carousel;
-
-  const [isAutoMatch, setIsAutoMatch] = useState(true);
-  const [activeThemeName, setActiveThemeName] = useState("pork-skewer");
+  const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
 
-  const activeThemeKey = isAutoMatch ? slide.id : activeThemeName;
-  const activeTheme = PRODUCT_THEMES[activeThemeKey] || PRODUCT_THEMES["pork-skewer"];
-
   const { addToCart } = useCart();
-  const { quantity, dec, inc } = useQuantity(slide.id);
 
-  const addToCartHandler = useCallback((q) => {
-    addToCart({ id: slide.id, name: slide.category, category: slide.category, price: slide.price, image: slide.image, quantity: q });
+  const total = SLIDES.length;
+  const slide = SLIDES[current];
+
+  function goTo(i) {
+    setDirection(i > current ? "right" : "left");
+    setCurrent(i);
+  }
+  function next() {
+    setDirection("right");
+    setCurrent((current + 1) % total);
+  }
+  function prev() {
+    setDirection("left");
+    setCurrent(current === 0 ? total - 1 : current - 1);
+  }
+
+  useEffect(() => {
+    if (isPaused) return;
+    const t = setTimeout(next, AUTOPLAY_MS);
+    return () => clearTimeout(t);
+  }, [current, isPaused]);
+
+  useEffect(() => {
+    function handleKey(e) {
+      if (e.key === "ArrowLeft") prev();
+      if (e.key === "ArrowRight") next();
+    }
+    window.addEventListener("keydown", handleKey);
+    return () => window.removeEventListener("keydown", handleKey);
+  }, [current]);
+
+  useEffect(() => {
+    setQuantity(1);
+  }, [slide.id]);
+
+  function handleAddToCart() {
+    addToCart({
+      id: slide.id,
+      name: slide.category,
+      category: slide.category,
+      price: slide.price,
+      image: slide.image,
+      quantity: quantity,
+    });
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 1500);
-  }, [slide, addToCart]);
+  }
+
+  const pill = "flex items-center gap-2 rounded-full px-4 py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wide";
 
   return (
     <section
       aria-roledescription="carousel"
-      aria-label="Artisanal food gallery"
-      className="relative w-full min-h-[100dvh] max-h-[100dvh] flex flex-col justify-center overflow-hidden select-none px-4 lg:px-12 pt-20 lg:pt-24 pb-4"
+      aria-label="Food gallery"
+      className="relative flex min-h-[100dvh] max-h-[100dvh] w-full select-none flex-col overflow-hidden px-4 pb-5 pt-6 transition-colors duration-700 lg:px-12 lg:pt-8"
+      style={{ backgroundColor: slide.bg }}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <FontFace />
-      <ColorThemeToggleMode
-        isAutoMatch={isAutoMatch}
-        setIsAutoMatch={setIsAutoMatch}
-        activeThemeName={activeThemeName}
-        setActiveThemeName={setActiveThemeName}
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&display=swap');
+        .font-display { font-family: 'Archivo', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+      `}</style>
+
+      {/* Soft light in the center */}
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{ background: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 60%)" }}
       />
-      <DynamicBackground slide={slide} activeTheme={activeTheme} />
 
-      <div className="relative flex-1 grid grid-cols-1 lg:grid-cols-[1.1fr_1.3fr_1.1fr] max-w-[1500px] w-full mx-auto items-center justify-items-center lg:justify-items-stretch gap-y-4 lg:gap-x-8 min-h-0 my-auto" aria-live="polite">
+      {/* Stage: giant words + product + badges */}
+      <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center" aria-live="polite">
+        {/* Giant background words */}
+        <AnimatePresence mode="wait">
+          <motion.h1
+            key={`w-${slide.id}`}
+            {...fadeUp(0.05)}
+            className="font-display pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center font-black uppercase leading-[0.82] tracking-[-0.04em]"
+            style={{ color: slide.word, fontSize: "clamp(4.5rem, 21vw, 17rem)" }}
+          >
+            <span>{slide.words[0]}</span>
+            <span>{slide.words[1]}</span>
+          </motion.h1>
+        </AnimatePresence>
 
-        {/* Left Column (Text) */}
-        <div className="flex flex-col justify-center h-full w-full lg:pl-6 lg:pr-8 relative order-2 lg:order-1 pt-1 lg:pt-0">
-          <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 -rotate-90 origin-left">
-            <span className="font-display font-bold text-[9px] tracking-[0.4em] uppercase text-white/65">
-              {slide.category}
-            </span>
-          </div>
-
-          <AnimatePresence mode="wait">
-            <motion.h1 key={`t-${slide.id}`} {...fadeUp(0.04)} className="mb-1.5 lg:mb-4 select-none text-center lg:text-left">
-              <span className="block font-display text-2xl sm:text-3xl lg:text-[5.5rem] font-black leading-[0.9] lg:leading-[0.85] tracking-tighter text-white">
-                {slide.title[1]}
-              </span>
-              <span className="block font-display text-lg sm:text-xl lg:text-5xl font-black tracking-tighter mt-0.5 text-white/95" style={{ color: "transparent", WebkitTextStroke: `1.5px rgba(255,255,255,0.95)` }}>
-                {slide.title[2]}
-              </span>
-            </motion.h1>
-          </AnimatePresence>
-
-          <AnimatePresence mode="wait">
-            <motion.p key={`d-${slide.id}`} {...fadeUp(0.08)} className="font-body leading-relaxed max-w-sm text-xs lg:text-sm text-white/90 line-clamp-2 lg:line-clamp-none text-center lg:text-left mx-auto lg:mx-0">
-              {slide.description}
-            </motion.p>
-          </AnimatePresence>
-
-          <AnimatePresence mode="wait">
-            <motion.div key={`tg-${slide.id}`} {...fadeUp(0.12)}>
-              <IngredientTags tags={slide.tags} accentColor={activeTheme.accent} />
-            </motion.div>
-          </AnimatePresence>
-
-          <TrustFeatures accentColor={activeTheme.accent} />
-        </div>
-
-        {/* Center Column (Massive Image) */}
-        <div className="relative h-[25vh] sm:h-[30vh] lg:h-full w-full overflow-visible flex items-center justify-center order-1 lg:order-2 my-0 lg:my-0">
-
-          {/* The Big, Bold Image (Ghost text and floating badges removed) */}
-          <AnimatePresence mode="popLayout" custom={direction}>
-            <motion.div
-              key={slide.id}
-              custom={direction}
-              variants={imgVar}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              className="relative z-10 w-[75vw] sm:w-[60vw] lg:w-[650px] max-w-[40rem] h-full flex items-center justify-center"
-            >
-              <motion.img
-                src={slide.image}
-                alt={slide.category}
-                animate={reducedMotion ? {} : { y: [0, -12, 0], rotate: [-3, 0, -3] }}
-                transition={reducedMotion ? {} : { duration: 7, repeat: Infinity, ease: "easeInOut" }}
-                className="w-full h-full object-contain pointer-events-none"
-                style={{
-                  filter: `drop-shadow(0 20px 30px rgba(0,0,0,0.6)) drop-shadow(0 0 35px rgba(${activeTheme.glow}, 0.5))`
-                }}
-              />
-            </motion.div>
-          </AnimatePresence>
-        </div>
-
-        {/* Right Column (Details & Actions) - Removed borders from container and pills */}
-        <div className="flex flex-col justify-center h-full w-full lg:pl-8 lg:pr-6 relative order-3 pb-1 lg:pb-0">
-          <div className="ml-0 lg:ml-auto flex flex-col items-center lg:items-start gap-3 lg:gap-4 w-full max-w-full lg:max-w-[20rem] bg-white/5 backdrop-blur-md rounded-2xl p-5 lg:p-6">
-
-            <div className="flex flex-col items-center lg:items-start w-full">
-              <span className="font-display text-[9px] font-bold tracking-[0.2em] uppercase mb-1 px-2 py-0.5 text-black rounded-full" style={{ backgroundColor: activeTheme.accent }}>
-                Save {savePct(slide.price, slide.oldPrice)}%
-              </span>
-              <AnimatePresence mode="popLayout">
-                <motion.div
-                  key={slide.id}
-                  initial={{ opacity: 0, y: 10, filter: "blur(4px)" }}
-                  animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-                  exit={{ opacity: 0, y: -10, filter: "blur(4px)" }}
-                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-                  className="flex items-baseline gap-2.5 mt-1"
-                >
-                  <span className="font-display text-2xl sm:text-3xl lg:text-4xl font-black leading-none text-white">{fmt(slide.price)}</span>
-                  <span className="font-body text-xs line-through text-white/60">{fmt(slide.oldPrice)}</span>
-                </motion.div>
-              </AnimatePresence>
-              <span className="font-body text-[9px] font-bold tracking-[0.3em] uppercase mt-0.5 text-white/70">UGX</span>
-            </div>
-
-            {/* Rating & Duration Pills (Borders Removed) */}
-            <div className="flex flex-wrap items-center gap-2 font-body text-[10px] tracking-wider text-white/95 w-full">
-              <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1.5 rounded-full">
-                <Clock size={12} strokeWidth={2.5} style={{ color: activeTheme.accent }} />
-                {slide.prepTime}
-              </span>
-              <span className="flex items-center gap-1.5 bg-white/5 px-2.5 py-1.5 rounded-full">
-                <Star size={12} strokeWidth={2.5} style={{ fill: activeTheme.accent, color: activeTheme.accent }} />
-                {slide.rating} Rating
-              </span>
-            </div>
-
-            <div className="w-full h-[1px] bg-white/10 my-0.5" />
-
-            <div className="flex items-center justify-between w-full">
-              <span className="font-display text-[9px] font-bold uppercase tracking-[0.2em] text-white/70">Quantity</span>
-              <QuantityStepper quantity={quantity} onDec={dec} onInc={inc} accentColor={activeTheme.accent} />
-            </div>
-
-            <AddToCartButton
-              onClick={() => addToCartHandler(quantity)}
-              isAdded={isAdded}
-              className="w-full mt-0.5"
-              primaryColor={activeTheme.primary}
-              primaryHoverColor={activeTheme.primaryHover}
+        {/* Product image */}
+        <AnimatePresence mode="popLayout" custom={direction}>
+          <motion.div
+            key={slide.id}
+            custom={direction}
+            variants={imgVar}
+            initial="enter"
+            animate="center"
+            exit="exit"
+            className="relative z-10 flex h-[52vh] w-full items-center justify-center sm:h-[50vh] lg:h-[72vh]"
+          >
+            <img
+              src={slide.image}
+              alt={slide.category}
+              className="pointer-events-none h-full max-w-[90vw] object-contain lg:max-w-[50rem]"
+              style={{ filter: "drop-shadow(0 30px 30px rgba(0,0,0,0.35))" }}
             />
-          </div>
-        </div>
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Dark speech bubble (left) */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`b1-${slide.id}`}
+            {...fadeUp(0.3)}
+            className="font-display absolute bottom-[14%] left-[3%] z-20 -rotate-3 rounded-2xl px-4 py-2 text-[11px] font-extrabold uppercase text-white lg:bottom-[20%] lg:left-[24%] lg:px-5 lg:py-2.5 lg:text-sm"
+            style={{ backgroundColor: slide.dark }}
+          >
+            {slide.tags[0]}
+            <span className="absolute -bottom-1 left-6 h-3 w-3 rotate-45" style={{ backgroundColor: slide.dark }} />
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Brand Color pill (right) - Now uses #D9FF00 as background to be visible */}
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={`b2-${slide.id}`}
+            {...fadeUp(0.4)}
+            className="font-display absolute right-[3%] top-[55%] z-20 rounded-full px-4 py-2 text-[11px] font-extrabold uppercase shadow-lg lg:right-[22%] lg:px-5 lg:py-2.5 lg:text-sm"
+            style={{ backgroundColor: BRAND_COLOR, color: slide.dark }}
+          >
+            {slide.tags[1]}
+          </motion.div>
+        </AnimatePresence>
+
+        {/* Side arrows */}
+        <motion.button
+          type="button"
+          onClick={prev}
+          aria-label="Previous"
+          whileHover={{ scale: 1.12 }}
+          whileTap={{ scale: 0.88 }}
+          transition={spring}
+          className="absolute left-0 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/30 text-white backdrop-blur-md lg:h-11 lg:w-11"
+        >
+          <ChevronLeft size={18} strokeWidth={2.5} />
+        </motion.button>
+        <motion.button
+          type="button"
+          onClick={next}
+          aria-label="Next"
+          whileHover={{ scale: 1.12 }}
+          whileTap={{ scale: 0.88 }}
+          transition={spring}
+          className="absolute right-0 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/30 text-white backdrop-blur-md lg:h-11 lg:w-11"
+        >
+          <ChevronRight size={18} strokeWidth={2.5} />
+        </motion.button>
       </div>
 
-      {/* Mobile Navigation */}
-      <div className="lg:hidden relative z-20 flex justify-center pt-4 shrink-0">
-        <div className="w-full max-w-md">
-          <ThumbnailRail current={current} onSelect={goTo} onPrev={prev} onNext={next} accentColor={activeTheme.accent} />
-        </div>
-      </div>
+      {/* Bottom pill row */}
+      <div className="relative z-20 flex flex-col items-center gap-3">
+        <div className="flex flex-wrap items-center justify-center gap-2 font-display text-white sm:gap-3">
 
-      {/* Footer Navigation (Desktop Thumbnails + Socials) */}
-      <div className="relative z-20 hidden lg:flex flex-row items-center justify-between max-w-[1500px] w-full mx-auto pt-2 shrink-0">
-        <SocialFooter accentColor={activeTheme.accent} />
-        <div className="flex max-w-md">
-          <ThumbnailRail current={current} onSelect={goTo} onPrev={prev} onNext={next} accentColor={activeTheme.accent} />
+          {/* Save % Pill - Uses Brand Color as background for high visibility */}
+          <span
+            className={`${pill} shadow-sm`}
+            style={{ backgroundColor: BRAND_COLOR, color: slide.dark }}
+          >
+            Save {savePct(slide.price, slide.oldPrice)}%
+          </span>
+
+          <span className={`${pill} border border-white/70`}>
+            <Clock size={13} strokeWidth={2.5} /> {slide.prepTime}
+          </span>
+
+          <span className={`${pill} border border-white/70`}>
+            <Star size={13} strokeWidth={2.5} fill="currentColor" /> {slide.rating}
+          </span>
+
+          {/* Quantity */}
+          <span className={`${pill} border border-white/70`}>
+            <button type="button" aria-label="Reduce quantity" className="cursor-pointer" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+              <Minus size={13} strokeWidth={3} />
+            </button>
+            <span className="w-4 text-center">{quantity}</span>
+            <button type="button" aria-label="Increase quantity" className="cursor-pointer" onClick={() => setQuantity(quantity + 1)}>
+              <Plus size={13} strokeWidth={3} />
+            </button>
+          </span>
+
+          {/* Main CTA - Uses Brand Color (#D9FF00) as background, Dark text. Turns Green when added. */}
+          <motion.button
+            type="button"
+            onClick={handleAddToCart}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            transition={spring}
+            className={`${pill} cursor-pointer shadow-lg`}
+            style={{
+              backgroundColor: isAdded ? SUCCESS_COLOR : BRAND_COLOR,
+              color: isAdded ? "#FFFFFF" : slide.dark
+            }}
+          >
+            {isAdded ? <Check size={14} strokeWidth={3} /> : <ShoppingBasket size={14} strokeWidth={2.5} />}
+            {isAdded ? "Added" : `Order now · ${fmt(slide.price * quantity)} UGX`}
+          </motion.button>
         </div>
+
+        <Link to="/returnPolicy" className="text-[10px] font-semibold uppercase tracking-widest text-white/70 transition-colors hover:text-white">
+          © {new Date().getFullYear()} {BRAND_NAME} · Return Policy
+        </Link>
       </div>
     </section>
   );

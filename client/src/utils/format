@@ -1,0 +1,13 @@
+// Shared formatting helpers used by Hero, Navbar, ProductsView and About.
+// Keeping this in one file means a price displays the same way everywhere.
+
+export function fmt(n) {
+  return Number(n).toLocaleString();
+}
+
+// Percentage saved between a current price and an anchoring/"was" price.
+export function savePct(price, anchoring) {
+  const a = parseInt(anchoring, 10);
+  if (!a || a <= price) return 0;
+  return Math.round((1 - price / a) * 100);
+}

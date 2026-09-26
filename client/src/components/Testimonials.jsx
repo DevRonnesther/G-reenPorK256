@@ -1,193 +1,182 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { MessageSquareQuote, Star, Check } from "lucide-react";
+import { MessageSquareQuote, Star, Check, Flame } from "lucide-react";
 
-// ─── Centralized GreenPork Design Tokens ──────────────────────────────────────
-const BRAND = {
-  red: "#D90404",      // --brand-red
-  lime: "#D4FF00",      // --brand-lime
-  white: "#FFFFFF",     // --brand-white
-  dark: "#2E0101",      // --brand-dark
-};
+/* ═══════════════════════════════════════════════════════════
+   STANDARD DESIGN TOKENS
+   ═══════════════════════════════════════════════════════════ */
+const BRAND_COLOR = "#D9FF00"; // Primary Action / Highlight
+const DARK = "#4A0A0A";       // Primary Dark / Text
+const ACCENT = "#F5A31A";     // Secondary Highlight (Stars, Verified)
 
-const DEFAULT_THEME = {
-  text: BRAND.dark,
-  textSoft: "rgba(46,1,1,0.8)",
-  textFaint: "rgba(46,1,1,0.6)",
-  bg: BRAND.white,
-};
+const testimonials = [
+  {
+    quote: "Green Pork completely changed my expectations for premium food delivery. The taste, freshness, and presentation are outstanding.",
+    author: "Maria Rodriguez",
+    role: "Restaurant Owner",
+    image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    quote: "As a chef, quality matters to me. Green Pork consistently delivers rich flavor, fast service, and exceptional customer care.",
+    author: "Thomas Lee",
+    role: "Executive Chef",
+    image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80",
+  },
+  {
+    quote: "Every order feels premium. From the packaging to the taste, Green Pork delivers an experience worth coming back for.",
+    author: "Emily Watson",
+    role: "Food Critic",
+    image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80",
+  },
+];
 
-// ─── GSAP-like Stagger Config ─────────────────────────────────────────────────
-const ease = [0.22, 1, 0.36, 1];
+const ease = [0.16, 1, 0.3, 1];
 
-const containerStagger = {
-  hidden: { opacity: 0 },
-  show: {
-    opacity: 1,
-    transition: { staggerChildren: 0.15, delayChildren: 0.1 }
-  }
-};
-
-const itemReveal = {
-  hidden: { opacity: 0, y: 50, clipPath: "inset(100% 0 0 0)" },
-  show: {
-    opacity: 1,
-    y: 0,
-    clipPath: "inset(0% 0 0 0)",
-    transition: { duration: 0.9, ease }
-  }
-};
-
-const Eyebrow = ({ theme }) => (
-  <span className="inline-flex items-center gap-3 text-xs font-display font-bold uppercase tracking-widest mb-6" style={{ color: theme.textFaint }}>
-    <span className="h-2 w-2" style={{ backgroundColor: BRAND.lime }} />
-    Customer Reviews
-  </span>
-);
-
-const Testimonials = ({ theme = DEFAULT_THEME }) => {
-  const testimonials = [
-    {
-      quote: "GreenPork completely changed my expectations for premium food delivery. The taste, freshness, and presentation are outstanding.",
-      author: "Maria Rodriguez", title: "Restaurant Owner",
-      image: "https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80",
-    },
-    {
-      quote: "As a chef, quality matters to me. GreenPork consistently delivers rich flavor, fast service, and exceptional customer care.",
-      author: "Thomas Lee", title: "Executive Chef",
-      image: "https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80",
-    },
-    {
-      quote: "Every order feels premium. From the packaging to the taste, GreenPork delivers an experience worth coming back for.",
-      author: "Emily Watson", title: "Food Critic",
-      image: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?ixlib=rb-4.0.3&auto=format&fit=crop&w=900&q=80",
-    },
-  ];
-
+function Reveal({ children, delay = 0, className = "" }) {
   return (
-    <section className="relative font-body">
-      <div className="max-w-7xl mx-auto relative z-10">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-start">
+    <motion.div
+      initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+      whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
+      viewport={{ once: true, margin: "-60px" }}
+      transition={{ duration: 0.7, ease, delay }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
+}
 
-          {/* LEFT COLUMN: STICKY BRAND OVERVIEW & TRUST BADGE */}
-          <motion.div
-            variants={containerStagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-80px" }}
-            className="lg:col-span-5 lg:sticky lg:top-32 space-y-8 mb-8 lg:mb-0"
-          >
-            <motion.div variants={itemReveal}>
-              <Eyebrow theme={theme} />
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black tracking-tighter leading-[0.9]" style={{ color: theme.text }}>
-                What Our Valued Clients <br />Say About Us
+export default function Testimonials() {
+  return (
+    <div className="font-display relative selection:bg-[#D9FF00] selection:text-[#4A0A0A]">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-12 lg:gap-16">
+
+          {/* Left column: Sticky summary */}
+          <div className="mb-8 space-y-8 self-start lg:col-span-5 lg:mb-0 lg:sticky lg:top-32">
+            <Reveal>
+              <span className="mb-5 inline-flex items-center gap-2 rounded-full bg-[#4A0A0A]/10 px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-[#4A0A0A]">
+                <Flame size={13} strokeWidth={2.5} />
+                Customer Reviews
+              </span>
+              <h2
+                className="font-black uppercase leading-[0.85] tracking-[-0.04em] text-[#4A0A0A]"
+                style={{ fontSize: "clamp(2.25rem, 5vw, 3.75rem)" }}
+              >
+                What Our <br /> Clients Say
               </h2>
-            </motion.div>
+            </Reveal>
 
-            <motion.p
-              variants={itemReveal}
-              className="text-base leading-relaxed max-w-md font-body"
-              style={{ color: theme.textSoft }}
-            >
-              Trusted by food lovers, chefs, and families who enjoy premium taste, quality service, and unforgettable culinary experiences across the country.
-            </motion.p>
-
-            {/* Trust Metric Card */}
-            <motion.div
-              variants={itemReveal}
-              className="p-6 max-w-md flex items-center gap-6 shadow-sm"
-              style={{ backgroundColor: theme.bg }}
-            >
-              <div className="text-center shrink-0">
-                <span className="text-5xl font-display font-black leading-none" style={{ color: theme.text }}>4.9</span>
-                <div className="flex items-center gap-1 mt-2 justify-center">
-                  {[...Array(5)].map((_, i) => (
-                    <Star key={i} size={12} className="fill-[#D90404] text-[#D90404]" />
-                  ))}
-                </div>
-              </div>
-              <div className="h-12 w-px shrink-0 bg-stone-200" />
-              <p className="text-xs leading-normal font-body font-medium" style={{ color: theme.textSoft }}>
-                Based on 1,500+ direct client reviews and local catering experiences.
+            <Reveal delay={0.1}>
+              <p className="max-w-md text-sm font-medium leading-relaxed text-[#4A0A0A]/70 md:text-base">
+                Trusted by food lovers, chefs, and families who enjoy premium taste, quality service, and unforgettable culinary experiences across the country.
               </p>
-            </motion.div>
-          </motion.div>
+            </Reveal>
 
-          {/* RIGHT COLUMN: ASYMMETRIC STAGGERED DECK */}
-          <motion.div
-            variants={containerStagger}
-            initial="hidden"
-            whileInView="show"
-            viewport={{ once: true, margin: "-80px" }}
-            className="lg:col-span-7 space-y-8 pb-6"
-          >
-
-            {/* 1. Featured Testimonial */}
-            <motion.div
-              variants={itemReveal}
-              whileHover={{ y: -4 }}
-              className="p-8 md:p-12 text-[#2E0101] shadow-2xl"
-              style={{ backgroundColor: BRAND.lime }}
-            >
-              <div className="flex items-center justify-between mb-8">
-                <div className="w-12 h-12 flex items-center justify-center bg-[#2E0101] text-[#D4FF00]">
-                  <MessageSquareQuote size={18} strokeWidth={2.5} />
-                </div>
-                <span className="inline-flex items-center gap-2 px-3 py-1.5 text-[10px] font-display font-black tracking-widest uppercase bg-[#2E0101] text-[#D4FF00]">
-                  <Check size={12} strokeWidth={3} /> Featured
-                </span>
-              </div>
-
-              <p className="leading-relaxed text-xl md:text-2xl mb-8 italic font-body">
-                "{testimonials[0].quote}"
-              </p>
-
-              <div className="flex items-center gap-4 pt-4 border-t-2 border-[#2E0101]/20">
-                <img src={testimonials[0].image} alt={testimonials[0].author} className="w-14 h-14 object-cover" />
-                <div>
-                  <h4 className="text-lg font-display font-black leading-none">{testimonials[0].author}</h4>
-                  <p className="text-xs font-ui font-bold mt-1 opacity-70 uppercase tracking-wide">{testimonials[0].title}</p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Staggered Sub-Grid for Reviews 2 & 3 */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {[testimonials[1], testimonials[2]].map((t, i) => (
-                <motion.div
-                  key={t.author}
-                  variants={itemReveal}
-                  whileHover={{ y: -4 }}
-                  className={`p-8 shadow-lg ${i === 1 ? "md:translate-y-8" : ""}`}
-                  style={{ backgroundColor: theme.bg }}
-                >
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="w-10 h-10 flex items-center justify-center" style={{ color: theme.text }}>
-                      <MessageSquareQuote size={16} strokeWidth={2.5} />
-                    </div>
-                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-[9px] font-display font-bold tracking-widest uppercase" style={{ color: theme.text }}>
-                      <Check size={10} strokeWidth={3} /> Verified
-                    </span>
+            <Reveal delay={0.2}>
+              <div className="flex max-w-md items-center gap-6 rounded-3xl bg-[#4A0A0A]/[0.03] p-6">
+                <div className="shrink-0 text-center">
+                  <span className="block text-5xl font-black leading-none text-[#4A0A0A]">
+                    4.9
+                  </span>
+                  <div className="mt-2 flex items-center justify-center gap-1">
+                    {[...Array(5)].map((_, i) => (
+                      <Star key={i} size={12} className="fill-[#F5A31A] text-[#F5A31A]" />
+                    ))}
                   </div>
+                </div>
+                <div className="h-12 w-px shrink-0 bg-[#4A0A0A]/15" />
+                <p className="text-xs font-medium leading-normal text-[#4A0A0A]/70">
+                  Based on 1,500+ direct client reviews and local catering experiences.
+                </p>
+              </div>
+            </Reveal>
+          </div>
 
-                  <p className="leading-relaxed text-sm mb-6 font-body" style={{ color: theme.textSoft }}>"{t.quote}"</p>
+          {/* Right column: Cards */}
+          <div className="space-y-8 pb-6 lg:col-span-7">
 
-                  <div className="flex items-center gap-3 pt-4 border-t border-stone-200">
-                    <img src={t.image} alt={t.author} className="w-12 h-12 object-cover" />
-                    <div>
-                      <h4 className="text-base font-display font-black leading-none" style={{ color: theme.text }}>{t.author}</h4>
-                      <p className="text-[11px] font-ui font-bold mt-1 uppercase tracking-wide" style={{ color: theme.textFaint }}>{t.title}</p>
+            {/* Featured Testimonial */}
+            <Reveal delay={0.1}>
+              <div className="h-full rounded-3xl bg-[#4A0A0A] p-8 transition-transform duration-300 hover:-translate-y-1 md:p-12">
+                <div className="mb-8 flex items-center justify-between">
+                  {/* Quote icon uses standard brand color */}
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full text-[#4A0A0A]" style={{ backgroundColor: BRAND_COLOR }}>
+                    <MessageSquareQuote size={18} strokeWidth={2.5} />
+                  </div>
+                  {/* Featured badge uses standard brand color */}
+                  <span className="inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-[#4A0A0A]" style={{ backgroundColor: BRAND_COLOR }}>
+                    <Check size={12} strokeWidth={3} /> Featured
+                  </span>
+                </div>
+
+                <p className="mb-8 text-xl font-medium italic leading-relaxed text-white md:text-2xl">
+                  "{testimonials[0].quote}"
+                </p>
+
+                <div className="mb-4 h-px w-full bg-white/15" />
+                <div className="flex items-center gap-4">
+                  <img
+                    src={testimonials[0].image}
+                    alt={testimonials[0].author}
+                    className="h-14 w-14 rounded-2xl object-cover"
+                  />
+                  <div>
+                    <h4 className="text-lg font-black uppercase leading-none tracking-tight text-white">
+                      {testimonials[0].author}
+                    </h4>
+                    <p className="mt-1 text-xs font-bold uppercase tracking-widest text-white/60">
+                      {testimonials[0].role}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Reveal>
+
+            {/* Secondary Testimonials */}
+            <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+              {testimonials.slice(1, 3).map((t, i) => (
+                <Reveal key={t.author} delay={0.15 + i * 0.1} className={i === 1 ? "md:mt-8" : ""}>
+                  <div className="h-full rounded-3xl bg-white p-8 shadow-lg transition-transform duration-300 hover:-translate-y-1 border border-[#4A0A0A]/5">
+                    <div className="mb-6 flex items-center justify-between">
+                      {/* Quote icon uses standard brand color */}
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full text-[#4A0A0A]" style={{ backgroundColor: BRAND_COLOR }}>
+                        <MessageSquareQuote size={16} strokeWidth={2.5} />
+                      </div>
+                      {/* Verified badge uses standard accent color */}
+                      <span className="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9px] font-bold uppercase tracking-widest text-[#4A0A0A]" style={{ backgroundColor: ACCENT }}>
+                        <Check size={10} strokeWidth={3} /> Verified
+                      </span>
+                    </div>
+
+                    <p className="mb-6 text-sm font-medium leading-relaxed text-[#4A0A0A]/70">
+                      "{t.quote}"
+                    </p>
+
+                    <div className="mb-4 h-px w-full bg-[#4A0A0A]/10" />
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={t.image}
+                        alt={t.author}
+                        className="h-12 w-12 rounded-2xl object-cover"
+                      />
+                      <div>
+                        <h4 className="text-base font-black uppercase leading-none tracking-tight text-[#4A0A0A]">
+                          {t.author}
+                        </h4>
+                        <p className="mt-1 text-[11px] font-bold uppercase tracking-widest text-[#4A0A0A]/50">
+                          {t.role}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </motion.div>
+                </Reveal>
               ))}
             </div>
 
-          </motion.div>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
   );
-};
-
-export default Testimonials;
+}
