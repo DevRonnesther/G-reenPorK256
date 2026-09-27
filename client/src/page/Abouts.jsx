@@ -281,7 +281,7 @@ export default function About() {
           <SectionHeading eyebrow="Leadership" color={DARK} light={false}>
             Meet Our <br /> Team
           </SectionHeading>
-          <ScrollReveal delay={0.1} className="rounded-3xl bg-[#2E0101]/[0.03] p-6 md:p-10">
+          <ScrollReveal delay={0.1} className="rounded-3xl bg-[#2E0101]/[0.03]//// p-6 md:p-10">
             <Staff />
           </ScrollReveal>
         </div>
@@ -312,7 +312,7 @@ export default function About() {
       </section>
 
       {/* --- LOGISTICS --- */}
-      <section ref={deliveryRef} className="relative overflow-hidden px-4 py-20 md:py-32 lg:px-12 bg-white">
+      <section ref={deliveryRef} className="relative overflow-hidden px-4 py-20 md:py-32 lg:px-12 bg-[#D9FF00]">
         {/* Giant Ghost Text Background */}
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.04]">
           <span className="font-display text-[20vw] font-black uppercase tracking-tighter" style={{ color: DARK }}>
@@ -392,9 +392,9 @@ export default function About() {
               </div>
 
               {/* Right Side: The Parallax Tracking Stage */}
-              <div className="relative flex min-h-[450px] items-center justify-center overflow-hidden bg-[#2E0101]/[0.02] p-8">
+              <div className="relative flex min-h-[450px] items-center justify-center overflow-hidden bg-[#D9FF00] p-8">
                 {/* Ambient Glow */}
-                <div className="pointer-events-none absolute h-96 w-96 rounded-full opacity-10 blur-[120px]" style={{ backgroundColor: RED }} />
+                <div className="pointer-events-none hidden absolute h-96 w-96 rounded-full opacity-10 blur-[120px]" style={{ backgroundColor: RED }} />
 
                 {/* Floating UI Card 1: Temp (Dark card) */}
                 <motion.div
@@ -440,7 +440,7 @@ export default function About() {
                 />
 
                 {/* Ground Track Line */}
-                <div className="absolute bottom-24 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#2E0101]/10 to-transparent"></div>
+                <div className="absolute bottom-24 hidden left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#2E0101]/10 to-transparent"></div>
               </div>
             </div>
           </ScrollReveal>
@@ -448,9 +448,9 @@ export default function About() {
       </section>
 
       {/* --- CONTACT --- */}
-      <section className="relative px-4 py-20 md:py-32 lg:px-12" style={{ backgroundColor: RED }}>
+      <section className="relative px-4 py-20 md:py-32 lg:px-12" bg-white>
         <div className="relative z-10 mx-auto max-w-7xl">
-          <SectionHeading eyebrow="Location" color={WORD_RED}>
+          <SectionHeading eyebrow="Location" color={RED}>
             Direct <br /> Contact
           </SectionHeading>
 
@@ -458,7 +458,7 @@ export default function About() {
             <div className="flex flex-col justify-between gap-4">
               {CONTACT_ITEMS.map((item, i) => {
                 const inner = (
-                  <div className="group flex items-center gap-5 rounded-2xl bg-white p-5 shadow-lg transition-transform duration-300 hover:-translate-y-1 md:p-6">
+                  <div className="group flex items-center gap-5 rounded-2xl bg-white p-5 shadow-none transition-transform duration-300 hover:-translate-y-1 md:p-6">
                     <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: DARK }}>
                       <item.icon className="h-5 w-5" strokeWidth={2.2} />
                     </div>

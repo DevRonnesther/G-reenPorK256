@@ -130,7 +130,7 @@ export default function Contact() {
           <div className="space-y-3 lg:sticky lg:top-28 lg:col-span-5">
             {INFO.map(({ icon: Icon, label, value, href }) => {
               const inner = (
-                <div className="flex items-center gap-4 rounded-2xl bg-white p-5 shadow-lg border border-[#4A0A0A]/5">
+                <div className="flex items-center gap-4 rounded-2xl bg-white p-5 shadow-none border-none border-[#4A0A0A]/5">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: DARK }}>
                     <Icon size={18} strokeWidth={2.2} />
                   </div>
