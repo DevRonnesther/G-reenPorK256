@@ -15,9 +15,9 @@ const PHONE_LINK = "tel:+256776464823";
 const EMAIL = "greenporkie@gmail.com";
 
 // Standardized Colors
-const BRAND_COLOR = "#D9FF00"; // Primary Action / Highlight
-const DARK = "#4A0A0A";       // Primary Dark / Text
-const RED = "#E11D1D";        // Alert / Active states
+const BRAND_COLOR = "#D9FF00";
+const DARK = "#4A0A0A";
+const RED = "#E11D1D";
 const WORD_RED = "#FFC2B3";
 
 const RETURN_RULES = [
@@ -62,7 +62,7 @@ const SUPPORT = [
 ];
 
 /* ═══════════════════════════════════════════════════════════
-   SHARED ANIMATION (same as Hero)
+   SHARED ANIMATION
    ═══════════════════════════════════════════════════════════ */
 const spring = { type: "spring", stiffness: 220, damping: 26 };
 const ease = [0.16, 1, 0.3, 1];
@@ -88,7 +88,6 @@ function ScrollReveal({ children, delay = 0, className = "" }) {
   );
 }
 
-// Small pill label
 function Eyebrow({ children, light = false }) {
   const tone = light ? "bg-white/15 text-white backdrop-blur-md" : "bg-[#4A0A0A]/10 text-[#4A0A0A]";
   return (
@@ -99,7 +98,6 @@ function Eyebrow({ children, light = false }) {
   );
 }
 
-// Round dark icon badge used across the page
 function IconBadge({ icon: Icon, size = "md" }) {
   const box = size === "lg" ? "h-14 w-14" : "h-11 w-11";
   return (
@@ -109,7 +107,6 @@ function IconBadge({ icon: Icon, size = "md" }) {
   );
 }
 
-// Highlighted key detail inside a sentence (uses standard brand color)
 function Mark({ children }) {
   return (
     <strong className="rounded-md px-1.5 py-0.5 font-black" style={{ backgroundColor: BRAND_COLOR, color: DARK }}>
@@ -133,9 +130,8 @@ export default function ReturnPolicy() {
 
       {/* ── HEADER ── */}
       <header className="relative mx-auto max-w-7xl px-4 pb-12 pt-28 lg:px-12 lg:pt-36">
-        {/* Soft red light behind the heading */}
         <div
-          className="pointer-events-none absolute inset-0"
+          className="pointer-events-none absolute inset-0 hidden"
           style={{ background: "radial-gradient(circle at 30% 40%, rgba(225,29,29,0.08) 0%, rgba(225,29,29,0) 60%)" }}
         />
 
@@ -153,7 +149,6 @@ export default function ReturnPolicy() {
               Return <br /> Policy
             </motion.h1>
 
-            {/* Dark speech bubble */}
             <motion.div
               {...fadeUp(0.3)}
               className="absolute bottom-[6%] right-[3%] z-20 hidden -rotate-3 rounded-2xl px-5 py-2.5 text-sm font-extrabold uppercase text-white sm:block lg:right-[22%]"
@@ -163,10 +158,9 @@ export default function ReturnPolicy() {
               <span className="absolute -bottom-1 left-6 h-3 w-3 rotate-45" style={{ backgroundColor: DARK }} />
             </motion.div>
 
-            {/* White pill */}
             <motion.div
               {...fadeUp(0.4)}
-              className="absolute right-[3%] top-[8%] z-20 hidden rounded-full bg-white px-5 py-2.5 text-sm font-extrabold uppercase shadow-lg ring-1 ring-black/5 sm:block lg:right-[8%]"
+              className="absolute right-[3%] top-[8%] z-20 hidden rounded-full bg-white px-5 py-2.5 text-sm font-extrabold uppercase sm:block lg:right-[8%]"
               style={{ color: DARK }}
             >
               Refunds in 3–5 days
@@ -181,7 +175,7 @@ export default function ReturnPolicy() {
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={spring}>
               <Link
                 to="/Products"
-                className="flex items-center gap-2 rounded-full px-6 py-3.5 text-xs font-bold uppercase tracking-wide shadow-lg"
+                className="flex items-center gap-2 rounded-full px-6 py-3.5 text-xs font-bold uppercase tracking-wide"
                 style={{ backgroundColor: BRAND_COLOR, color: DARK }}
               >
                 <ShoppingBasket size={14} strokeWidth={2.5} />
@@ -196,6 +190,7 @@ export default function ReturnPolicy() {
       {/* ── MAIN ── */}
       <main className="mx-auto max-w-7xl px-4 pb-8 pt-8 lg:px-12">
         <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-12">
+
           {/* LEFT: returns and refunds */}
           <section className="lg:col-span-7">
             <ScrollReveal>
@@ -213,7 +208,7 @@ export default function ReturnPolicy() {
                 <ScrollReveal
                   key={rule.title}
                   delay={i * 0.1}
-                  className="flex items-start gap-5 rounded-3xl border border-[#4A0A0A]/10 bg-[#4A0A0A]/[0.03] p-6 md:p-8"
+                  className="flex items-start gap-5 rounded-[2.5rem] bg-[#4A0A0A]/[0.02] p-6 transition-all duration-300 hover:bg-[#4A0A0A]/[0.04] md:p-8"
                 >
                   <IconBadge icon={rule.icon} />
                   <div>
@@ -232,7 +227,7 @@ export default function ReturnPolicy() {
           {/* RIGHT: cancellation + assurance */}
           <div className="space-y-4 lg:sticky lg:top-28 lg:col-span-5">
             <ScrollReveal>
-              <section className="relative overflow-hidden rounded-3xl p-8 text-white shadow-2xl md:p-10" style={{ backgroundColor: DARK }}>
+              <section className="relative overflow-hidden rounded-[2.5rem] p-8 text-white md:p-10" style={{ backgroundColor: DARK }}>
                 <div
                   className="pointer-events-none absolute inset-0"
                   style={{ background: "radial-gradient(circle at 50% 0%, rgba(225,29,29,0.45) 0%, rgba(225,29,29,0) 65%)" }}
@@ -247,7 +242,6 @@ export default function ReturnPolicy() {
                   </div>
                   <p className="text-sm font-medium leading-relaxed text-white/80">
                     Orders may be canceled before{" "}
-                    {/* Highlight uses standard brand color */}
                     <strong className="rounded-md px-1.5 py-0.5 font-black" style={{ backgroundColor: BRAND_COLOR, color: DARK }}>8:00 AM</strong>{" "}
                     on your scheduled day of delivery. Once culinary preparation begins, cancellations cannot be accommodated.
                   </p>
@@ -256,7 +250,7 @@ export default function ReturnPolicy() {
             </ScrollReveal>
 
             <ScrollReveal delay={0.1}>
-              <section className="space-y-7 rounded-3xl border border-[#4A0A0A]/10 bg-[#4A0A0A]/[0.03] p-8 md:p-10">
+              <section className="space-y-7 rounded-[2.5rem] bg-[#4A0A0A]/[0.02] p-8 md:p-10">
                 {ASSURANCES.map((a) => (
                   <div key={a.title} className="flex gap-4">
                     <IconBadge icon={a.icon} />
@@ -271,9 +265,9 @@ export default function ReturnPolicy() {
           </div>
         </div>
 
-        {/* ── HELP DESK (red panel, like a Hero slide) ── */}
+        {/* ── HELP DESK ── */}
         <ScrollReveal className="mt-20">
-          <section className="relative overflow-hidden rounded-[2rem] px-6 py-14 shadow-2xl md:px-12 md:py-20" style={{ backgroundColor: RED }}>
+          <section className="relative overflow-hidden rounded-[2.5rem] px-6 py-14 md:px-12 md:py-20" style={{ backgroundColor: RED }}>
             <div
               className="pointer-events-none absolute inset-0"
               style={{ background: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 60%)" }}
@@ -296,7 +290,7 @@ export default function ReturnPolicy() {
               <div className="grid gap-4 md:grid-cols-3">
                 {SUPPORT.map(({ icon, label, value, href }) => {
                   const card = (
-                    <div className="flex h-full flex-col justify-between gap-6 rounded-2xl bg-white p-6 shadow-lg">
+                    <div className="flex h-full flex-col justify-between gap-6 rounded-[2rem] bg-white p-6 transition-transform duration-300 hover:-translate-y-1">
                       <IconBadge icon={icon} size="lg" />
                       <div>
                         <h3 className="mb-2 text-[10px] font-bold uppercase tracking-widest text-[#4A0A0A]/50">{label}</h3>

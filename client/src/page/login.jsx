@@ -88,7 +88,7 @@ export default function Login() {
 
         <div className="relative z-10 flex h-full flex-col justify-between">
           {/* Top Branding */}
-          <div className="space-y-6">
+          <div className="space-y-6 hidden">
             <Link to="/" className="group flex w-fit items-center gap-3">
               <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-xs font-black backdrop-blur-md transition-transform group-hover:scale-105">
                 GP
@@ -106,9 +106,9 @@ export default function Login() {
 
           {/* Middle Call To Action */}
           <div className="my-auto space-y-4">
-            <h2 className="text-3xl font-black uppercase leading-[0.85] tracking-[-0.04em] xl:text-4xl">
-              One Bite.<br />
-              <span style={{ color: WORD_RED }}>Good Mood.</span>
+            <h2 className="text-4xl font-black uppercase leading-[0.85] tracking-[-0.04em] xl:text-5xl">
+              Eat Fresh.<br />
+              <span style={{ color: WORD_RED }}>Live Happy</span>
             </h2>
             <p className="max-w-xs text-xs font-medium leading-relaxed text-white/70 xl:text-sm">
               Crafted for sharing, feasting, and instant good vibes. Continue your culinary journey.
@@ -116,7 +116,7 @@ export default function Login() {
           </div>
 
           {/* Bottom Stats */}
-          <div className="space-y-4 pt-6">
+          <div className="space-y-4 hidden pt-6">
             <div className="h-px w-full bg-white/15" />
             {[
               { value: "10K+", label: "Active Customers" },
@@ -139,7 +139,7 @@ export default function Login() {
       {/* RIGHT FORM CANVAS */}
       <main className="relative flex h-full flex-1 flex-col justify-center overflow-hidden p-6 sm:p-10 xl:p-16">
         {/* Floating Decorative Background Text */}
-        <div className="pointer-events-none absolute right-0 top-0 select-none opacity-[0.03]" style={{ color: DARK }}>
+        <div className="pointer-events-none hidden absolute right-0 top-0 select-none opacity-[0.03]" style={{ color: DARK }}>
           <span className="font-black text-[12rem] leading-none tracking-tighter xl:text-[16rem]">
             LOGIN
           </span>
@@ -149,7 +149,7 @@ export default function Login() {
           {/* HEADER */}
           <Reveal delay={0.1}>
             <div className="mb-8 lg:mb-10">
-              <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#4A0A0A]/10 px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-[#4A0A0A]">
+              <span className="mb-4 inline-flex// hidden items-center gap-2 rounded-full bg-[#4A0A0A]/10 px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-[#4A0A0A]">
                 <Flame size={13} strokeWidth={2.5} />
                 Access Account
               </span>

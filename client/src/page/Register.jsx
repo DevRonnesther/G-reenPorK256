@@ -124,8 +124,8 @@ export default function RegisterForm() {
           {/* Center Copy */}
           <div className="my-auto space-y-4">
             <h2 className="text-3xl font-black uppercase leading-[0.85] tracking-[-0.04em] xl:text-4xl">
-              One Bite.<br />
-              <span style={{ color: WORD_RED }}>Good Mood.</span>
+              Eat Fresh.<br />
+              <span style={{ color: WORD_RED }}>Live Happy</span>
             </h2>
             <p className="max-w-xs text-xs font-medium leading-relaxed text-white/70 xl:text-sm">
               Crafted for sharing, feasting, and instant good vibes. Join the inner circle of pork lovers.
@@ -133,7 +133,7 @@ export default function RegisterForm() {
           </div>
 
           {/* Stats */}
-          <div className="space-y-4 pt-6">
+          <div className="space-y-4 hidden pt-6">
             <div className="h-px w-full bg-white/15" />
             {[
               { value: "10K+", label: "Active Customers" },
@@ -156,7 +156,7 @@ export default function RegisterForm() {
       {/* RIGHT FORM CANVAS */}
       <main className="relative flex h-full flex-1 flex-col justify-center overflow-hidden p-6 sm:p-10 xl:p-16">
         {/* Ghost Background Text — same giant-word device as the Hero */}
-        <div className="pointer-events-none absolute right-0 top-0 select-none opacity-[0.03]" style={{ color: DARK }}>
+        <div className="pointer-events-none hidden absolute right-0 top-0 select-none opacity-[0.03]" style={{ color: DARK }}>
           <span className="font-black text-[12rem] leading-none tracking-tighter xl:text-[16rem]">
             JOIN
           </span>
@@ -166,7 +166,7 @@ export default function RegisterForm() {
         <div className="relative z-10 mx-auto w-full max-w-3xl">
           <Reveal delay={0.1}>
             <div className="mb-8 lg:mb-10">
-              <span className="mb-4 inline-flex items-center gap-2 rounded-full bg-[#2E0101]/10 px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-[#2E0101]">
+              <span className="mb-4 inline-flex// hidden items-center gap-2 rounded-full bg-[#2E0101]/10 px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-[#2E0101]">
                 <Flame size={13} strokeWidth={2.5} />
                 Get Started
               </span>

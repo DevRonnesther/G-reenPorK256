@@ -12,7 +12,6 @@ const WHATSAPP = "256776464823";
 const PHONE_DISPLAY = "+256 776 464 823";
 const EMAIL = "greenporkie@gmail.com";
 
-// Core brand colors
 const BRAND_COLOR = "#D9FF00";
 const SUCCESS_COLOR = "#059669";
 const DARK = "#4A0A0A";
@@ -33,6 +32,8 @@ const SOCIALS = [
   { label: "WhatsApp", Icon: MessageCircle, href: `https://wa.me/${WHATSAPP}` },
 ];
 
+const cx = (...classes) => classes.filter(Boolean).join(" ");
+const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E0101] focus-visible:ring-offset-2";
 const spring = { type: "spring", stiffness: 220, damping: 26 };
 const ease = [0.16, 1, 0.3, 1];
 
@@ -50,7 +51,6 @@ const getInputClass = (hasError) => {
     : `${base} bg-[#4A0A0A]/[0.04] focus:bg-white focus:ring-[#4A0A0A]/30`;
 };
 
-// Simple mock API call for the form
 async function sendMessage(data) {
   console.log("Sending contact form:", data);
   await new Promise((resolve) => setTimeout(resolve, 800));
@@ -71,7 +71,6 @@ export default function Contact() {
   const onSubmit = async (data) => {
     setSubmitError("");
 
-    // Honeypot check
     if (data.website) {
       setSent(true);
       return;
@@ -130,7 +129,7 @@ export default function Contact() {
           <div className="space-y-3 lg:sticky lg:top-28 lg:col-span-5">
             {INFO.map(({ icon: Icon, label, value, href }) => {
               const inner = (
-                <div className="flex items-center gap-4 rounded-2xl bg-white p-5 shadow-none border-none border-[#4A0A0A]/5">
+                <div className="flex items-center gap-4 rounded-[2rem] bg-[#4A0A0A]/[0.02] p-5 transition-all duration-300 hover:-translate-y-1 hover:bg-[#4A0A0A]/[0.04]">
                   <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: DARK }}>
                     <Icon size={18} strokeWidth={2.2} />
                   </div>
@@ -158,7 +157,7 @@ export default function Contact() {
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
               transition={spring}
-              className="flex items-center justify-between rounded-2xl p-6 shadow-lg"
+              className="flex items-center justify-between rounded-[2rem] p-6"
               style={{ backgroundColor: BRAND_COLOR, color: DARK }}
             >
               <div>
@@ -195,7 +194,7 @@ export default function Contact() {
           {/* Right Column: Form */}
           <motion.div
             {...fadeUp(0.25)}
-            className="rounded-[2rem] border border-[#4A0A0A]/10 bg-white p-6 shadow-2xl md:p-10 lg:col-span-7"
+            className="rounded-[2.5rem] bg-[#4A0A0A]/[0.02] p-6 md:p-10 lg:col-span-7"
           >
             <AnimatePresence mode="wait">
               {sent ? (
@@ -217,7 +216,7 @@ export default function Contact() {
                   <button
                     type="button"
                     onClick={() => setSent(false)}
-                    className="mt-8 cursor-pointer rounded-full border border-[#4A0A0A]/30 px-6 py-3 text-xs font-bold uppercase tracking-wide transition-colors hover:bg-[#4A0A0A] hover:text-white"
+                    className="mt-8 cursor-pointer rounded-full bg-[#4A0A0A]/5 px-6 py-3 text-xs font-bold uppercase tracking-wide transition-colors hover:bg-[#4A0A0A] hover:text-white"
                   >
                     Send another message
                   </button>
@@ -238,7 +237,7 @@ export default function Contact() {
                         {TOPICS.map((t) => (
                           <label key={t} className="cursor-pointer">
                             <input type="radio" value={t} className="peer sr-only" {...register("topic")} />
-                            <span className="block rounded-full border border-[#4A0A0A]/25 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wide transition-colors peer-checked:border-[#D9FF00] peer-checked:bg-[#D9FF00] peer-checked:text-[#4A0A0A] peer-focus-visible:ring-2 peer-focus-visible:ring-[#E11D1D]">
+                            <span className="block rounded-full bg-[#4A0A0A]/[0.04] px-4 py-2.5 text-[11px] font-bold uppercase tracking-wide transition-colors peer-checked:bg-[#D9FF00] peer-checked:text-[#4A0A0A] peer-focus-visible:ring-2 peer-focus-visible:ring-[#E11D1D]">
                               {t}
                             </span>
                           </label>
@@ -330,7 +329,7 @@ export default function Contact() {
                       whileHover={{ scale: 1.05 }}
                       whileTap={{ scale: 0.95 }}
                       transition={spring}
-                      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full px-8 py-4 text-xs font-bold uppercase tracking-wide shadow-lg disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+                      className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full px-8 py-4 text-xs font-bold uppercase tracking-wide disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
                       style={{ backgroundColor: BRAND_COLOR, color: DARK }}
                     >
                       {isSubmitting ? "Sending…" : "Send message"}
@@ -344,10 +343,11 @@ export default function Contact() {
         </div>
       </div>
 
-      <footer className="relative z-10 px-4 py-8 lg:px-12" style={{ backgroundColor: DARK }}>
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-[10px] font-semibold uppercase tracking-widest text-white/70 sm:flex-row">
+      {/* --- FOOTER --- */}
+      <footer className="border-t border-[#2E0101]/10 bg-white px-4 py-8 lg:px-12">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-[10px] font-semibold uppercase tracking-widest text-[#2E0101]/60 sm:flex-row">
           <p>© {year} {BRAND}. All rights reserved.</p>
-          <Link to="/returnPolicy" className="transition-colors hover:text-[#D9FF00]">
+          <Link to="/returnPolicy" className={cx("rounded-full transition-colors hover:text-[#D9FF00]", focusRing)}>
             Return Policy
           </Link>
         </div>

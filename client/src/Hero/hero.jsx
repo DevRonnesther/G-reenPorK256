@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingBasket, Check, Clock, Star } from "lucide-react";
+import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingBasket, Check, Clock, Star, Flame } from "lucide-react";
 import { useCart } from "../components/cart/CartContext";
 
 import PorkStake from "../assets/ChatGPT Image Jun 18, 2026, 03_34_25 PM.png";
@@ -11,9 +11,16 @@ import Chicken from "../assets/fullchicken.png";
 
 const BRAND_NAME = "Green Pork";
 const AUTOPLAY_MS = 5500;
-const BRAND_COLOR = "#D9FF00"; // Standardized Brand Color
-const SUCCESS_COLOR = "#059669"; // Standardized Success Color
 
+// Same palette as About.jsx: red, lime, deep red, white. No orange or gold.
+const RED = "#E11D1D";
+const LIME = "#D9FF00";
+const PIZZA = "#E65C00";
+const DARK = "#2E0101";
+const WHITE = "#FFFFFF";
+const SUCCESS_COLOR = "#059669";
+
+// Each slide carries its own colors so text, pills and arrows stay readable on every background.
 const SLIDES = [
   {
     id: "pork-skewer",
@@ -26,9 +33,15 @@ const SLIDES = [
     rating: 4.9,
     prepTime: "12 min",
     tags: ["extra cassava", "salads"],
-    bg: "#E11D1D",
+    bg: RED,
     word: "#FFC2B3",
-    dark: "#4A0A0A",
+    fg: WHITE,
+    line: "rgba(255,255,255,0.7)",
+    glass: "rgba(255,255,255,0.25)",
+    bubble: DARK,
+    bubbleText: WHITE,
+    accent: LIME,
+    accentText: DARK,
   },
   {
     id: "angus-burger",
@@ -41,9 +54,15 @@ const SLIDES = [
     rating: 4.9,
     prepTime: "10 min",
     tags: ["100% Angus", "Extra Cheese"],
-    bg: "#F5A31A",
-    word: "#FFF1BF",
-    dark: "#4A2508",
+    bg: DARK,
+    word: RED,
+    fg: WHITE,
+    line: "rgba(255,255,255,0.7)",
+    glass: "rgba(255,255,255,0.18)",
+    bubble: RED,
+    bubbleText: WHITE,
+    accent: LIME,
+    accentText: DARK,
   },
   {
     id: "chicken-pizza",
@@ -56,9 +75,15 @@ const SLIDES = [
     rating: 4.8,
     prepTime: "18 min",
     tags: ["Stone-Baked", "Fresh Mozzarella"],
-    bg: "#E8590C",
-    word: "#FFD6B0",
-    dark: "#4A1A05",
+    bg: PIZZA,
+    word: "#F1FF9A",
+    fg: DARK,
+    line: "rgba(46,1,1,0.5)",
+    glass: "rgba(46,1,1,0.1)",
+    bubble: DARK,
+    bubbleText: WHITE,
+    accent: DARK,
+    accentText: LIME,
   },
   {
     id: "roasted-chicken",
@@ -71,28 +96,39 @@ const SLIDES = [
     rating: 4.9,
     prepTime: "25 min",
     tags: ["Fire Roasted", "Farm Fresh"],
-    bg: "#E0A100",
-    word: "#FFF4B8",
-    dark: "#3D2C04",
+    bg: WHITE,
+    word: "#FFE3DC",
+    fg: DARK,
+    line: "rgba(46,1,1,0.4)",
+    glass: "rgba(46,1,1,0.07)",
+    bubble: RED,
+    bubbleText: WHITE,
+    accent: LIME,
+    accentText: DARK,
   },
 ];
 
 const fmt = (v) => Number(v).toLocaleString();
 const savePct = (p, o) => Math.round(((o - p) / o) * 100);
 
+const ease = [0.16, 1, 0.3, 1];
 const spring = { type: "spring", stiffness: 220, damping: 26 };
 
 const fadeUp = (d = 0) => ({
   initial: { opacity: 0, y: 20, filter: "blur(6px)" },
-  animate: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: d } },
+  animate: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease, delay: d } },
   exit: { opacity: 0, y: -12, filter: "blur(6px)", transition: { duration: 0.25 } },
 });
 
 const imgVar = {
   enter: (d) => ({ opacity: 0, x: d === "right" ? 90 : -90, scale: 0.7, rotate: d === "right" ? -8 : 8, filter: "blur(12px)" }),
-  center: { opacity: 1, x: 0, scale: 1, rotate: 0, filter: "blur(0px)", transition: { duration: 0.85, ease: [0.16, 1, 0.3, 1] } },
+  center: { opacity: 1, x: 0, scale: 1, rotate: 0, filter: "blur(0px)", transition: { duration: 0.85, ease } },
   exit: (d) => ({ opacity: 0, x: d === "right" ? -70 : 70, scale: 0.8, rotate: d === "right" ? 6 : -6, filter: "blur(12px)", transition: { duration: 0.4 } }),
 };
+
+const pill = "flex items-center gap-2 rounded-full px-4 py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wide transition-colors duration-700";
+const tab = "cursor-pointer rounded-full border px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wide transition-colors duration-300";
+const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--fg)]";
 
 export default function Hero() {
   const [current, setCurrent] = useState(0);
@@ -101,42 +137,63 @@ export default function Hero() {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
 
+  const touchStartX = useRef(null);
+
   const { addToCart } = useCart();
 
   const total = SLIDES.length;
   const slide = SLIDES[current];
 
   function goTo(i) {
+    if (i === current) return;
     setDirection(i > current ? "right" : "left");
     setCurrent(i);
   }
   function next() {
     setDirection("right");
-    setCurrent((current + 1) % total);
+    setCurrent((c) => (c + 1) % total);
   }
   function prev() {
     setDirection("left");
-    setCurrent(current === 0 ? total - 1 : current - 1);
+    setCurrent((c) => (c === 0 ? total - 1 : c - 1));
   }
 
+  // Autoplay
   useEffect(() => {
     if (isPaused) return;
     const t = setTimeout(next, AUTOPLAY_MS);
     return () => clearTimeout(t);
   }, [current, isPaused]);
 
+  // Arrow keys (ignored while typing in a field)
   useEffect(() => {
     function handleKey(e) {
+      const tag = e.target.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
       if (e.key === "ArrowLeft") prev();
       if (e.key === "ArrowRight") next();
     }
     window.addEventListener("keydown", handleKey);
     return () => window.removeEventListener("keydown", handleKey);
-  }, [current]);
+  }, []);
 
+  // Reset quantity when the dish changes
   useEffect(() => {
     setQuantity(1);
   }, [slide.id]);
+
+  // Swipe on touch screens
+  function handleTouchStart(e) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+  function handleTouchEnd(e) {
+    if (touchStartX.current === null) return;
+    const diff = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(diff) < 50) return;
+    if (diff < 0) next();
+    else prev();
+  }
 
   function handleAddToCart() {
     addToCart({
@@ -151,22 +208,20 @@ export default function Hero() {
     setTimeout(() => setIsAdded(false), 1500);
   }
 
-  const pill = "flex items-center gap-2 rounded-full px-4 py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wide";
-
   return (
     <section
       aria-roledescription="carousel"
       aria-label="Food gallery"
       className="relative flex min-h-[100dvh] max-h-[100dvh] w-full select-none flex-col overflow-hidden px-4 pb-5 pt-6 transition-colors duration-700 lg:px-12 lg:pt-8"
-      style={{ backgroundColor: slide.bg }}
+      style={{ backgroundColor: slide.bg, "--fg": slide.fg }}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
     >
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&display=swap');
         .font-display { font-family: 'Archivo', sans-serif; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
 
       {/* Soft light in the center */}
@@ -174,6 +229,21 @@ export default function Hero() {
         className="pointer-events-none absolute inset-0"
         style={{ background: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 60%)" }}
       />
+
+      {/* Category eyebrow */}
+      <div className="relative z-20 flex justify-center">
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={`cat-${slide.id}`}
+            {...fadeUp(0)}
+            className="font-display hidden inline-flex// items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-wide backdrop-blur-md"
+            style={{ backgroundColor: slide.glass, color: slide.fg }}
+          >
+            <Flame size={13} strokeWidth={2.5} />
+            {slide.category}
+          </motion.span>
+        </AnimatePresence>
+      </div>
 
       {/* Stage: giant words + product + badges */}
       <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center" aria-live="polite">
@@ -199,7 +269,7 @@ export default function Hero() {
             initial="enter"
             animate="center"
             exit="exit"
-            className="relative z-10 flex h-[52vh] w-full items-center justify-center sm:h-[50vh] lg:h-[72vh]"
+            className="relative z-10 flex h-[46vh] w-full items-center justify-center sm:h-[46vh] lg:h-[64vh]"
           >
             <img
               src={slide.image}
@@ -210,26 +280,26 @@ export default function Hero() {
           </motion.div>
         </AnimatePresence>
 
-        {/* Dark speech bubble (left) */}
+        {/* Speech bubble (left) */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`b1-${slide.id}`}
             {...fadeUp(0.3)}
-            className="font-display absolute bottom-[14%] left-[3%] z-20 -rotate-3 rounded-2xl px-4 py-2 text-[11px] font-extrabold uppercase text-white lg:bottom-[20%] lg:left-[24%] lg:px-5 lg:py-2.5 lg:text-sm"
-            style={{ backgroundColor: slide.dark }}
+            className="font-display absolute bottom-[14%] left-[3%] z-20 -rotate-3 rounded-2xl px-4 py-2 text-[11px] font-extrabold uppercase lg:bottom-[20%] lg:left-[24%] lg:px-5 lg:py-2.5 lg:text-sm"
+            style={{ backgroundColor: slide.bubble, color: slide.bubbleText }}
           >
             {slide.tags[0]}
-            <span className="absolute -bottom-1 left-6 h-3 w-3 rotate-45" style={{ backgroundColor: slide.dark }} />
+            <span className="absolute -bottom-1 left-6 h-3 w-3 rotate-45" style={{ backgroundColor: slide.bubble }} />
           </motion.div>
         </AnimatePresence>
 
-        {/* Brand Color pill (right) - Now uses #D9FF00 as background to be visible */}
+        {/* Accent pill (right) */}
         <AnimatePresence mode="wait">
           <motion.div
             key={`b2-${slide.id}`}
             {...fadeUp(0.4)}
             className="font-display absolute right-[3%] top-[55%] z-20 rounded-full px-4 py-2 text-[11px] font-extrabold uppercase shadow-lg lg:right-[22%] lg:px-5 lg:py-2.5 lg:text-sm"
-            style={{ backgroundColor: BRAND_COLOR, color: slide.dark }}
+            style={{ backgroundColor: slide.accent, color: slide.accentText }}
           >
             {slide.tags[1]}
           </motion.div>
@@ -243,7 +313,8 @@ export default function Hero() {
           whileHover={{ scale: 1.12 }}
           whileTap={{ scale: 0.88 }}
           transition={spring}
-          className="absolute left-0 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/30 text-white backdrop-blur-md lg:h-11 lg:w-11"
+          className={`absolute left-0 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full backdrop-blur-md lg:h-11 lg:w-11 ${focusRing}`}
+          style={{ backgroundColor: slide.glass, color: slide.fg }}
         >
           <ChevronLeft size={18} strokeWidth={2.5} />
         </motion.button>
@@ -254,54 +325,63 @@ export default function Hero() {
           whileHover={{ scale: 1.12 }}
           whileTap={{ scale: 0.88 }}
           transition={spring}
-          className="absolute right-0 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full bg-white/30 text-white backdrop-blur-md lg:h-11 lg:w-11"
+          className={`absolute right-0 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full backdrop-blur-md lg:h-11 lg:w-11 ${focusRing}`}
+          style={{ backgroundColor: slide.glass, color: slide.fg }}
         >
           <ChevronRight size={18} strokeWidth={2.5} />
         </motion.button>
       </div>
 
-      {/* Bottom pill row */}
+      {/* Bottom area */}
       <div className="relative z-20 flex flex-col items-center gap-3">
-        <div className="flex flex-wrap items-center justify-center gap-2 font-display text-white sm:gap-3">
-
-          {/* Save % Pill - Uses Brand Color as background for high visibility */}
-          <span
-            className={`${pill} shadow-sm`}
-            style={{ backgroundColor: BRAND_COLOR, color: slide.dark }}
-          >
+        {/* Pill row */}
+        <div className="font-display flex flex-wrap items-center justify-center gap-2 sm:gap-3" style={{ color: slide.fg }}>
+          {/* Save pill, with the old price crossed out */}
+          <span className={`${pill} shadow-sm`} style={{ backgroundColor: slide.accent, color: slide.accentText }}>
             Save {savePct(slide.price, slide.oldPrice)}%
+            <s className="font-semibold opacity-60">{fmt(slide.oldPrice * quantity)}</s>
           </span>
 
-          <span className={`${pill} border border-white/70`}>
+          <span className={`${pill} border`} style={{ borderColor: slide.line }}>
             <Clock size={13} strokeWidth={2.5} /> {slide.prepTime}
           </span>
 
-          <span className={`${pill} border border-white/70`}>
+          <span className={`${pill} border`} style={{ borderColor: slide.line }}>
             <Star size={13} strokeWidth={2.5} fill="currentColor" /> {slide.rating}
           </span>
 
           {/* Quantity */}
-          <span className={`${pill} border border-white/70`}>
-            <button type="button" aria-label="Reduce quantity" className="cursor-pointer" onClick={() => setQuantity(Math.max(1, quantity - 1))}>
+          <span className={`${pill} border`} style={{ borderColor: slide.line }}>
+            <button
+              type="button"
+              aria-label="Reduce quantity"
+              className={`cursor-pointer rounded-full ${focusRing}`}
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            >
               <Minus size={13} strokeWidth={3} />
             </button>
             <span className="w-4 text-center">{quantity}</span>
-            <button type="button" aria-label="Increase quantity" className="cursor-pointer" onClick={() => setQuantity(quantity + 1)}>
+            <button
+              type="button"
+              aria-label="Increase quantity"
+              className={`cursor-pointer rounded-full ${focusRing}`}
+              onClick={() => setQuantity(quantity + 1)}
+            >
               <Plus size={13} strokeWidth={3} />
             </button>
           </span>
 
-          {/* Main CTA - Uses Brand Color (#D9FF00) as background, Dark text. Turns Green when added. */}
+          {/* Main CTA */}
           <motion.button
             type="button"
             onClick={handleAddToCart}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             transition={spring}
-            className={`${pill} cursor-pointer shadow-lg`}
+            className={`${pill} cursor-pointer shadow-lg ${focusRing}`}
             style={{
-              backgroundColor: isAdded ? SUCCESS_COLOR : BRAND_COLOR,
-              color: isAdded ? "#FFFFFF" : slide.dark
+              backgroundColor: isAdded ? SUCCESS_COLOR : slide.accent,
+              color: isAdded ? WHITE : slide.accentText,
             }}
           >
             {isAdded ? <Check size={14} strokeWidth={3} /> : <ShoppingBasket size={14} strokeWidth={2.5} />}
@@ -309,7 +389,32 @@ export default function Hero() {
           </motion.button>
         </div>
 
-        <Link to="/returnPolicy" className="text-[10px] font-semibold uppercase tracking-widest text-white/70 transition-colors hover:text-white">
+        {/* Dish tabs */}
+        <div role="tablist" aria-label="Choose a dish" className="font-display flex flex-wrap items-center justify-center gap-2">
+          {SLIDES.map((s, i) => (
+            <button
+              key={s.id}
+              type="button"
+              role="tab"
+              aria-selected={i === current}
+              onClick={() => goTo(i)}
+              className={`${tab} ${focusRing}`}
+              style={
+                i === current
+                  ? { backgroundColor: slide.fg, borderColor: slide.fg, color: slide.bg }
+                  : { backgroundColor: "transparent", borderColor: slide.line, color: slide.fg }
+              }
+            >
+              {s.short}
+            </button>
+          ))}
+        </div>
+
+        <Link
+          to="/returnPolicy"
+          className={`rounded-full text-[10px] font-semibold uppercase tracking-widest opacity-70 transition-opacity hover:opacity-100 ${focusRing}`}
+          style={{ color: slide.fg }}
+        >
           © {new Date().getFullYear()} {BRAND_NAME} · Return Policy
         </Link>
       </div>
