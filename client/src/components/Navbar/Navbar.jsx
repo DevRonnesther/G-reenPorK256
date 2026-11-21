@@ -15,7 +15,7 @@ import GreenPorkIcon from "../../assets/Greenore.png";
 
 /* ───────────── CONFIG + DESIGN TOKENS ───────────── */
 const BRAND = "Greenpork";
-const SLOGAN = "Crave the difference";
+const SLOGAN = "Eat Fresh. Live Happy";
 const PHONE = "256776464823";
 const DISPLAY_PHONE = "+256 776 464 823";
 const HOURS = "10:00 AM – 10:00 PM";
@@ -65,9 +65,6 @@ function Logo({ onClick }) {
         alt={BRAND}
         className="block h-9 w-auto max-w-[120px] object-contain transition-transform duration-300 group-hover:scale-105 sm:h-10 sm:max-w-[140px] md:h-11 md:max-w-[180px]"
       />
-      <span className="hidden rounded-full border-0 bg-[#111111] px-3 py-1 font-display text-[10px] font-black uppercase tracking-widest text-[#D9FF00] xl:inline-flex">
-        Gulu City
-      </span>
     </Link>
   );
 }
@@ -134,7 +131,7 @@ export default function Navbar() {
           {/* Center: Desktop Quick-Nav Rail */}
           <nav
             aria-label="Primary navigation"
-            className="hidden items-center gap-1 rounded-full border-0 bg-[#F5F5F5] p-1.5 md:flex"
+            className="hidden items-center gap-1 rounded-full border-0 bg-[#F5F5F5] p-1.5 md:flex//"
           >
             {NAV_LINKS.map((item) => {
               const isActive =
