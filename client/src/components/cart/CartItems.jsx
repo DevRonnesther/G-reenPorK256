@@ -2,55 +2,96 @@ import React, { useState, useMemo, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Trash2, Minus, Plus, ArrowLeft, ArrowRight,
-  ShoppingBag, User, MapPin, CreditCard,
-  ShieldCheck, Truck, Clock, Leaf,
+  Trash2,
+  Minus,
+  Plus,
+  ArrowLeft,
+  ArrowRight,
+  ShoppingBag,
+  User,
+  MapPin,
+  CreditCard,
+  ShieldCheck,
+  Truck,
+  Clock,
+  Leaf,
   ShoppingBasket,
+  Flame,
 } from "lucide-react";
 import { useCart } from "../../components/cart/CartContext.jsx";
 
-/* ═══════════════════════════════════════════════════════════
-   BRAND + DESIGN TOKENS
-   ═══════════════════════════════════════════════════════════ */
-const BRAND_NAME = "Green Pork";
-const DARK = "#4A0A0A";
-const RED = "#E11D1D";
-const LIME = "#D9FF00";
-const WORD_RED = "#FFC2B3";
-
+/* ───────────── CONFIG + DESIGN TOKENS ───────────── */
+const BRAND_NAME = "Greenpork";
+const SLOGAN = "Eat Fresh. Live Happy.";
 const FREE_DELIVERY_THRESHOLD = 50000;
 const WHATSAPP_NUMBER = "256776464823";
 
-const spring = { type: "spring", stiffness: 220, damping: 26 };
-const ease = [0.16, 1, 0.3, 1];
-const smooth = { duration: 0.8, ease };
+const PALETTE = {
+  red: "#E11D1D",
+  lime: "#D9FF00",
+  orange: "#E65C00",
+  ink: "#111111",
+  charcoal: "#2A2A2A",
+  muted: "#4A4A4A",
+  surface: "#F5F5F5",
+  surfaceHover: "#EFEFEF",
+  white: "#FFFFFF",
+  success: "#059669",
+};
 
-const fadeUp = (d = 0) => ({
+const REGIONS = [
+  "Gulu City",
+  "Kampala (Central)",
+  "Kira",
+  "Entebbe",
+  "Mukono",
+  "Wakiso",
+  "Nansana",
+  "Makindye",
+  "Lubaga",
+  "Other",
+];
+
+const EASE = [0.16, 1, 0.3, 1];
+const SPRING = { type: "spring", stiffness: 220, damping: 26 };
+
+const hoverTap = (hover = 1.03, tap = 0.97) => ({
+  whileHover: { scale: hover },
+  whileTap: { scale: tap },
+  transition: SPRING,
+});
+
+const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 20, filter: "blur(6px)" },
-  animate: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease, delay: d } },
-  exit: { opacity: 0, y: -12, filter: "blur(6px)", transition: { duration: 0.25 } },
+  animate: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.65, ease: EASE, delay },
+  },
+  exit: {
+    opacity: 0,
+    y: -12,
+    filter: "blur(6px)",
+    transition: { duration: 0.25 },
+  },
 });
 
 const fmt = (n) => Number(n).toLocaleString();
 const cx = (...c) => c.filter(Boolean).join(" ");
-
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4A0A0A] focus-visible:ring-offset-2";
-
-const REGIONS = [
-  "Kampala (Central)", "Kira", "Entebbe", "Mukono", "Wakiso",
-  "Nansana", "Makindye", "Lubaga", "Njeru", "Other",
-];
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]";
+const pillBtn =
+  "flex items-center justify-center gap-2 rounded-full border-0 font-display text-xs font-black uppercase tracking-wide transition-colors";
 
 const FontStyles = React.memo(() => (
   <style>{`
-    @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
     .font-display { font-family: 'Archivo', sans-serif; }
     .font-body { font-family: 'Inter', sans-serif; }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     .cart-scroll::-webkit-scrollbar { width: 4px; }
     .cart-scroll::-webkit-scrollbar-track { background: transparent; }
-    .cart-scroll::-webkit-scrollbar-thumb { background: rgba(74,10,10,0.15); border-radius: 99px; }
+    .cart-scroll::-webkit-scrollbar-thumb { background: rgba(17,17,17,0.16); border-radius: 99px; }
   `}</style>
 ));
 
@@ -60,16 +101,19 @@ const CtaButton = React.memo(({ href, disabled, children, className, small }) =>
       <div className="w-full text-center">
         <div
           className={cx(
-            "flex w-full select-none items-center justify-center gap-2.5 rounded-full bg-[#4A0A0A]/5 font-display text-xs font-black uppercase tracking-wide text-[#4A0A0A]/30 cursor-not-allowed",
-            small ? "px-6 py-3.5" : "px-8 py-5"
+            pillBtn,
+            "w-full cursor-not-allowed select-none bg-[#EFEFEF] text-[#4A4A4A]",
+            small ? "px-4 py-3 text-[11px]" : "h-12 px-6"
           )}
         >
           <ShoppingBasket size={small ? 14 : 16} strokeWidth={2.5} />
-          Checkout Locked
+          <span>Checkout Locked</span>
         </div>
-        <p className="mt-2 text-[10px] font-body font-medium uppercase tracking-widest text-[#4A0A0A]/40">
-          Complete required delivery fields to unlock
-        </p>
+        {!small && (
+          <p className="mt-2 font-body text-[10px] font-semibold uppercase tracking-widest text-[#FFFFFF]/70">
+            Complete required delivery fields to unlock
+          </p>
+        )}
       </div>
     );
   }
@@ -79,23 +123,23 @@ const CtaButton = React.memo(({ href, disabled, children, className, small }) =>
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      whileHover={{ scale: 1.03 }}
-      whileTap={{ scale: 0.97 }}
-      transition={spring}
+      {...hoverTap(1.02, 0.98)}
       className={cx(
-        "group relative inline-flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-full font-display text-xs font-black uppercase tracking-wide",
+        "group",
+        pillBtn,
+        "w-full cursor-pointer",
         focusRing,
-        small ? "px-6 py-3.5" : "px-8 py-5",
+        small ? "px-4 py-3 text-[11px]" : "h-12 px-6",
         className
       )}
-      style={{ backgroundColor: LIME, color: DARK }}
+      style={{ backgroundColor: PALETTE.lime, color: PALETTE.ink }}
     >
-      <ShoppingBasket size={small ? 14 : 16} strokeWidth={2.5} className="relative z-10" />
-      <span className="relative z-10">{children}</span>
+      <ShoppingBasket size={small ? 14 : 16} strokeWidth={2.5} />
+      <span>{children}</span>
       <ArrowRight
-        size={small ? 14 : 16}
-        strokeWidth={3}
-        className="relative z-10 transition-transform duration-300 group-hover:translate-x-1.5"
+        size={small ? 14 : 15}
+        strokeWidth={2.75}
+        className="transition-transform duration-300 group-hover:translate-x-1"
       />
     </motion.a>
   );
@@ -108,8 +152,8 @@ const ErrorMessage = ({ show, children }) => (
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: "auto" }}
         exit={{ opacity: 0, height: 0 }}
-        className="mt-1.5 overflow-hidden text-[11px] font-display font-bold tracking-tight"
-        style={{ color: RED }}
+        className="mt-1.5 overflow-hidden font-display text-[11px] font-bold tracking-tight"
+        style={{ color: PALETTE.red }}
       >
         {children}
       </motion.p>
@@ -120,21 +164,30 @@ const ErrorMessage = ({ show, children }) => (
 const FormFieldLabel = ({ icon: Icon, required, children, htmlFor }) => (
   <label
     htmlFor={htmlFor}
-    className="mb-2.5 flex cursor-pointer items-center gap-2 text-xs font-display font-extrabold uppercase tracking-wider text-[#4A0A0A]"
+    className="mb-2 flex cursor-pointer items-center gap-2 font-display text-xs font-extrabold uppercase tracking-wider text-[#111111]"
   >
-    {Icon && <Icon size={14} strokeWidth={2.5} style={{ color: RED }} />}
-    {children}
-    {required && <span style={{ color: RED }}>*</span>}
+    {Icon && <Icon size={14} strokeWidth={2.5} style={{ color: PALETTE.red }} />}
+    <span>{children}</span>
+    {required && <span style={{ color: PALETTE.red }}>*</span>}
   </label>
 );
 
 export default function Cart() {
-  const { cartItems, removeFromCart, increaseQuantity, decreaseQuantity, subtotal, shipping, tax, total } = useCart();
+  const {
+    cartItems,
+    removeFromCart,
+    increaseQuantity,
+    decreaseQuantity,
+    subtotal,
+    shipping,
+    tax,
+    total,
+  } = useCart();
 
   const [form, setForm] = useState({
     fullName: "",
     phone: "",
-    city: "Kampala (Central)",
+    city: "Gulu City",
     address: "",
     paymentMethod: "Cash on Delivery",
     notes: "",
@@ -165,44 +218,56 @@ export default function Cart() {
   const whatsappHref = useMemo(() => {
     if (!cartItems.length) return null;
     const lines = cartItems
-      .map((i) => `• ${i.name} (x${i.quantity}) — ${fmt(i.price * i.quantity)} UGX`)
+      .map(
+        (i, idx) =>
+          `${idx + 1}. ${i.name} x${i.quantity} - ${fmt(i.price * i.quantity)} UGX`
+      )
       .join("\n");
 
-    const message =
-      `Hello ${BRAND_NAME}! I'd like to place an order:\n\n` +
-      `👤 *CUSTOMER INFORMATION*\n-------------------------\n` +
-      `Name: ${form.fullName}\nPhone: ${form.phone}\n` +
-      `Region/City: ${form.city}\nDelivery Address: ${form.address}\n` +
-      `Payment Option: ${form.paymentMethod}\nDelivery Note: ${form.notes || "None"}\n\n` +
-      `🛒 *ORDER DETAIL*\n-----------------\n${lines}\n\n` +
-      `📊 *SUMMARY*\n------------\n` +
-      `Subtotal: ${fmt(subtotal)} UGX\nTax (18%): ${fmt(tax)} UGX\n` +
-      `Delivery Fee: ${shipping === 0 ? "Free" : `${fmt(shipping)} UGX`}\n\n` +
-      `💰 *Grand Total: ${fmt(total)} UGX*`;
+    const message = [
+      `Hello ${BRAND_NAME} (${SLOGAN}), I would like to place an order:`,
+      "",
+      "CUSTOMER DETAILS",
+      `Name: ${form.fullName}`,
+      `Phone: ${form.phone}`,
+      `City: ${form.city}`,
+      `Address: ${form.address}`,
+      `Payment: ${form.paymentMethod}`,
+      `Notes: ${form.notes || "None"}`,
+      "",
+      "ORDER ITEMS",
+      lines,
+      "",
+      `Subtotal: ${fmt(subtotal)} UGX`,
+      `Tax (18%): ${fmt(tax)} UGX`,
+      `Delivery: ${shipping === 0 ? "FREE" : `${fmt(shipping)} UGX`}`,
+      `Total: ${fmt(total)} UGX`,
+    ].join("\n");
 
     return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;
   }, [cartItems, subtotal, tax, shipping, total, form]);
 
-  const inputStyles =
-    "w-full h-14 px-5 py-4 text-sm font-body font-medium outline-none transition-all rounded-2xl bg-[#4A0A0A]/[0.04] text-[#4A0A0A] placeholder-[#4A0A0A]/35 focus:bg-white focus:ring-2 focus:ring-[#4A0A0A]/30";
+  const inputStyles = cx(
+    "w-full h-13 px-4 py-3 text-sm font-body font-medium outline-none transition-colors rounded-2xl border-0 bg-[#F5F5F5] text-[#111111] placeholder-[#4A4A4A]/65 focus:bg-[#EFEFEF]",
+    focusRing
+  );
 
-  // ═══════════════════════════════════════════════════════════
+  const remainingForFreeDelivery = Math.max(
+    0,
+    FREE_DELIVERY_THRESHOLD - subtotal
+  );
+  const deliveryLabel = shipping === 0 ? "FREE" : `${fmt(shipping)} UGX`;
+
   // 1. EMPTY STATE
-  // ═══════════════════════════════════════════════════════════
   if (!cartItems.length) {
     return (
-      <section className="relative flex min-h-[100dvh] w-full select-none flex-col items-center justify-center overflow-hidden bg-white px-4 pb-8 pt-10 text-[#4A0A0A]">
+      <section className="relative flex min-h-[100dvh] w-full select-none flex-col items-center justify-center overflow-hidden border-0 bg-[#FFFFFF] px-4 pb-8 pt-10 text-[#111111]">
         <FontStyles />
-
-        <div
-          className="pointer-events-none absolute inset-0"
-          style={{ background: "radial-gradient(circle at 50% 50%, rgba(225,29,29,0.06) 0%, rgba(255,255,255,0) 65%)" }}
-        />
 
         <motion.h1
           {...fadeUp(0.05)}
           className="font-display pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center font-black uppercase leading-[0.82] tracking-[-0.04em]"
-          style={{ color: "#FAFAFA", fontSize: "clamp(4.5rem, 18vw, 15rem)" }}
+          style={{ color: PALETTE.surface, fontSize: "clamp(4.5rem, 18vw, 15rem)" }}
         >
           <span>EMPTY</span>
           <span>BAG</span>
@@ -211,44 +276,61 @@ export default function Cart() {
         <motion.div
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ ...smooth, delay: 0.1 }}
-          className="relative z-10 flex h-24 w-24 items-center justify-center rounded-full text-white"
-          style={{ backgroundColor: DARK }}
+          transition={{ duration: 0.65, ease: EASE }}
+          className="relative z-10 flex h-24 w-24 items-center justify-center rounded-full border-0 text-[#FFFFFF]"
+          style={{ backgroundColor: PALETTE.ink }}
         >
-          <ShoppingBag size={38} strokeWidth={2.2} style={{ color: LIME }} />
+          <ShoppingBag
+            size={38}
+            strokeWidth={2.2}
+            style={{ color: PALETTE.lime }}
+          />
         </motion.div>
 
         <motion.div
-          {...fadeUp(0.3)}
-          className="font-display absolute bottom-[18%] left-[8%] z-20 -rotate-3 rounded-2xl px-4 py-2 text-[11px] font-extrabold uppercase text-white shadow-xl lg:bottom-[22%] lg:left-[24%] lg:px-5 lg:py-2.5 lg:text-sm"
-          style={{ backgroundColor: DARK }}
+          {...fadeUp(0.25)}
+          className="font-display absolute bottom-[18%] left-[8%] z-20 -rotate-3 rounded-2xl border-0 px-4 py-2 text-[11px] font-extrabold uppercase text-[#FFFFFF] lg:bottom-[22%] lg:left-[24%] lg:px-5 lg:py-2.5 lg:text-sm"
+          style={{ backgroundColor: PALETTE.ink }}
         >
           Bag is hungry
-          <span className="absolute -bottom-1 left-6 h-3 w-3 rotate-45" style={{ backgroundColor: DARK }} />
+          <span
+            className="absolute -bottom-1 left-6 h-3 w-3 rotate-45"
+            style={{ backgroundColor: PALETTE.ink }}
+          />
         </motion.div>
 
         <motion.div
-          {...fadeUp(0.4)}
-          className="font-display absolute right-[8%] top-[28%] z-20 rounded-full px-4 py-2 text-[11px] font-extrabold uppercase shadow-xl lg:right-[24%] lg:px-5 lg:py-2.5 lg:text-sm"
-          style={{ backgroundColor: LIME, color: DARK }}
+          {...fadeUp(0.35)}
+          className="font-display absolute right-[8%] top-[28%] z-20 rounded-full border-0 px-4 py-2 text-[11px] font-extrabold uppercase lg:right-[24%] lg:px-5 lg:py-2.5 lg:text-sm"
+          style={{ backgroundColor: PALETTE.lime, color: PALETTE.ink }}
         >
-          Wood-Smoked Menu
+          {BRAND_NAME} · {SLOGAN}
         </motion.div>
 
         <motion.div
-          {...fadeUp(0.5)}
+          {...fadeUp(0.45)}
           className="relative z-20 mt-14 flex flex-col items-center gap-5 text-center"
         >
-          <p className="max-w-xs text-sm font-body font-medium leading-relaxed text-[#4A0A0A]/70">
-            You haven't added anything delicious yet. Explore our farm-fresh menu.
+          <p className="max-w-xs font-body text-sm font-medium leading-relaxed text-[#2A2A2A]">
+            You haven&apos;t added anything delicious yet. Explore our fresh
+            pork, burgers, pizza, and chicken in Gulu City.
           </p>
-          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} transition={spring}>
+          <motion.div {...hoverTap(1.04, 0.96)}>
             <Link
               to="/Products"
-              className={cx("flex cursor-pointer items-center gap-2.5 rounded-full px-8 py-4 font-display text-xs font-black uppercase tracking-wide text-white", focusRing)}
-              style={{ backgroundColor: DARK }}
+              className={cx(
+                pillBtn,
+                "cursor-pointer px-8 py-4 text-[#FFFFFF]",
+                focusRing
+              )}
+              style={{ backgroundColor: PALETTE.ink }}
             >
-              <ArrowLeft size={14} strokeWidth={3} style={{ color: LIME }} /> Browse Menu
+              <ArrowLeft
+                size={14}
+                strokeWidth={3}
+                style={{ color: PALETTE.lime }}
+              />
+              <span>Browse Menu</span>
             </Link>
           </motion.div>
         </motion.div>
@@ -256,78 +338,70 @@ export default function Cart() {
     );
   }
 
-  // ═══════════════════════════════════════════════════════════
-  // 2. ACTIVE CART & CHECKOUT
-  // ═══════════════════════════════════════════════════════════
+  // 2. ACTIVE CART & CHECKOUT (MATCHED TO PRODUCTS.JSX UI)
   return (
-    <div className="relative min-h-screen select-none bg-white pb-36 font-body text-[#4A0A0A] selection:bg-[#D9FF00] selection:text-[#4A0A0A] lg:pb-16">
+    <div className="relative min-h-screen select-none border-0 bg-[#FFFFFF] pb-28 font-body text-[#111111] selection:bg-[#D9FF00] selection:text-[#111111] lg:pb-16">
       <FontStyles />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-6 py-24 md:px-12 md:py-28">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 py-24 sm:px-6 md:py-28 lg:px-12">
         {/* HEADER */}
         <motion.div
-          initial={{ opacity: 0, y: 15 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={smooth}
-          className="mb-14 flex items-end justify-between gap-6 border-b border-[#4A0A0A]/10 pb-8"
+          transition={{ duration: 0.65, ease: EASE }}
+          className="mb-12 flex flex-wrap items-end justify-between gap-6"
         >
-          <div className="flex items-end gap-4">
-            <div className="h-14 w-3 rounded-full" style={{ backgroundColor: RED }} />
-            <div>
-              <span className="font-display text-xs font-bold uppercase tracking-widest text-[#4A0A0A]/50">
-                {BRAND_NAME} Secure Checkout
-              </span>
-              <h1 className="mt-1 font-display text-6xl font-black uppercase leading-none tracking-tighter text-[#4A0A0A] md:text-8xl lg:text-9xl">
-                Checkout
-              </h1>
-              <p className="mt-4 font-body text-sm font-bold uppercase tracking-widest text-[#4A0A0A]/70">
-                {cartItems.length} item{cartItems.length !== 1 ? "s" : ""} awaiting dispatch
-              </p>
-            </div>
+          <div>
+            <h1 className="font-display text-5xl font-black uppercase leading-[0.9] tracking-[-0.04em] text-[#111111] sm:text-6xl md:text-7xl">
+              Checkout
+            </h1>
+            <p className="mt-3 font-display text-xs font-bold uppercase tracking-wider text-[#4A4A4A]">
+              {cartItems.length} item{cartItems.length !== 1 ? "s" : ""} ready ·
+              Gulu City
+            </p>
           </div>
 
-          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} transition={spring}>
+          <motion.div {...hoverTap(1.03, 0.97)}>
             <Link
               to="/Products"
               className={cx(
-                "hidden items-center gap-2 rounded-full bg-[#4A0A0A]/5 px-5 py-3.5 font-display text-xs font-black uppercase tracking-wide text-[#4A0A0A] transition-colors hover:bg-[#4A0A0A] hover:text-white sm:flex",
+                pillBtn,
+                "bg-[#F5F5F5] px-5 py-3 text-[#111111] hover:bg-[#EFEFEF]",
                 focusRing
               )}
             >
-              <ArrowLeft size={15} strokeWidth={3} /> Continue Shopping
+              <ArrowLeft size={14} strokeWidth={2.75} />
+              <span>Continue Shopping</span>
             </Link>
           </motion.div>
         </motion.div>
 
-        <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-12 lg:gap-16">
+        <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12 lg:gap-10">
           {/* LEFT COLUMN — DELIVERY DETAILS */}
-          <div className="space-y-16 lg:col-span-7">
-            <div>
-              <div className="mb-5 flex items-center gap-2.5">
-                <span className="h-2 w-2 rounded-full" style={{ backgroundColor: RED }} />
-                <span className="font-display text-sm font-extrabold uppercase tracking-widest text-[#4A0A0A]">
-                  Delivery Details
+          <div className="space-y-8 lg:col-span-7">
+            <div className="rounded-3xl border-0 bg-[#F5F5F5] p-5 sm:p-8">
+              <div className="mb-6 flex items-center justify-between gap-3">
+                <div>
+                  <span className="font-display text-[10px] font-bold uppercase tracking-wider text-[#4A4A4A]">
+                    Step 01 · Dispatch Info
+                  </span>
+                  <h2 className="mt-1 font-display text-2xl font-black uppercase tracking-tight text-[#111111]">
+                    Delivery Details
+                  </h2>
+                </div>
+                <span
+                  className="rounded-full border-0 px-3 py-1 font-display text-[10px] font-black uppercase tracking-wide"
+                  style={{ backgroundColor: PALETTE.lime, color: PALETTE.ink }}
+                >
+                  {form.city}
                 </span>
               </div>
 
-              <motion.p
-                initial={{ opacity: 0, y: 15 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ ...smooth, delay: 0.06 }}
-                className="mb-8 max-w-md font-body text-base font-medium text-[#4A0A0A]/70"
-              >
-                Provide details for swift, temperature-controlled delivery.
-              </motion.p>
-
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ ...smooth, delay: 0.08 }}
-                className="grid grid-cols-1 gap-5 md:grid-cols-2"
-              >
-                {/* Full Name */}
-                <div className="space-y-1.5">
-                  <FormFieldLabel icon={User} required htmlFor="fullName">Full Name</FormFieldLabel>
+              <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+                <div className="space-y-1">
+                  <FormFieldLabel icon={User} required htmlFor="fullName">
+                    Full Name
+                  </FormFieldLabel>
                   <input
                     id="fullName"
                     type="text"
@@ -337,18 +411,24 @@ export default function Cart() {
                     onBlur={() => handleBlur("fullName")}
                     placeholder="e.g. John Doe"
                     className={cx(
-                      inputStyles,
-                      touched.fullName && form.fullName.trim().length < 2 && "!border-[#E11D1D] bg-[#E11D1D]/5"
+                      "w-full h-12 px-4 py-3 text-sm font-body font-medium outline-none transition-colors rounded-2xl border-0 bg-[#FFFFFF] text-[#111111] placeholder-[#4A4A4A]/65 focus:bg-[#EFEFEF]",
+                      focusRing,
+                      touched.fullName &&
+                        form.fullName.trim().length < 2 &&
+                        "bg-[#E11D1D]/15"
                     )}
                   />
-                  <ErrorMessage show={touched.fullName && form.fullName.trim().length < 2}>
-                    Please enter your real full name.
+                  <ErrorMessage
+                    show={touched.fullName && form.fullName.trim().length < 2}
+                  >
+                    Please enter your full name.
                   </ErrorMessage>
                 </div>
 
-                {/* Phone */}
-                <div className="space-y-1.5">
-                  <FormFieldLabel icon={Clock} required htmlFor="phone">Phone Number</FormFieldLabel>
+                <div className="space-y-1">
+                  <FormFieldLabel icon={Clock} required htmlFor="phone">
+                    Phone Number
+                  </FormFieldLabel>
                   <input
                     id="phone"
                     type="tel"
@@ -358,51 +438,79 @@ export default function Cart() {
                     onBlur={() => handleBlur("phone")}
                     placeholder="e.g. 0776464823"
                     className={cx(
-                      inputStyles,
-                      touched.phone && form.phone.trim().length < 9 && "!border-[#E11D1D] bg-[#E11D1D]/5"
+                      "w-full h-12 px-4 py-3 text-sm font-body font-medium outline-none transition-colors rounded-2xl border-0 bg-[#FFFFFF] text-[#111111] placeholder-[#4A4A4A]/65 focus:bg-[#EFEFEF]",
+                      focusRing,
+                      touched.phone &&
+                        form.phone.trim().length < 9 &&
+                        "bg-[#E11D1D]/15"
                     )}
                   />
-                  <ErrorMessage show={touched.phone && form.phone.trim().length < 9}>
+                  <ErrorMessage
+                    show={touched.phone && form.phone.trim().length < 9}
+                  >
                     Please enter a valid phone number.
                   </ErrorMessage>
                 </div>
 
-                {/* City */}
-                <div className="space-y-1.5">
-                  <FormFieldLabel icon={MapPin} htmlFor="city">Region / City</FormFieldLabel>
+                <div className="space-y-1">
+                  <FormFieldLabel icon={MapPin} htmlFor="city">
+                    Region / City
+                  </FormFieldLabel>
                   <select
                     id="city"
                     name="city"
                     value={form.city}
                     onChange={handleInputChange}
-                    className={cx(inputStyles, "cursor-pointer appearance-none bg-white")}
+                    className={cx(
+                      "w-full h-12 px-4 py-3 text-sm font-body font-medium outline-none transition-colors rounded-2xl border-0 bg-[#FFFFFF] text-[#111111] focus:bg-[#EFEFEF] cursor-pointer",
+                      focusRing
+                    )}
                   >
                     {REGIONS.map((r) => (
-                      <option key={r} value={r}>
+                      <option
+                        key={r}
+                        value={r}
+                        className="bg-[#FFFFFF] text-[#111111]"
+                      >
                         {r}
                       </option>
                     ))}
                   </select>
                 </div>
 
-                {/* Payment Method */}
-                <div className="space-y-1.5">
-                  <FormFieldLabel icon={CreditCard} htmlFor="paymentMethod">Payment Method</FormFieldLabel>
+                <div className="space-y-1">
+                  <FormFieldLabel icon={CreditCard} htmlFor="paymentMethod">
+                    Payment Method
+                  </FormFieldLabel>
                   <select
                     id="paymentMethod"
                     name="paymentMethod"
                     value={form.paymentMethod}
                     onChange={handleInputChange}
-                    className={cx(inputStyles, "cursor-pointer appearance-none bg-white")}
+                    className={cx(
+                      "w-full h-12 px-4 py-3 text-sm font-body font-medium outline-none transition-colors rounded-2xl border-0 bg-[#FFFFFF] text-[#111111] focus:bg-[#EFEFEF] cursor-pointer",
+                      focusRing
+                    )}
                   >
-                    <option value="Cash on Delivery">Cash on Delivery</option>
-                    <option value="Mobile Money (MTN/Airtel)">Mobile Money</option>
+                    <option
+                      value="Cash on Delivery"
+                      className="bg-[#FFFFFF] text-[#111111]"
+                    >
+                      Cash on Delivery
+                    </option>
+                    <option
+                      value="Mobile Money (MTN/Airtel)"
+                      className="bg-[#FFFFFF] text-[#111111]"
+                    >
+                      Mobile Money
+                    </option>
                   </select>
                 </div>
 
-                {/* Address */}
-                <div className="space-y-1.5 md:col-span-2">
-                  <FormFieldLabel icon={MapPin} required htmlFor="address">Delivery Address</FormFieldLabel>
+                <div className="space-y-1 md:col-span-2">
+                  <FormFieldLabel icon={MapPin} required htmlFor="address">
+                    Delivery Address
+                  </FormFieldLabel>
                   <input
                     id="address"
                     type="text"
@@ -410,22 +518,26 @@ export default function Cart() {
                     value={form.address}
                     onChange={handleInputChange}
                     onBlur={() => handleBlur("address")}
-                    placeholder="Street name, landmark, gate details, or plot number"
+                    placeholder="Street name, landmark, or plot number"
                     className={cx(
-                      inputStyles,
-                      touched.address && form.address.trim().length <= 3 && "!border-[#E11D1D] bg-[#E11D1D]/5"
+                      "w-full h-12 px-4 py-3 text-sm font-body font-medium outline-none transition-colors rounded-2xl border-0 bg-[#FFFFFF] text-[#111111] placeholder-[#4A4A4A]/65 focus:bg-[#EFEFEF]",
+                      focusRing,
+                      touched.address &&
+                        form.address.trim().length <= 3 &&
+                        "bg-[#E11D1D]/15"
                     )}
                   />
-                  <ErrorMessage show={touched.address && form.address.trim().length <= 3}>
-                    Please provide a clear physical delivery address.
+                  <ErrorMessage
+                    show={touched.address && form.address.trim().length <= 3}
+                  >
+                    Please provide a clear delivery address.
                   </ErrorMessage>
                 </div>
 
-                {/* Notes */}
-                <div className="space-y-1.5 md:col-span-2">
+                <div className="space-y-1 md:col-span-2">
                   <label
                     htmlFor="notes"
-                    className="mb-2.5 block cursor-pointer font-display text-xs font-extrabold uppercase tracking-wider text-[#4A0A0A]"
+                    className="mb-2 block cursor-pointer font-display text-xs font-extrabold uppercase tracking-wider text-[#111111]"
                   >
                     Delivery Notes (Optional)
                   </label>
@@ -435,171 +547,189 @@ export default function Cart() {
                     rows="2"
                     value={form.notes}
                     onChange={handleInputChange}
-                    placeholder="e.g. Leave order with guard, extra crispy request..."
-                    className={cx(inputStyles, "h-auto resize-none py-4")}
+                    placeholder="e.g. Extra chili dip, call on arrival..."
+                    className={cx(
+                      "w-full px-4 py-3 text-sm font-body font-medium outline-none transition-colors rounded-2xl border-0 bg-[#FFFFFF] text-[#111111] placeholder-[#4A4A4A]/65 focus:bg-[#EFEFEF] resize-none",
+                      focusRing
+                    )}
                   />
                 </div>
-              </motion.div>
-
-              {/* Trust Badges */}
-              <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                {[
-                  { icon: ShieldCheck, label: "100% Fresh", sub: "Farm Sourced" },
-                  { icon: Truck, label: "Fast Dispatch", sub: "Temperature Regulated" },
-                  { icon: Leaf, label: "Organic Prep", sub: "Strict Sanitation" },
-                ].map(({ icon: Icon, label, sub }, i) => (
-                  <motion.div
-                    key={label}
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.4, delay: i * 0.05 }}
-                    className="flex items-center gap-3.5 rounded-[2rem] bg-[#4A0A0A]/[0.02] p-4 transition-all duration-300 hover:bg-[#4A0A0A]/[0.04]"
-                  >
-                    <div className="flex shrink-0 items-center justify-center rounded-full bg-white p-3 shadow-sm" style={{ color: RED }}>
-                      <Icon size={16} strokeWidth={2.5} />
-                    </div>
-                    <div className="leading-tight">
-                      <p className="font-display text-xs font-black uppercase tracking-wide text-[#4A0A0A]">
-                        {label}
-                      </p>
-                      <p className="mt-0.5 font-body text-[10px] font-medium uppercase tracking-wider text-[#4A0A0A]/50">
-                        {sub}
-                      </p>
-                    </div>
-                  </motion.div>
-                ))}
               </div>
+            </div>
+
+            {/* Trust Strip */}
+            <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+              {[
+                { icon: ShieldCheck, label: "100% Fresh", sub: "Farm Sourced" },
+                { icon: Truck, label: "Fast Delivery", sub: "Gulu City Dispatch" },
+                { icon: Leaf, label: "Hot & Hygienic", sub: "Wood-Fired Prep" },
+              ].map(({ icon: Icon, label, sub }) => (
+                <div
+                  key={label}
+                  className="flex items-center gap-3 rounded-2xl border-0 bg-[#F5F5F5] p-4"
+                >
+                  <div
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-0 bg-[#FFFFFF]"
+                    style={{ color: PALETTE.red }}
+                  >
+                    <Icon size={16} strokeWidth={2.5} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="truncate font-display text-xs font-black uppercase tracking-wide text-[#111111]">
+                      {label}
+                    </p>
+                    <p className="truncate font-body text-[11px] font-medium text-[#4A4A4A]">
+                      {sub}
+                    </p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
 
-          {/* RIGHT COLUMN — ORDER BAG SIDEBAR */}
+          {/* RIGHT COLUMN — CHECKOUT SUMMARY (MATCHED TO PRODUCTS.JSX CART) */}
           <div className="lg:sticky lg:top-28 lg:col-span-5">
             <motion.div
               initial={{ opacity: 0, y: 20, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={spring}
-              className="flex flex-col overflow-hidden rounded-[2.5rem] bg-[#4A0A0A]/[0.02]"
+              transition={SPRING}
+              className="flex flex-col overflow-hidden rounded-3xl border-0 bg-[#FFFFFF]"
             >
-              {/* Bag Header */}
-              <div className="flex items-center justify-between p-6 text-white" style={{ backgroundColor: DARK }}>
-                <div className="flex items-center gap-2.5">
-                  <ShoppingBag size={20} strokeWidth={2.5} style={{ color: LIME }} />
-                  <h3 className="font-display text-lg font-black uppercase tracking-tight text-white">
-                    Your Order Bag
-                  </h3>
+              {/* Dark Header */}
+              <div
+                className="flex items-center justify-between border-0 p-4"
+                style={{ backgroundColor: PALETTE.ink, color: PALETTE.white }}
+              >
+                <div className="flex items-center gap-2">
+                  <ShoppingBasket
+                    size={18}
+                    strokeWidth={2.5}
+                    style={{ color: PALETTE.lime }}
+                  />
+                  <span className="font-display text-sm font-black uppercase tracking-wide">
+                    Order Summary ({cartItems.length})
+                  </span>
                 </div>
+
                 <Link
                   to="/Products"
-                  className="font-display text-xs font-black uppercase tracking-wider text-white/60 transition-colors hover:text-[#D9FF00]"
+                  className={cx(
+                    "cursor-pointer rounded-full border-0 bg-[#FFFFFF]/15 px-3 py-1 font-display text-[10px] font-bold uppercase tracking-wider text-[#FFFFFF] transition-colors hover:bg-[#FFFFFF]/25",
+                    focusRing
+                  )}
                 >
-                  Edit
+                  Menu
                 </Link>
               </div>
 
-              {/* Free Delivery Tracker */}
-              {subtotal < FREE_DELIVERY_THRESHOLD ? (
-                <div className="bg-[#4A0A0A]/[0.03] p-4 px-6">
-                  <p className="font-body text-xs font-medium text-[#4A0A0A]/80">
-                    Add <span className="font-display font-black text-[#4A0A0A]">{fmt(FREE_DELIVERY_THRESHOLD - subtotal)} UGX</span> more for{" "}
-                    <span className="font-display font-black uppercase" style={{ color: RED }}>Free Delivery!</span>
-                  </p>
-                  <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-[#4A0A0A]/10">
-                    <div
-                      className="h-full rounded-full transition-all duration-500"
-                      style={{ backgroundColor: RED, width: `${Math.min(100, (subtotal / FREE_DELIVERY_THRESHOLD) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="bg-[#4A0A0A]/[0.03] p-4 px-6">
-                  <p className="flex items-center gap-1.5 font-body text-xs font-bold text-[#4A0A0A]">
-                    <Truck size={14} strokeWidth={2.5} style={{ color: RED }} /> You've unlocked Free Delivery!
-                  </p>
-                </div>
-              )}
-
-              {/* Items List */}
-              <div className="cart-scroll max-h-64 flex-grow space-y-4 overflow-y-auto p-6">
-                {cartItems.map((item) => {
-                  return (
-                    <div key={item.id} className="flex items-center justify-between gap-3 border-b border-[#4A0A0A]/5 pb-4 last:border-none last:pb-0">
-                      <div className="relative flex h-14 w-14 flex-shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-[#4A0A0A]/[0.04]">
-                        <img
-                          src={item.image}
-                          alt={item.name}
-                          className="h-full w-full object-contain p-1.5"
-                        />
-                      </div>
-
-                      <div className="min-w-0 flex-grow">
-                        <h4 className="font-display truncate text-sm font-black uppercase text-[#4A0A0A]">
-                          {item.name}
-                        </h4>
-                        <span className="text-xs font-semibold text-[#4A0A0A]/50">{fmt(item.price)} UGX each</span>
-                      </div>
-
-                      {/* Stepper + Remove */}
-                      <div className="flex flex-shrink-0 items-center gap-2">
-                        <div className="flex items-center rounded-full bg-[#4A0A0A]/5 p-0.5">
-                          <button
-                            type="button"
-                            aria-label="Decrease quantity"
-                            onClick={() => decreaseQuantity(item.id)}
-                            className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-[#4A0A0A] transition-colors hover:bg-[#4A0A0A]/10"
-                          >
-                            <Minus size={10} strokeWidth={3} />
-                          </button>
-                          <span className="font-display w-6 text-center text-sm font-black text-[#4A0A0A]">
-                            {item.quantity}
-                          </span>
-                          <button
-                            type="button"
-                            aria-label="Increase quantity"
-                            onClick={() => increaseQuantity(item.id)}
-                            className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full text-[#4A0A0A] transition-colors hover:bg-[#4A0A0A]/10"
-                          >
-                            <Plus size={10} strokeWidth={3} />
-                          </button>
-                        </div>
-                        <button
-                          type="button"
-                          aria-label="Remove item"
-                          onClick={() => removeFromCart(item.id)}
-                          className="flex h-6 w-6 cursor-pointer items-center justify-center rounded-full transition-colors hover:bg-[#E11D1D]/10"
-                          style={{ color: RED }}
-                        >
-                          <Trash2 size={12} />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
+              {/* Free Delivery Notice */}
+              <div className="border-0 bg-[#F5F5F5] px-4 py-2.5 text-[11px] font-semibold text-[#111111]">
+                {remainingForFreeDelivery === 0 ? (
+                  <span className="font-bold text-[#111111]">
+                    Unlocked free delivery
+                  </span>
+                ) : (
+                  <span>
+                    Add{" "}
+                    <strong className="font-black text-[#111111]">
+                      {fmt(remainingForFreeDelivery)} UGX
+                    </strong>{" "}
+                    for free delivery
+                  </span>
+                )}
               </div>
 
-              {/* Pricing Summary */}
-              <div className="space-y-2 p-6 text-white" style={{ backgroundColor: DARK }}>
-                <div className="flex justify-between font-body text-xs text-white/70">
+              {/* Cart Lines */}
+              <div className="cart-scroll max-h-64 flex-1 divide-y divide-[#EFEFEF] overflow-y-auto px-4">
+                {cartItems.map((item) => (
+                  <div
+                    key={item.id}
+                    className="flex items-center justify-between gap-3 py-3"
+                  >
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="h-12 w-12 flex-shrink-0 rounded-xl border-0 bg-[#F5F5F5] object-contain p-1"
+                    />
+                    <div className="min-w-0 flex-grow">
+                      <h4 className="font-display truncate text-xs font-black uppercase text-[#111111]">
+                        {item.name}
+                      </h4>
+                      <span className="text-[11px] font-semibold text-[#4A4A4A]">
+                        {fmt(item.price)} UGX
+                      </span>
+                    </div>
+
+                    <div className="flex flex-shrink-0 items-center gap-1.5">
+                      <button
+                        type="button"
+                        aria-label="Decrease quantity"
+                        onClick={() => decreaseQuantity(item.id)}
+                        className={cx(
+                          "flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-0 bg-[#F5F5F5] text-[#111111] transition-colors hover:bg-[#EFEFEF] sm:h-6 sm:w-6",
+                          focusRing
+                        )}
+                      >
+                        <Minus size={10} strokeWidth={3} />
+                      </button>
+                      <span className="font-display w-5 text-center text-xs font-black tabular-nums text-[#111111]">
+                        {item.quantity}
+                      </span>
+                      <button
+                        type="button"
+                        aria-label="Increase quantity"
+                        onClick={() => increaseQuantity(item.id)}
+                        className={cx(
+                          "flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-0 bg-[#F5F5F5] text-[#111111] transition-colors hover:bg-[#EFEFEF] sm:h-6 sm:w-6",
+                          focusRing
+                        )}
+                      >
+                        <Plus size={10} strokeWidth={3} />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label="Remove item"
+                        onClick={() => removeFromCart(item.id)}
+                        className={cx(
+                          "ml-1 flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-0 text-[#E11D1D] transition-colors hover:bg-[#F5F5F5] sm:h-6 sm:w-6",
+                          focusRing
+                        )}
+                      >
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Totals + Checkout CTA */}
+              <div className="space-y-2 border-0 bg-[#F5F5F5] p-4">
+                <div className="flex items-center justify-between text-xs font-medium text-[#4A4A4A]">
                   <span>Subtotal</span>
-                  <span className="font-bold text-white">{fmt(subtotal)} UGX</span>
-                </div>
-                <div className="flex justify-between font-body text-xs text-white/70">
-                  <span>Tax (18%)</span>
-                  <span className="font-bold text-white">{fmt(tax)} UGX</span>
-                </div>
-                <div className="flex justify-between font-body text-xs text-white/70">
-                  <span>Delivery fee</span>
-                  <span className="font-bold" style={{ color: LIME }}>
-                    {shipping === 0 ? "FREE" : `${fmt(shipping)} UGX`}
+                  <span className="font-bold tabular-nums text-[#111111]">
+                    {fmt(subtotal)} UGX
                   </span>
                 </div>
-                <div className="mt-2 flex justify-between border-t border-white/10 pt-3 font-display text-sm font-black text-white">
+                <div className="flex items-center justify-between text-xs font-medium text-[#4A4A4A]">
+                  <span>Tax (18%)</span>
+                  <span className="font-bold tabular-nums text-[#111111]">
+                    {fmt(tax)} UGX
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-xs font-medium text-[#4A4A4A]">
+                  <span>Delivery</span>
+                  <span className="font-black tabular-nums text-[#111111]">
+                    {deliveryLabel}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between pt-2 font-display text-sm font-black uppercase text-[#111111]">
                   <span>Total</span>
-                  <span style={{ color: LIME }}>{fmt(total)} UGX</span>
+                  <span className="tabular-nums">{fmt(total)} UGX</span>
                 </div>
 
-                <div className="mt-4">
-                  <CtaButton href={whatsappHref} disabled={!isFormValid} className="w-full !py-4 text-sm">
-                    {isFormValid ? "Checkout via WhatsApp" : "Checkout Locked"}
+                <div className="pt-2">
+                  <CtaButton href={whatsappHref} disabled={!isFormValid}>
+                    {isFormValid ? "Order on WhatsApp" : "Checkout Locked"}
                   </CtaButton>
                 </div>
               </div>
@@ -609,29 +739,24 @@ export default function Cart() {
       </div>
 
       {/* MOBILE STICKY CHECKOUT BAR */}
-      <motion.div
-        initial={{ y: 50 }}
-        animate={{ y: 0 }}
-        transition={{ ...smooth, delay: 0.3 }}
-        className="fixed bottom-4 left-4 right-4 z-30 lg:hidden"
-      >
-        <div className="flex items-center justify-between gap-4 rounded-full bg-white/95 p-3 pl-6 shadow-2xl backdrop-blur-2xl">
-          <div className="relative z-10 flex flex-col text-left">
-            <span className="font-display text-xs font-black uppercase tracking-wide text-[#4A0A0A]">
+      <div className="fixed bottom-4 left-4 right-4 z-30 lg:hidden">
+        <div className="flex items-center justify-between gap-3 rounded-full border-0 bg-[#111111] px-4 py-2.5 text-[#FFFFFF]">
+          <div className="flex flex-col text-left">
+            <span className="font-display text-[10px] font-bold uppercase tracking-wider text-[#FFFFFF]/70">
               {cartItems.length} Item{cartItems.length !== 1 ? "s" : ""}
             </span>
-            <span className="font-body text-sm font-black text-[#4A0A0A]">
+            <span className="font-display text-xs font-black tabular-nums text-[#FFFFFF]">
               {fmt(total)} UGX
             </span>
           </div>
 
-          <div className="relative z-10 w-44">
+          <div className="w-40">
             <CtaButton href={whatsappHref} disabled={!isFormValid} small>
-              {isFormValid ? "Checkout" : "Locked"}
+              {isFormValid ? "Order" : "Locked"}
             </CtaButton>
           </div>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 }

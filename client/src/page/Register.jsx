@@ -1,43 +1,48 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import {
-  Eye, EyeOff, User, Mail, Lock, ArrowRight, ShieldCheck, Check, PhoneCall, Flame,
-} from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { Eye, EyeOff, ArrowRight, Check, Loader2, Flame } from "lucide-react";
+
+import Logo from "../assets/Greenore.png";
 import BgImage from "../assets/PorkBg.png";
 
-const BRAND = "Green Pork";
-const PHONE = "+256 776 464 823";
+const BRAND = "greenpork";
+const BRAND_NAME = "Greenpork";
+const SLOGAN = "Crave the difference";
 
-// Same tokens as Hero.jsx / Navbar.jsx / ProductsView.jsx / About.jsx
-const DARK = "#2E0101";
-const BRAND_COLOR = "#D9FF00";
-const RED = "#E11D1D";
-const WORD_RED = "#FFC2B3";
+const PALETTE = {
+  ink: "#111111",
+  charcoal: "#2A2A2A",
+  muted: "#4A4A4A",
+  surface: "#F5F5F5",
+  surfaceHover: "#EFEFEF",
+  red: "#E11D1D",
+  lime: "#D9FF00",
+  white: "#FFFFFF",
+};
 
-const ease = [0.16, 1, 0.3, 1];
+const EASE = [0.16, 1, 0.3, 1];
+const SPRING = { type: "spring", stiffness: 240, damping: 28 };
 
-// Same rings used across the rest of the site — visible on keyboard focus, not just hover.
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E0101] focus-visible:ring-offset-2";
-const focusRingOnDark = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#2E0101]";
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]";
 
-function Reveal({ children, delay = 0, className = "" }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ duration: 0.6, ease, delay }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 12 },
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.5, ease: EASE, delay },
+  },
+});
 
 export default function RegisterForm() {
+  const navigate = useNavigate();
+
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [agreeTerms, setAgreeTerms] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -49,295 +54,426 @@ export default function RegisterForm() {
   const [errors, setErrors] = useState({});
 
   function handleChange(e) {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-    setErrors({ ...errors, [e.target.name]: "" });
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
   }
 
   function validate() {
-    let newErrors = {};
-    if (!formData.name) newErrors.name = "Name is required";
-    if (!formData.email) newErrors.email = "Email is required";
-    if (formData.email && !/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Invalid email format";
-    if (!formData.password) newErrors.password = "Password is required";
-    if (formData.password && formData.password.length < 6) newErrors.password = "Minimum 6 characters";
-    if (!formData.confirmPassword) newErrors.confirmPassword = "Confirm your password";
-    if (formData.password !== formData.confirmPassword) newErrors.confirmPassword = "Passwords do not match";
+    const newErrors = {};
+    if (!formData.name.trim()) newErrors.name = "Full name is required";
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Enter a valid email address";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Minimum 6 characters required";
+    }
+
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Confirm your password";
+    } else if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
     if (!agreeTerms) newErrors.terms = "You must agree to the terms";
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   }
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-    if (validate()) {
-      console.log("REGISTER DATA:", formData);
+    if (!validate()) return;
+
+    try {
+      setLoading(true);
+      await new Promise((resolve) => setTimeout(resolve, 850));
+      navigate("/layout");
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
     }
   }
 
-  // Base input style with NO focus ring baked in — the ring color depends on
-  // whether the field has an error, so it's applied conditionally below.
-  // (Previously a red ring was hard-coded here and a second, conflicting ring
-  // was appended per-field, so valid fields could randomly show a red ring
-  // depending on Tailwind's generated class order. Only one ring class now.)
-  const inputBaseClass = "w-full pl-12 pr-12 py-3.5 bg-[#2E0101]/[0.03] rounded-2xl text-[#2E0101] placeholder:text-[#2E0101]/30 font-medium text-sm outline-none transition-all duration-300 focus:bg-white";
-  const errorRing = "focus:ring-4 focus:ring-[#E11D1D]/30 bg-[#E11D1D]/5";
-  const normalRing = "focus:ring-4 focus:ring-[#2E0101]/10";
-
   return (
-    <div className="font-display flex h-[100dvh] w-full select-none overflow-hidden bg-white selection:bg-[#D9FF00] selection:text-[#2E0101]">
+    <div className="font-display flex h-[100dvh] w-full select-none overflow-hidden border-0 bg-white text-[#111111] selection:bg-[#D9FF00] selection:text-[#111111]">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         .font-display { font-family: 'Archivo', sans-serif; }
+        .font-body { font-family: 'Inter', sans-serif; }
       `}</style>
 
-      {/* LEFT VERTICAL PANEL */}
-      <aside className="relative hidden h-full w-[40%] flex-col justify-between overflow-hidden p-10 text-white lg:flex xl:w-[35%] xl:p-12" style={{ backgroundColor: DARK }}>
-        <motion.img
-          initial={{ scale: 1.2 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 15, ease: "linear" }}
+      {/* ═══════════════════════════════════════════════════════════
+         LEFT: EDITORIAL BRAND STAGE (BORDERLESS DARK SURFACE)
+         ═══════════════════════════════════════════════════════════ */}
+      <aside
+        className="relative hidden h-full w-1/2 flex-col justify-between overflow-hidden border-0 p-16 text-white lg:flex xl:p-24"
+        style={{ backgroundColor: PALETTE.ink }}
+      >
+        <img
           src={BgImage}
-          alt="Premium wood-smoked roasted pork"
-          className="absolute inset-0 h-full w-full object-cover brightness-[0.45]"
+          alt={BRAND_NAME}
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-35"
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(160deg, rgba(17,17,17,0.88) 0%, rgba(17,17,17,0.72) 55%, rgba(225,29,29,0.28) 100%)",
+          }}
         />
 
-        <div className="pointer-events-none absolute left-1/4 top-1/4 h-96 w-96 rounded-full opacity-20 blur-[120px]" style={{ backgroundColor: RED }} />
+        {/* TOP BRAND IDENTITY */}
+        <div className="relative z-10 flex items-center gap-4">
+          <Link
+            to="/"
+            className={`flex items-center gap-3 rounded-full border-0 ${focusRing}`}
+          >
+            <img
+              src={Logo}
+              alt={BRAND_NAME}
+              className="h-20 w-auto object-contain"
+            />
+          </Link>
+        </div>
 
-        <div className="relative z-10 flex h-full flex-col justify-between">
-          {/* Branding */}
-          <div className="space-y-6">
-            <Link to="/" className={`group flex w-fit items-center gap-3 rounded-full ${focusRingOnDark}`}>
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-xs font-black backdrop-blur-md transition-transform group-hover:scale-105">
-                GP
-              </div>
-              <span className="text-sm font-black uppercase tracking-[0.15em] text-white">
-                {BRAND}
-              </span>
-            </Link>
+        {/* CENTER EDITORIAL TITLE */}
+        <div className="relative z-10 my-auto">
+          <span
+            className="mb-5 inline-flex items-center gap-2 rounded-full border-0 px-4 py-2 text-[11px] font-black uppercase tracking-wide"
+            style={{ backgroundColor: PALETTE.lime, color: PALETTE.ink }}
+          >
+            <Flame size={13} strokeWidth={2.5} />
+            {SLOGAN}
+          </span>
+          <h2 className="text-6xl font-black uppercase leading-[0.9] tracking-[-0.04em] text-white xl:text-7xl">
+            Join The <br />
+            <span style={{ color: PALETTE.red }}>Kitchen.</span>
+          </h2>
+          <p className="mt-6 max-w-sm font-body text-sm font-medium leading-relaxed text-white/85">
+            Create your {BRAND_NAME} account for quick ordering across pork,
+            burgers, pizza, and chicken in Gulu City.
+          </p>
+        </div>
 
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-[11px] font-bold uppercase tracking-wide backdrop-blur-md">
-              <ShieldCheck size={13} strokeWidth={2.5} />
-              Premium Farm Fresh
+        {/* FOOTER METRICS */}
+        <div className="relative z-10 flex items-center gap-10 text-xs font-semibold text-white/80">
+          <div>
+            <span className="block font-display text-sm font-black uppercase text-[#D9FF00]">
+              30 MINS
             </span>
+            <span>Gulu City Dispatch</span>
           </div>
-
-          {/* Center Copy */}
-          <div className="my-auto space-y-4">
-            <h2 className="text-3xl font-black uppercase leading-[0.85] tracking-[-0.04em] xl:text-4xl">
-              Eat Fresh.<br />
-              <span style={{ color: WORD_RED }}>Live Happy</span>
-            </h2>
-            <p className="max-w-xs text-xs font-medium leading-relaxed text-white/70 xl:text-sm">
-              Crafted for sharing, feasting, and instant good vibes. Join the inner circle of pork lovers.
-            </p>
-          </div>
-
-          {/* Stats */}
-          <div className="space-y-4 hidden pt-6">
-            <div className="h-px w-full bg-white/15" />
-            {[
-              { value: "10K+", label: "Active Customers" },
-              { value: "30m", label: "Lightning Dispatch" },
-              { value: "4.9★", label: "Avg. User Rating" },
-            ].map((stat) => (
-              <div key={stat.label} className="group flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-white/50">
-                  {stat.label}
-                </span>
-                <span className="text-xl font-black tracking-tight transition-transform duration-300 group-hover:translate-x-1 xl:text-2xl">
-                  {stat.value}
-                </span>
-              </div>
-            ))}
+          <div>
+            <span className="block font-display text-sm font-black uppercase text-white">
+              4.9 ★
+            </span>
+            <span>Customer Rating</span>
           </div>
         </div>
       </aside>
 
-      {/* RIGHT FORM CANVAS */}
-      <main className="relative flex h-full flex-1 flex-col justify-center overflow-hidden p-6 sm:p-10 xl:p-16">
-        {/* Ghost Background Text — same giant-word device as the Hero */}
-        <div className="pointer-events-none hidden absolute right-0 top-0 select-none opacity-[0.03]" style={{ color: DARK }}>
-          <span className="font-black text-[12rem] leading-none tracking-tighter xl:text-[16rem]">
-            JOIN
-          </span>
+      {/* ═══════════════════════════════════════════════════════════
+         RIGHT: BORDERLESS FLAT FORM CANVAS
+         ═══════════════════════════════════════════════════════════ */}
+      <main className="relative flex h-full w-full flex-col justify-between overflow-y-auto border-0 bg-white p-8 text-[#111111] sm:p-14 lg:w-1/2 lg:p-20 xl:p-24">
+        {/* MOBILE TOP BAR */}
+        <div className="flex items-center justify-between lg:hidden">
+          <Link
+            to="/"
+            className={`flex items-center gap-2 rounded-full border-0 ${focusRing}`}
+          >
+            <img
+              src={Logo}
+              alt={BRAND_NAME}
+              className="h-9 w-auto object-contain"
+            />
+            <span className="text-base font-black uppercase tracking-wider text-[#111111]">
+              {BRAND_NAME}
+            </span>
+          </Link>
+          <Link
+            to="/Products"
+            className={`rounded-full border-0 px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[#2A2A2A] hover:text-[#111111] ${focusRing}`}
+          >
+            Menu
+          </Link>
         </div>
 
-        {/* Centered Form Container */}
-        <div className="relative z-10 mx-auto w-full max-w-3xl">
-          <Reveal delay={0.1}>
-            <div className="mb-8 lg:mb-10">
-              <span className="mb-4 inline-flex// hidden items-center gap-2 rounded-full bg-[#2E0101]/10 px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-[#2E0101]">
-                <Flame size={13} strokeWidth={2.5} />
-                Get Started
-              </span>
-              <h2 className="font-black uppercase leading-[0.85] tracking-[-0.04em]" style={{ color: DARK, fontSize: "clamp(2.2rem, 5vw, 4rem)" }}>
-                Join the<br />
-                <span style={{ color: RED }}>Pork Revolt.</span>
-              </h2>
-              <p className="mt-3 max-w-sm text-xs font-medium leading-relaxed text-[#2E0101]/60 sm:text-sm">
-                Fill in your details to start ordering wood-smoked premium cuts.
-              </p>
-            </div>
-          </Reveal>
+        {/* FORM CONTAINER */}
+        <div className="mx-auto my-auto w-full max-w-md py-6">
+          <motion.div {...fadeUp(0.05)} className="mb-8">
+            <h1 className="text-4xl font-black uppercase tracking-[-0.03em] text-[#111111] sm:text-5xl">
+              Register
+            </h1>
+            <p className="mt-2 font-body text-xs font-medium text-[#4A4A4A] sm:text-sm">
+              Enter your details to create a {BRAND_NAME} account.
+            </p>
+          </motion.div>
 
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 gap-4 gap-x-6 sm:grid-cols-2" noValidate>
-            {/* NAME */}
-            <Reveal delay={0.15} className="sm:col-span-2">
-              <label htmlFor="name" className="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-[#2E0101]/80">
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            {/* FULL NAME */}
+            <motion.div {...fadeUp(0.1)}>
+              <label
+                htmlFor="name"
+                className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#111111]"
+              >
                 Full Name
               </label>
-              <div className="relative">
-                <User className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#2E0101]/30" size={18} strokeWidth={2.2} />
-                <input
-                  id="name"
-                  type="text"
-                  name="name"
-                  value={formData.name}
-                  onChange={handleChange}
-                  placeholder="John Doe"
-                  aria-invalid={!!errors.name}
-                  aria-describedby={errors.name ? "name-error" : undefined}
-                  className={`${inputBaseClass} ${errors.name ? errorRing : normalRing}`}
-                />
-              </div>
-              {errors.name && <p id="name-error" className="mt-1.5 text-xs font-medium" style={{ color: RED }}>{errors.name}</p>}
-            </Reveal>
+              <input
+                id="name"
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleChange}
+                placeholder="John Doe"
+                aria-invalid={!!errors.name}
+                aria-describedby={errors.name ? "name-error" : undefined}
+                className="h-14 w-full rounded-2xl border-0 bg-[#F5F5F5] px-5 font-body text-sm font-medium text-[#111111] placeholder:text-[#666666] outline-none ring-0 transition-colors focus:bg-[#EFEFEF]"
+              />
+              <AnimatePresence>
+                {errors.name && (
+                  <motion.p
+                    id="name-error"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-1.5 pl-1 text-xs font-bold text-[#E11D1D]"
+                  >
+                    {errors.name}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.div>
 
             {/* EMAIL */}
-            <Reveal delay={0.2}>
-              <label htmlFor="email" className="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-[#2E0101]/80">
+            <motion.div {...fadeUp(0.15)}>
+              <label
+                htmlFor="email"
+                className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#111111]"
+              >
                 Email Address
               </label>
-              <div className="relative">
-                <Mail className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#2E0101]/30" size={18} strokeWidth={2.2} />
-                <input
-                  id="email"
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="you@example.com"
-                  aria-invalid={!!errors.email}
-                  aria-describedby={errors.email ? "email-error" : undefined}
-                  className={`${inputBaseClass} ${errors.email ? errorRing : normalRing}`}
-                />
-              </div>
-              {errors.email && <p id="email-error" className="mt-1.5 text-xs font-medium" style={{ color: RED }}>{errors.email}</p>}
-            </Reveal>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@example.com"
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
+                className="h-14 w-full rounded-2xl border-0 bg-[#F5F5F5] px-5 font-body text-sm font-medium text-[#111111] placeholder:text-[#666666] outline-none ring-0 transition-colors focus:bg-[#EFEFEF]"
+              />
+              <AnimatePresence>
+                {errors.email && (
+                  <motion.p
+                    id="email-error"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-1.5 pl-1 text-xs font-bold text-[#E11D1D]"
+                  >
+                    {errors.email}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.div>
 
-            {/* PASSWORD */}
-            <Reveal delay={0.25}>
-              <label htmlFor="password" className="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-[#2E0101]/80">
-                Password
-              </label>
-              <div className="relative">
-                <Lock className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#2E0101]/30" size={18} strokeWidth={2.2} />
-                <input
-                  id="password"
-                  type={showPassword ? "text" : "password"}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  aria-invalid={!!errors.password}
-                  aria-describedby={errors.password ? "password-error" : undefined}
-                  className={`${inputBaseClass} ${errors.password ? errorRing : normalRing}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className={`absolute right-4 top-1/2 -translate-y-1/2 rounded-full text-[#2E0101]/40 transition-colors hover:text-[#2E0101] ${focusRing}`}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
+            {/* PASSWORD GRID */}
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {/* PASSWORD */}
+              <motion.div {...fadeUp(0.2)}>
+                <label
+                  htmlFor="password"
+                  className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#111111]"
                 >
-                  {showPassword ? <EyeOff size={18} strokeWidth={2.2} /> : <Eye size={18} strokeWidth={2.2} />}
-                </button>
-              </div>
-              {errors.password && <p id="password-error" className="mt-1.5 text-xs font-medium" style={{ color: RED }}>{errors.password}</p>}
-            </Reveal>
+                  Password
+                </label>
+                <div className="relative">
+                  <input
+                    id="password"
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    aria-invalid={!!errors.password}
+                    aria-describedby={
+                      errors.password ? "password-error" : undefined
+                    }
+                    className="h-14 w-full rounded-2xl border-0 bg-[#F5F5F5] pl-5 pr-11 font-body text-sm font-medium text-[#111111] placeholder:text-[#666666] outline-none ring-0 transition-colors focus:bg-[#EFEFEF]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    className={`absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer rounded-full border-0 p-1.5 text-[#4A4A4A] transition-colors hover:text-[#111111] ${focusRing}`}
+                    aria-label="Toggle password visibility"
+                  >
+                    {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                  </button>
+                </div>
+                <AnimatePresence>
+                  {errors.password && (
+                    <motion.p
+                      id="password-error"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mt-1.5 pl-1 text-xs font-bold text-[#E11D1D]"
+                    >
+                      {errors.password}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </motion.div>
 
-            {/* CONFIRM PASSWORD */}
-            <Reveal delay={0.3} className="sm:col-span-2">
-              <label htmlFor="confirmPassword" className="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-[#2E0101]/80">
-                Confirm Password
-              </label>
-              <div className="relative">
-                <Lock className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#2E0101]/30" size={18} strokeWidth={2.2} />
-                <input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  aria-invalid={!!errors.confirmPassword}
-                  aria-describedby={errors.confirmPassword ? "confirmPassword-error" : undefined}
-                  className={`${inputBaseClass} ${errors.confirmPassword ? errorRing : normalRing}`}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className={`absolute right-4 top-1/2 -translate-y-1/2 rounded-full text-[#2E0101]/40 transition-colors hover:text-[#2E0101] ${focusRing}`}
-                  aria-label={showConfirmPassword ? "Hide confirm password" : "Show confirm password"}
+              {/* CONFIRM PASSWORD */}
+              <motion.div {...fadeUp(0.25)}>
+                <label
+                  htmlFor="confirmPassword"
+                  className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#111111]"
                 >
-                  {showConfirmPassword ? <EyeOff size={18} strokeWidth={2.2} /> : <Eye size={18} strokeWidth={2.2} />}
-                </button>
-              </div>
-              {errors.confirmPassword && <p id="confirmPassword-error" className="mt-1.5 text-xs font-medium" style={{ color: RED }}>{errors.confirmPassword}</p>}
-            </Reveal>
+                  Confirm
+                </label>
+                <div className="relative">
+                  <input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    name="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    placeholder="••••••••"
+                    aria-invalid={!!errors.confirmPassword}
+                    aria-describedby={
+                      errors.confirmPassword
+                        ? "confirm-password-error"
+                        : undefined
+                    }
+                    className="h-14 w-full rounded-2xl border-0 bg-[#F5F5F5] pl-5 pr-11 font-body text-sm font-medium text-[#111111] placeholder:text-[#666666] outline-none ring-0 transition-colors focus:bg-[#EFEFEF]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    className={`absolute right-3.5 top-1/2 -translate-y-1/2 cursor-pointer rounded-full border-0 p-1.5 text-[#4A4A4A] transition-colors hover:text-[#111111] ${focusRing}`}
+                    aria-label="Toggle confirm password visibility"
+                  >
+                    {showConfirmPassword ? (
+                      <EyeOff size={16} />
+                    ) : (
+                      <Eye size={16} />
+                    )}
+                  </button>
+                </div>
+                <AnimatePresence>
+                  {errors.confirmPassword && (
+                    <motion.p
+                      id="confirm-password-error"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: "auto" }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="mt-1.5 pl-1 text-xs font-bold text-[#E11D1D]"
+                    >
+                      {errors.confirmPassword}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            </div>
 
-            {/* ACTION ROW */}
-            <Reveal delay={0.35} className="mt-2 flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-end sm:col-span-2">
-              <div className="flex w-full items-start gap-3 sm:w-auto sm:max-w-[50%]">
-                <button
-                  type="button"
-                  onClick={() => setAgreeTerms(!agreeTerms)}
-                  className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md transition-all duration-300 ${focusRing} ${agreeTerms ? "bg-[#D9FF00]" : "bg-[#2E0101]/10 hover:bg-[#2E0101]/20"}`}
-                  role="checkbox"
-                  aria-checked={agreeTerms}
-                  aria-describedby={errors.terms ? "terms-error" : undefined}
+            {/* AGREE TERMS CHECKBOX */}
+            <motion.div {...fadeUp(0.3)} className="pt-1">
+              <label className="group flex cursor-pointer items-center gap-3">
+                <input
+                  type="checkbox"
+                  checked={agreeTerms}
+                  onChange={(e) => setAgreeTerms(e.target.checked)}
+                  className="peer sr-only"
+                />
+                <div
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-lg border-0 transition-colors ${focusRing} ${
+                    agreeTerms
+                      ? "bg-[#D9FF00] text-[#111111]"
+                      : "bg-[#F5F5F5] text-transparent"
+                  }`}
                 >
-                  {agreeTerms && <Check size={12} strokeWidth={3} className="text-[#2E0101]" />}
-                </button>
-                <p className="text-xs font-medium leading-relaxed text-[#2E0101]/60">
+                  <Check size={12} strokeWidth={3.5} />
+                </div>
+                <span className="font-body text-xs font-medium text-[#2A2A2A]">
                   I agree to the{" "}
-                  <Link to="/returnPolicy" className={`rounded font-bold underline text-[#2E0101] ${focusRing}`}>
-                    Terms & Policy
+                  <Link
+                    to="/returnPolicy"
+                    className={`rounded font-bold text-[#E11D1D] hover:underline ${focusRing}`}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Terms &amp; Privacy Policy
                   </Link>
-                  .
-                </p>
-              </div>
-              {errors.terms && <p id="terms-error" className="w-full text-xs font-medium sm:w-auto" style={{ color: RED }}>{errors.terms}</p>}
+                </span>
+              </label>
+              <AnimatePresence>
+                {errors.terms && (
+                  <motion.p
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-1.5 pl-1 text-xs font-bold text-[#E11D1D]"
+                  >
+                    {errors.terms}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.div>
 
+            {/* SUBMIT BUTTON */}
+            <motion.div {...fadeUp(0.35)} className="pt-3">
               <motion.button
                 type="submit"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 220, damping: 26 }}
-                className={`flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-3.5 px-6 text-xs font-black uppercase tracking-wide shadow-lg sm:w-auto sm:min-w-[240px] ${focusRing}`}
-                style={{ backgroundColor: BRAND_COLOR, color: DARK }}
+                disabled={loading}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                transition={SPRING}
+                className={`flex h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-0 font-display text-xs font-black uppercase tracking-wider transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 ${focusRing}`}
+                style={{ backgroundColor: PALETTE.lime, color: PALETTE.ink }}
               >
-                Create Account <ArrowRight size={14} strokeWidth={2.5} />
+                {loading ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <>
+                    Create Account
+                    <ArrowRight size={16} strokeWidth={2.5} />
+                  </>
+                )}
               </motion.button>
-            </Reveal>
+            </motion.div>
           </form>
 
-          {/* FOOTER */}
-          <Reveal delay={0.4} className="mt-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <div className="h-px w-full bg-[#2E0101]/10 sm:hidden" />
-            <p className="text-center text-xs font-medium text-[#2E0101]/60 sm:text-left">
+          {/* FOOTER SWITCH NOTE */}
+          <motion.div {...fadeUp(0.4)} className="mt-8 text-center sm:text-left">
+            <p className="font-body text-xs font-medium text-[#4A4A4A]">
               Already have an account?{" "}
-              <Link to="/login" className={`ml-1 rounded font-black uppercase tracking-wider underline text-[#2E0101] ${focusRing}`}>
+              <Link
+                to="/login"
+                className={`rounded font-display font-black uppercase tracking-wider text-[#E11D1D] hover:underline ${focusRing}`}
+              >
                 Sign In
               </Link>
             </p>
-            <a
-              href={`tel:+${PHONE.replace(/\s/g, "")}`}
-              className={`group flex items-center gap-2 rounded-full text-xs font-black uppercase tracking-widest text-[#2E0101]/80 transition-colors ${focusRing}`}
-            >
-              <PhoneCall size={14} strokeWidth={2.5} className="transition-transform group-hover:scale-110" style={{ color: RED }} />
-              {PHONE}
-            </a>
-          </Reveal>
+          </motion.div>
+        </div>
+
+        {/* BOTTOM LEGAL ROW */}
+        <div className="py-2 text-center sm:text-left">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#4A4A4A]">
+            © {new Date().getFullYear()} {BRAND_NAME} · {SLOGAN}
+          </p>
         </div>
       </main>
     </div>

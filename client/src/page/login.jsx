@@ -1,256 +1,452 @@
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
-  Eye, EyeOff, Mail, Lock, ArrowRight, ShieldCheck, Check, Flame,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Loader2,
+  ShieldCheck,
+  UserCheck,
+  Flame,
 } from "lucide-react";
-import BgImage from "../assets/pngwing.com (19).png";
 
-const BRAND = "Green Pork";
+import Logo from "../assets/Greenore.png";
+import BG_IMAGE from "../assets/bgimage.png";
 
-// Standardized Colors
-const BRAND_COLOR = "#D9FF00";
-const DARK = "#4A0A0A";
-const RED = "#E11D1D";
-const WORD_RED = "#FFC2B3";
+const BRAND = "greenpork";
+const BRAND_NAME = "Greenpork";
+const SLOGAN = "Crave the difference";
 
-const ease = [0.16, 1, 0.3, 1];
+const DEMO_USERS = {
+  admin: {
+    email: "admin@greenpork.com",
+    password: "password123",
+  },
+  customer: {
+    email: "customer@greenpork.com",
+    password: "password123",
+  },
+};
 
-function Reveal({ children, delay = 0, className = "" }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
-      animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      transition={{ duration: 0.6, ease, delay }}
-      className={className}
-    >
-      {children}
-    </motion.div>
-  );
-}
+const PALETTE = {
+  red: "#E11D1D",
+  lime: "#D9FF00",
+  ink: "#111111",
+  charcoal: "#2A2A2A",
+  muted: "#4A4A4A",
+  white: "#FFFFFF",
+};
 
-export default function Login() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      email: "",
-      password: "",
-      remember: false,
-    },
-  });
+const EASE = [0.16, 1, 0.3, 1];
+const SPRING = { type: "spring", stiffness: 240, damping: 28 };
 
-  const [loading, setLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 14, filter: "blur(4px)" },
+  animate: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.55, ease: EASE, delay },
+  },
+  exit: {
+    opacity: 0,
+    y: -8,
+    filter: "blur(4px)",
+    transition: { duration: 0.2 },
+  },
+});
 
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]";
+
+export default function LoginForm() {
   const navigate = useNavigate();
 
-  const onSubmit = async (data) => {
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [activeRole, setActiveRole] = useState("admin");
+
+  const [formData, setFormData] = useState({
+    email: DEMO_USERS.admin.email,
+    password: DEMO_USERS.admin.password,
+  });
+
+  const [errors, setErrors] = useState({});
+  const [authError, setAuthError] = useState("");
+
+  function handleChange(e) {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (errors[name]) {
+      setErrors((prev) => ({ ...prev, [name]: "" }));
+    }
+    if (authError) setAuthError("");
+  }
+
+  function fillCredentials(type) {
+    const user = DEMO_USERS[type];
+    setActiveRole(type);
+    setFormData({
+      email: user.email,
+      password: user.password,
+    });
+    setErrors({});
+    setAuthError("");
+  }
+
+  function validate() {
+    const newErrors = {};
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Enter a valid email address";
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Minimum 6 characters required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  }
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    if (!validate()) return;
+
     try {
       setLoading(true);
-      console.log("LOGIN DATA:", data);
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      navigate("/layout");
-    } catch (error) {
-      console.error(error);
+      setAuthError("");
+      await new Promise((resolve) => setTimeout(resolve, 550));
+
+      const matchedUser = Object.values(DEMO_USERS).find(
+        (u) =>
+          u.email.toLowerCase() === formData.email.trim().toLowerCase() &&
+          u.password === formData.password
+      );
+
+      if (!matchedUser) {
+        setAuthError("Invalid credentials. Use the quick demo toggles above.");
+        return;
+      }
+
+      localStorage.setItem("isAuthenticated", "true");
+      localStorage.setItem("userEmail", formData.email);
+      localStorage.setItem(
+        "userRole",
+        formData.email.includes("admin") ? "admin" : "customer"
+      );
+
+      navigate("/home");
+    } catch (err) {
+      console.error(err);
+      setAuthError("Something went wrong. Please try again.");
     } finally {
       setLoading(false);
     }
-  };
-
-  const inputBaseClass = "w-full pl-12 pr-12 py-3.5 bg-[#4A0A0A]/[0.03] rounded-2xl text-[#4A0A0A] placeholder:text-[#4A0A0A]/30 font-medium text-sm outline-none transition-all duration-300 focus:bg-white focus:ring-4 focus:ring-[#E11D1D]/20";
-  const errorClass = "ring-4 ring-[#E11D1D]/20 bg-[#E11D1D]/5";
-  const normalClass = "focus:ring-[#4A0A0A]/10";
+  }
 
   return (
-    <div className="font-display flex h-[100dvh] w-full select-none overflow-hidden bg-white selection:bg-[#D9FF00] selection:text-[#4A0A0A]">
+    <div className="font-display flex h-[100dvh] w-full select-none overflow-hidden border-0 bg-[#111111] text-white selection:bg-[#D9FF00] selection:text-[#111111]">
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         .font-display { font-family: 'Archivo', sans-serif; }
+        .font-body { font-family: 'Inter', sans-serif; }
       `}</style>
 
-      {/* LEFT VERTICAL PANEL */}
-      <aside className="relative hidden h-full w-[40%] flex-col justify-between overflow-hidden p-10 text-white lg:flex xl:w-[35%] xl:p-12" style={{ backgroundColor: DARK }}>
-        <motion.img
-          initial={{ scale: 1.2 }}
-          animate={{ scale: 1 }}
-          transition={{ duration: 15, ease: "linear" }}
-          src={BgImage}
-          alt="Premium wood-smoked roasted pork"
-          className="absolute inset-0 h-full w-full object-cover brightness-[0.45]"
+      {/* ═══════════════════════════════════════════════════════════
+         LEFT: EDITORIAL BRAND HERO STAGE (BORDERLESS DARK SURFACE)
+         ═══════════════════════════════════════════════════════════ */}
+      <aside className="relative z-10 hidden h-full w-1/2 flex-col justify-between overflow-hidden border-0 bg-[#111111] p-16 lg:flex xl:p-24">
+        <img
+          src={BG_IMAGE}
+          alt={BRAND}
+          className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-35"
+        />
+        <div
+          className="pointer-events-none absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(160deg, rgba(17,17,17,0.88) 0%, rgba(17,17,17,0.72) 55%, rgba(225,29,29,0.28) 100%)",
+          }}
         />
 
-        <div className="pointer-events-none absolute left-1/4 top-1/4 h-96 w-96 rounded-full opacity-20 blur-[120px]" style={{ backgroundColor: RED }} />
-
-        <div className="relative z-10 flex h-full flex-col justify-between">
-          {/* Top Branding */}
-          <div className="space-y-6 hidden">
-            <Link to="/" className="group flex w-fit items-center gap-3">
-              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white/10 text-xs font-black backdrop-blur-md transition-transform group-hover:scale-105">
-                GP
-              </div>
-              <span className="text-sm font-black uppercase tracking-[0.15em] text-white">
-                {BRAND}
-              </span>
-            </Link>
-
-            <span className="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-2 text-[11px] font-bold uppercase tracking-wide backdrop-blur-md">
-              <ShieldCheck size={13} strokeWidth={2.5} />
-              Premium Farm Fresh
-            </span>
-          </div>
-
-          {/* Middle Call To Action */}
-          <div className="my-auto space-y-4">
-            <h2 className="text-4xl font-black uppercase leading-[0.85] tracking-[-0.04em] xl:text-5xl">
-              Eat Fresh.<br />
-              <span style={{ color: WORD_RED }}>Live Happy</span>
-            </h2>
-            <p className="max-w-xs text-xs font-medium leading-relaxed text-white/70 xl:text-sm">
-              Crafted for sharing, feasting, and instant good vibes. Continue your culinary journey.
-            </p>
-          </div>
-
-          {/* Bottom Stats */}
-          <div className="space-y-4 hidden pt-6">
-            <div className="h-px w-full bg-white/15" />
-            {[
-              { value: "10K+", label: "Active Customers" },
-              { value: "30m", label: "Lightning Dispatch" },
-              { value: "4.9★", label: "Avg. User Rating" },
-            ].map((stat) => (
-              <div key={stat.label} className="group flex items-center justify-between">
-                <span className="text-[10px] font-black uppercase tracking-widest text-white/50">
-                  {stat.label}
-                </span>
-                <span className="text-xl font-black tracking-tight transition-transform duration-300 group-hover:translate-x-1 xl:text-2xl">
-                  {stat.value}
-                </span>
-              </div>
-            ))}
-          </div>
+        {/* TOP BRAND IDENTITY */}
+        <div className="relative z-10 flex items-center gap-4">
+          <Link
+            to="/"
+            className={`flex items-center gap-3 rounded-full border-0 ${focusRing}`}
+          >
+            <img
+              src={Logo}
+              alt={BRAND_NAME}
+              className="h-20 w-auto object-contain"
+            />
+          </Link>
         </div>
+
+        {/* CENTER TYPOGRAPHY */}
+        <div className="relative z-10 my-auto">
+          <motion.div {...fadeUp(0)}>
+            <span
+              className="mb-6 inline-flex items-center gap-2 rounded-full border-0 px-4 py-2 text-[11px] font-black uppercase tracking-wide"
+              style={{ backgroundColor: PALETTE.lime, color: PALETTE.ink }}
+            >
+              <Flame size={13} strokeWidth={2.5} />
+              {SLOGAN}
+            </span>
+          </motion.div>
+
+          <motion.h1
+            {...fadeUp(0.04)}
+            className="font-display text-6xl font-black uppercase leading-[0.88] tracking-[-0.04em] text-white xl:text-7xl"
+          >
+            SIGN IN <br />
+            <span style={{ color: PALETTE.red }}>TO ORDER.</span>
+          </motion.h1>
+
+          <motion.p
+            {...fadeUp(0.08)}
+            className="mt-6 max-w-sm font-body text-sm font-medium leading-relaxed text-white/85"
+          >
+            Order freshly prepared pork, burgers, pizza, and chicken in Gulu
+            City, track orders, and manage your {BRAND_NAME} account.
+          </motion.p>
+        </div>
+
+        {/* FOOTER METRICS */}
+        <motion.div
+          {...fadeUp(0.12)}
+          className="relative z-10 flex items-center gap-10 text-xs font-semibold text-white/80"
+        >
+          <div>
+            <span className="block font-display text-sm font-black uppercase text-[#D9FF00]">
+              30 MINS
+            </span>
+            <span>Gulu City Dispatch</span>
+          </div>
+          <div>
+            <span className="block font-display text-sm font-black uppercase text-white">
+              4.9 ★
+            </span>
+            <span>Customer Rating</span>
+          </div>
+        </motion.div>
       </aside>
 
-      {/* RIGHT FORM CANVAS */}
-      <main className="relative flex h-full flex-1 flex-col justify-center overflow-hidden p-6 sm:p-10 xl:p-16">
-        {/* Floating Decorative Background Text */}
-        <div className="pointer-events-none hidden absolute right-0 top-0 select-none opacity-[0.03]" style={{ color: DARK }}>
-          <span className="font-black text-[12rem] leading-none tracking-tighter xl:text-[16rem]">
-            LOGIN
-          </span>
+      {/* ═══════════════════════════════════════════════════════════
+         RIGHT: BORDERLESS FLAT FORM CANVAS (WHITE SURFACE)
+         ═══════════════════════════════════════════════════════════ */}
+      <main className="relative z-10 flex h-full w-full flex-col justify-between overflow-y-auto border-0 bg-white p-6 text-[#111111] sm:p-12 lg:w-1/2 lg:p-20 xl:p-24">
+        {/* MOBILE HEADER */}
+        <div className="flex items-center justify-between lg:hidden">
+          <Link
+            to="/"
+            className={`flex items-center gap-2 rounded-full border-0 ${focusRing}`}
+          >
+            <img
+              src={Logo}
+              alt={BRAND_NAME}
+              className="h-10 w-auto object-contain"
+            />
+            <span className="text-base font-black uppercase tracking-wider text-[#111111]">
+              {BRAND_NAME}
+            </span>
+          </Link>
         </div>
 
-        <div className="relative z-10 mx-auto w-full max-w-3xl">
-          {/* HEADER */}
-          <Reveal delay={0.1}>
-            <div className="mb-8 lg:mb-10">
-              <span className="mb-4 inline-flex// hidden items-center gap-2 rounded-full bg-[#4A0A0A]/10 px-4 py-2 text-[11px] font-bold uppercase tracking-wide text-[#4A0A0A]">
-                <Flame size={13} strokeWidth={2.5} />
-                Access Account
-              </span>
-              <h2 className="font-black uppercase leading-[0.85] tracking-[-0.04em]" style={{ color: DARK, fontSize: "clamp(2.2rem, 5vw, 4rem)" }}>
-                Welcome<br />
-                <span style={{ color: RED }}>Back.</span>
-              </h2>
-              <p className="mt-3 max-w-sm text-xs font-medium leading-relaxed text-[#4A0A0A]/60 sm:text-sm">
-                Sign in to continue ordering premium cuts.
-              </p>
-            </div>
-          </Reveal>
+        {/* FORM CONTAINER */}
+        <div className="mx-auto my-auto w-full max-w-md py-6">
+          <motion.div {...fadeUp(0.04)} className="mb-7">
+            <h2 className="text-4xl font-black uppercase tracking-[-0.03em] text-[#111111] sm:text-5xl">
+              Sign In
+            </h2>
+            <p className="mt-2 font-body text-xs font-medium text-[#4A4A4A] sm:text-sm">
+              Enter your account credentials to proceed.
+            </p>
+          </motion.div>
 
-          {/* FORM GRID */}
-          <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 gap-4 gap-x-6 sm:grid-cols-2">
+          {/* FLAT SEGMENTED DEMO SWITCHER */}
+          <motion.div
+            {...fadeUp(0.06)}
+            className="mb-7 rounded-2xl border-0 bg-[#F5F5F5] p-1.5"
+          >
+            <div className="grid grid-cols-2 gap-1.5">
+              <button
+                type="button"
+                onClick={() => fillCredentials("admin")}
+                className={`flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border-0 py-3 font-display text-[11px] font-bold uppercase tracking-wider transition-colors ${focusRing} ${
+                  activeRole === "admin"
+                    ? "bg-[#111111] text-[#D9FF00]"
+                    : "bg-transparent text-[#2A2A2A] hover:bg-white hover:text-[#111111]"
+                }`}
+              >
+                <ShieldCheck size={14} />
+                As Admin
+              </button>
+              <button
+                type="button"
+                onClick={() => fillCredentials("customer")}
+                className={`flex cursor-pointer items-center justify-center gap-1.5 rounded-xl border-0 py-3 font-display text-[11px] font-bold uppercase tracking-wider transition-colors ${focusRing} ${
+                  activeRole === "customer"
+                    ? "bg-[#111111] text-[#D9FF00]"
+                    : "bg-transparent text-[#2A2A2A] hover:bg-white hover:text-[#111111]"
+                }`}
+              >
+                <UserCheck size={14} />
+                As Customer
+              </button>
+            </div>
+          </motion.div>
+
+          {/* AUTH ERROR ALERT */}
+          <AnimatePresence>
+            {authError && (
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                className="mb-5 rounded-2xl border-0 bg-[#E11D1D]/10 px-4 py-3 font-body text-xs font-bold text-[#E11D1D]"
+              >
+                {authError}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
             {/* EMAIL */}
-            <Reveal delay={0.15} className="sm:col-span-2">
-              <label className="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-[#4A0A0A]/80">
+            <motion.div {...fadeUp(0.08)}>
+              <label
+                htmlFor="email"
+                className="mb-2 block text-xs font-bold uppercase tracking-wider text-[#111111]"
+              >
                 Email Address
               </label>
-              <div className="relative">
-                <Mail className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#4A0A0A]/30" size={18} strokeWidth={2.2} />
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  {...register("email", { required: "Email is required" })}
-                  className={`${inputBaseClass} ${errors.email ? errorClass : normalClass}`}
-                />
-              </div>
-              {errors.email && <p className="mt-1.5 text-xs font-medium" style={{ color: RED }}>{errors.email.message}</p>}
-            </Reveal>
+              <input
+                id="email"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="you@example.com"
+                aria-invalid={!!errors.email}
+                aria-describedby={errors.email ? "email-error" : undefined}
+                className="h-14 w-full rounded-2xl border-0 bg-[#F5F5F5] px-5 font-body text-sm font-medium text-[#111111] placeholder:text-[#666666] outline-none ring-0 transition-colors focus:bg-[#EFEFEF]"
+              />
+              <AnimatePresence>
+                {errors.email && (
+                  <motion.p
+                    id="email-error"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-1.5 pl-1 text-xs font-bold text-[#E11D1D]"
+                  >
+                    {errors.email}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.div>
 
             {/* PASSWORD */}
-            <Reveal delay={0.2} className="sm:col-span-2">
-              <label className="mb-1.5 block text-[11px] font-black uppercase tracking-widest text-[#4A0A0A]/80">
-                Password
-              </label>
+            <motion.div {...fadeUp(0.1)}>
+              <div className="mb-2 flex items-center justify-between">
+                <label
+                  htmlFor="password"
+                  className="text-xs font-bold uppercase tracking-wider text-[#111111]"
+                >
+                  Password
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className={`rounded text-xs font-bold uppercase tracking-wide text-[#E11D1D] transition-opacity hover:opacity-75 ${focusRing}`}
+                >
+                  Forgot?
+                </Link>
+              </div>
               <div className="relative">
-                <Lock className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[#4A0A0A]/30" size={18} strokeWidth={2.2} />
                 <input
+                  id="password"
                   type={showPassword ? "text" : "password"}
+                  name="password"
+                  value={formData.password}
+                  onChange={handleChange}
                   placeholder="••••••••"
-                  {...register("password", { required: "Password is required" })}
-                  className={`${inputBaseClass} ${errors.password ? errorClass : normalClass}`}
+                  aria-invalid={!!errors.password}
+                  aria-describedby={
+                    errors.password ? "password-error" : undefined
+                  }
+                  className="h-14 w-full rounded-2xl border-0 bg-[#F5F5F5] pl-5 pr-12 font-body text-sm font-medium text-[#111111] placeholder:text-[#666666] outline-none ring-0 transition-colors focus:bg-[#EFEFEF]"
                 />
                 <button
                   type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-[#4A0A0A]/40 transition-colors hover:text-[#4A0A0A]"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className={`absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer rounded-full border-0 p-2 text-[#4A4A4A] transition-colors hover:text-[#111111] ${focusRing}`}
                   aria-label="Toggle password visibility"
                 >
-                  {showPassword ? <EyeOff size={18} strokeWidth={2.2} /> : <Eye size={18} strokeWidth={2.2} />}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              {errors.password && <p className="mt-1.5 text-xs font-medium" style={{ color: RED }}>{errors.password.message}</p>}
-            </Reveal>
+              <AnimatePresence>
+                {errors.password && (
+                  <motion.p
+                    id="password-error"
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="mt-1.5 pl-1 text-xs font-bold text-[#E11D1D]"
+                  >
+                    {errors.password}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.div>
 
-            {/* ACTION ROW */}
-            <Reveal delay={0.25} className="mt-2 flex flex-col items-center justify-between gap-4 sm:flex-row sm:items-end sm:col-span-2">
-              <div className="flex w-full items-start gap-3 sm:w-auto">
-                <button
-                  type="button"
-                  onClick={() => setRememberMe(!rememberMe)}
-                  className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md transition-all duration-300 ${rememberMe ? "bg-[#D9FF00]" : "bg-[#4A0A0A]/10 hover:bg-[#4A0A0A]/20"}`}
-                  aria-pressed={rememberMe}
-                >
-                  {rememberMe && <Check size={12} strokeWidth={3} className="text-[#4A0A0A]" />}
-                </button>
-                <p className="text-xs font-medium leading-relaxed text-[#4A0A0A]/60">
-                  Remember me on this device
-                </p>
-              </div>
-
+            {/* SUBMIT BUTTON */}
+            <motion.div {...fadeUp(0.12)} className="pt-3">
               <motion.button
                 type="submit"
                 disabled={loading}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                transition={{ type: "spring", stiffness: 220, damping: 26 }}
-                className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-full py-3.5 px-6 text-xs font-black uppercase tracking-wide shadow-lg disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto sm:min-w-[240px]"
-                style={{ backgroundColor: BRAND_COLOR, color: DARK }}
+                whileHover={{ scale: 1.01 }}
+                whileTap={{ scale: 0.99 }}
+                transition={SPRING}
+                className={`flex h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-2xl border-0 font-display text-xs font-black uppercase tracking-wider transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50 ${focusRing}`}
+                style={{ backgroundColor: PALETTE.lime, color: PALETTE.ink }}
               >
-                {loading ? "Authenticating..." : "Sign In"}
-                {!loading && <ArrowRight size={14} strokeWidth={2.5} />}
+                {loading ? (
+                  <Loader2 size={18} className="animate-spin" />
+                ) : (
+                  <>
+                    Sign In
+                    <ArrowRight size={16} strokeWidth={2.5} />
+                  </>
+                )}
               </motion.button>
-            </Reveal>
+            </motion.div>
           </form>
 
-          {/* FOOTER LINKS */}
-          <Reveal delay={0.3} className="mt-8 flex flex-col items-center justify-between gap-4 sm:flex-row">
-            <div className="h-px w-full bg-[#4A0A0A]/10 sm:hidden" />
-            <p className="text-center text-xs font-medium text-[#4A0A0A]/60 sm:text-left">
+          {/* FOOTER SWITCH NOTE */}
+          <motion.div {...fadeUp(0.14)} className="mt-8 text-center sm:text-left">
+            <p className="font-body text-xs font-medium text-[#4A4A4A]">
               Don't have an account?{" "}
-              <Link to="/Register" className="ml-1 font-black uppercase tracking-wider underline text-[#4A0A0A]">
-                Create Account
+              <Link
+                to="/register"
+                className={`rounded font-display font-black uppercase tracking-wider text-[#E11D1D] hover:underline ${focusRing}`}
+              >
+                Register Now
               </Link>
             </p>
-            <Link to="/forgot-password" className="font-black uppercase tracking-widest text-[#4A0A0A]/60 text-xs underline transition-colors hover:text-[#E11D1D]">
-              Forgot Password?
-            </Link>
-          </Reveal>
+          </motion.div>
+        </div>
+
+        {/* LEGAL ROW */}
+        <div className="py-2 text-center sm:text-left">
+          <p className="text-[10px] font-bold uppercase tracking-widest text-[#4A4A4A]">
+            © {new Date().getFullYear()} {BRAND_NAME} · {SLOGAN}
+          </p>
         </div>
       </main>
     </div>

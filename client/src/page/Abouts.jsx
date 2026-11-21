@@ -1,8 +1,18 @@
 import React, { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import {
-  Phone, Clock, MapPin, Users, Leaf,
-  ShieldCheck, ArrowRight, Flame, Zap, Star, Snowflake, Bike as BikeIcon,
+  Phone,
+  Clock,
+  MapPin,
+  Users,
+  Leaf,
+  ShieldCheck,
+  ArrowRight,
+  Flame,
+  Zap,
+  Star,
+  Snowflake,
+  Bike as BikeIcon,
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import Testimonials from "../components/Testimonials";
@@ -12,80 +22,120 @@ import Gallery from "../components/Gallery";
 import Bike from "../assets/DeliveryBike.png";
 import BgImage from "../assets/PorkBg.png";
 
-const BRAND = "Green Pork";
+/* ───────────── CONFIG + DESIGN TOKENS ───────────── */
+const BRAND = "Greenpork";
+const SLOGAN = "Eat Fresh. Live Happy.";
 const PHONE = "+256 776 464 823";
 const WHATSAPP = "256776464823";
 
-const DARK = "#2E0101";
-const BRAND_COLOR = "#D9FF00";
-const RED = "#E11D1D";
-const WORD_RED = "#FFC2B3";
+const PALETTE = {
+  red: "#E11D1D",
+  lime: "#D9FF00",
+  orange: "#E65C00",
+  ink: "#111111",
+  charcoal: "#2A2A2A",
+  muted: "#4A4A4A",
+  surface: "#F5F5F5",
+  surfaceHover: "#EFEFEF",
+  white: "#FFFFFF",
+  success: "#059669",
+};
 
 const STATS = [
-  { value: "5+", label: "Years Active" },
-  { value: "10K+", label: "Clients Served" },
+  { value: "5+", label: "Years Active", icon: null },
+  { value: "10K+", label: "Orders Served", icon: null },
   { value: "4.9", label: "Avg Rating", icon: Star },
-  { value: "30m", label: "Fast Dispatch", icon: Clock },
+  { value: "30m", label: "Fast Delivery", icon: Clock },
 ];
 
 const PHILOSOPHY = [
   {
     num: "01",
-    title: "100% Traceable Selection",
-    text: "Carefully curated premium farm cuts and organic ingredients sourced daily from reliable, trusted local livestock caretakers.",
+    title: "100% Traceable Cuts & Ingredients",
+    text: "Carefully selected farm pork, burger patties, pizza dough and toppings, and fresh chicken sourced daily for bold, consistent flavor.",
   },
   {
     num: "02",
-    title: "Master Wood-Smoked Flavor",
-    text: "Specialized double-glazing methods combined with native hardwood smoke to build complex, unmatched flavor textures.",
+    title: "Signature Wood-Smoked Craft",
+    text: "Double-glazed finishes and hardwood smoke paired with crisp sides and fast kitchen prep so every order hits the table hot.",
   },
 ];
 
 const PILLARS = [
-  { icon: Leaf, title: "Strictly Fresh", text: "Organic farm-fresh handling with strict daily turnarounds ensuring peak tenderness." },
-  { icon: ShieldCheck, title: "Guaranteed Hygiene", text: "Vacuum-sealed packaging protocols and pristine sanitation frameworks maintained end-to-end." },
-  { icon: Users, title: "Community First", text: "Empowering regional farmers and building a reliable culinary hub right in Njeru." },
+  {
+    num: "01",
+    icon: Leaf,
+    title: "Freshly Prepared",
+    text: "Daily kitchen prep with fresh ingredients across pork skewers, burgers, pizza, and chicken.",
+  },
+  {
+    num: "02",
+    icon: ShieldCheck,
+    title: "Clean & Sealed",
+    text: "Hygienic preparation and secure packaging from our Gulu City kitchen straight to your handoff.",
+  },
+  {
+    num: "03",
+    icon: Users,
+    title: "Gulu Community Roots",
+    text: "Supporting local producers and serving Gulu City with fast, dependable food and delivery.",
+  },
 ];
 
 const CONTACT_ITEMS = [
-  { icon: MapPin, title: "Physical Location", desc: "Plot 42, Jinja-Kampala Highway, Njeru, Uganda", href: null },
-  { icon: Phone, title: "Direct Contact", desc: PHONE, href: `tel:+${WHATSAPP}` },
-  { icon: Clock, title: "Operating Hours", desc: "Monday – Sunday · 10 AM – 10 PM", href: null },
+  {
+    icon: MapPin,
+    title: "Location",
+    desc: "Gulu City, Uganda",
+    href: null,
+  },
+  {
+    icon: Phone,
+    title: "Direct Contact",
+    desc: PHONE,
+    href: `tel:+${WHATSAPP}`,
+  },
+  {
+    icon: Clock,
+    title: "Operating Hours",
+    desc: "Monday – Sunday · 10:00 AM – 10:00 PM",
+    href: null,
+  },
 ];
 
 const TRANSIT_STEPS = [
   { num: "01", title: "Order Confirmed", time: "Instantly", icon: ShieldCheck },
-  { num: "02", title: "Vacuum Sealed & Prepped", time: "Within 10 mins", icon: Snowflake },
+  {
+    num: "02",
+    title: "Freshly Packed & Sealed",
+    time: "Within 10 mins",
+    icon: Snowflake,
+  },
   { num: "03", title: "Rider Dispatched", time: "Avg 15 mins", icon: BikeIcon },
 ];
 
+const EASE = [0.16, 1, 0.3, 1];
+const SPRING = { type: "spring", stiffness: 220, damping: 26 };
+const VIEWPORT = { once: true, margin: "-60px" };
+
+const BIG_WORD_SIZE = "clamp(4.5rem, 21vw, 17rem)";
+const HEADING_SIZE = "clamp(2.75rem, 9vw, 7rem)";
+
 const cx = (...classes) => classes.filter(Boolean).join(" ");
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#111111]";
+const pillClass =
+  "flex items-center gap-2 rounded-full border-0 px-4 py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wide";
+const actionBtnClass =
+  "flex items-center gap-2 rounded-full border-0 px-6 py-3.5 text-xs font-extrabold uppercase tracking-wide cursor-pointer";
 
-const spring = { type: "spring", stiffness: 220, damping: 26 };
-const ease = [0.16, 1, 0.3, 1];
-
-const pill = "flex items-center gap-2 rounded-full px-4 py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wide";
-const btn = "flex items-center gap-2 rounded-full px-6 py-3.5 text-xs font-bold uppercase tracking-wide";
-
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#2E0101] focus-visible:ring-offset-2";
-
-const bigWordSize = "clamp(4.5rem, 21vw, 17rem)";
-const headingSize = "clamp(2.75rem, 9vw, 7rem)";
-
-function fadeUp(d = 0) {
-  return {
-    initial: { opacity: 0, y: 20, filter: "blur(6px)" },
-    animate: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease, delay: d } },
-  };
-}
-
-function ScrollReveal({ children, delay = 0, y = 20, className = "" }) {
+function Reveal({ children, delay = 0, className = "" }) {
   return (
     <motion.div
-      initial={{ opacity: 0, y, filter: "blur(6px)" }}
+      initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
       whileInView={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.7, ease, delay }}
+      viewport={VIEWPORT}
+      transition={{ duration: 0.65, ease: EASE, delay }}
       className={className}
     >
       {children}
@@ -93,32 +143,57 @@ function ScrollReveal({ children, delay = 0, y = 20, className = "" }) {
   );
 }
 
-function Eyebrow({ children, icon: Icon = Flame, light = true }) {
-  const tone = light
-    ? "bg-white/15 text-white backdrop-blur-md"
-    : "bg-[#2E0101]/10 text-[#2E0101]";
+function Eyebrow({ children, icon: Icon = Flame, variant = "dark" }) {
+  const tone =
+    variant === "limeOnDark"
+      ? "bg-[#111111] text-[#D9FF00]"
+      : "bg-[#111111] text-[#FFFFFF]";
 
   return (
-    <span className={cx("font-display mb-5 inline-flex items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-wide", tone)}>
+    <span
+      className={cx(
+        "font-display mb-5 inline-flex items-center gap-2 rounded-full border-0 px-4 py-2 text-[11px] font-bold uppercase tracking-wide",
+        tone
+      )}
+    >
       <Icon size={13} strokeWidth={2.5} />
-      {children}
+      <span>{children}</span>
     </span>
   );
 }
 
-function SectionHeading({ eyebrow, color, light = true, children }) {
+function SectionHeading({
+  eyebrow,
+  color = PALETTE.ink,
+  eyebrowVariant,
+  children,
+}) {
   return (
-    <ScrollReveal>
+    <Reveal>
       <div className="mb-12 md:mb-16">
-        <Eyebrow light={light}>{eyebrow}</Eyebrow>
+        <Eyebrow variant={eyebrowVariant}>{eyebrow}</Eyebrow>
         <h2
           className="font-display font-black uppercase leading-[0.85] tracking-[-0.04em]"
-          style={{ color, fontSize: headingSize }}
+          style={{ color, fontSize: HEADING_SIZE }}
         >
           {children}
         </h2>
       </div>
-    </ScrollReveal>
+    </Reveal>
+  );
+}
+
+function SectionContainer({ children, className = "", sectionRef = null }) {
+  return (
+    <section
+      ref={sectionRef}
+      className={cx(
+        "relative border-0 bg-[#FFFFFF] px-4 py-20 md:py-28 lg:px-12",
+        className
+      )}
+    >
+      <div className="relative z-10 mx-auto max-w-7xl">{children}</div>
+    </section>
   );
 }
 
@@ -128,370 +203,597 @@ export default function About() {
   const introRef = useRef(null);
   const deliveryRef = useRef(null);
 
-  const { scrollYProgress: introProgress } = useScroll({ target: introRef, offset: ["start start", "end start"] });
+  const { scrollYProgress: introProgress } = useScroll({
+    target: introRef,
+    offset: ["start start", "end start"],
+  });
   const yIntroImg = useTransform(introProgress, [0, 1], ["0%", "12%"]);
   const opacityIntro = useTransform(introProgress, [0, 0.8], [1, 0]);
 
-  const { scrollYProgress: deliveryProgress } = useScroll({ target: deliveryRef, offset: ["start end", "end start"] });
+  const { scrollYProgress: deliveryProgress } = useScroll({
+    target: deliveryRef,
+    offset: ["start end", "end start"],
+  });
   const xBike = useTransform(deliveryProgress, [0, 1], ["-15%", "15%"]);
 
+  const LeadIcon = PILLARS[0].icon;
+  const secondaryPillars = PILLARS.slice(1);
+
   return (
-    <div className="font-display relative min-h-screen w-full overflow-hidden bg-white text-[#2E0101] selection:bg-[#D9FF00] selection:text-[#2E0101]">
+    <div className="font-display relative min-h-screen w-full overflow-hidden border-0 bg-[#FFFFFF] text-[#111111] selection:bg-[#D9FF00] selection:text-[#111111]">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800;900&family=Inter:wght@400;500;600&display=swap');
         .font-display { font-family: 'Archivo', sans-serif; }
         .font-body { font-family: 'Inter', sans-serif; }
       `}</style>
 
-      {/* --- HERO --- */}
+      {/* HERO SPOTLIGHT */}
       <section
         ref={introRef}
-        className="relative flex min-h-[100dvh] w-full flex-col overflow-hidden px-4 pb-8 pt-28 lg:px-12 lg:pt-32"
-        style={{ backgroundColor: RED }}
+        className="relative flex min-h-[100dvh] w-full flex-col overflow-hidden border-0 px-4 pb-8 pt-28 lg:px-12 lg:pt-32"
+        style={{ backgroundColor: PALETTE.red }}
       >
-        <div className="relative z-20 flex justify-center">
-          <Eyebrow>About {BRAND}</Eyebrow>
+        <div className="relative z-20 flex// hidden justify-center">
+          <Eyebrow variant="limeOnDark">
+            About {BRAND}.
+          </Eyebrow>
         </div>
 
         <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center">
-          <motion.div style={{ opacity: opacityIntro }} className="pointer-events-none absolute inset-0">
+          <motion.div
+            style={{ opacity: opacityIntro }}
+            className="pointer-events-none absolute inset-0"
+          >
             <motion.h1
-              {...fadeUp(0.05)}
+              initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+              animate={{
+                opacity: 1,
+                y: 0,
+                filter: "blur(0px)",
+                transition: { duration: 0.7, ease: EASE, delay: 0.05 },
+              }}
               className="font-display absolute inset-0 flex flex-col items-center justify-center text-center font-black uppercase leading-[0.82] tracking-[-0.04em]"
-              style={{ color: WORD_RED, fontSize: bigWordSize }}
+              style={{ color: "#FFC2B3", fontSize: BIG_WORD_SIZE }}
             >
-              <span>Farm</span>
-              <span>Fresh</span>
+              <span>Bold</span>
+              <span>Craft</span>
             </motion.h1>
           </motion.div>
 
-          <motion.div style={{ y: yIntroImg }} className="relative z-10 flex w-full items-center justify-center">
+          <motion.div
+            style={{ y: yIntroImg }}
+            className="relative z-10 flex w-full items-center justify-center"
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.7, rotate: -8, filter: "blur(12px)" }}
-              animate={{ opacity: 1, scale: 1, rotate: -3, filter: "blur(0px)", transition: { duration: 0.85, ease } }}
-              className="relative aspect-[16/10] h-[34vh] max-w-[90vw] overflow-hidden rounded-[2rem] sm:h-[40vh] lg:h-[52vh]"
+              initial={{
+                opacity: 0,
+                scale: 0.75,
+                rotate: -6,
+                filter: "blur(10px)",
+              }}
+              animate={{
+                opacity: 1,
+                scale: 1,
+                rotate: -3,
+                filter: "blur(0px)",
+                transition: { duration: 0.8, ease: EASE },
+              }}
+              className="relative aspect-[16/10] h-[34vh] max-w-[90vw] overflow-hidden rounded-[2rem] border-0 sm:h-[40vh] lg:h-[52vh]"
             >
-              <img src={BgImage} alt="Green Pork signature dish" className="h-full w-full object-cover" />
+              <img
+                src={BgImage}
+                alt={`${BRAND} signature food`}
+                className="h-full w-full object-cover"
+              />
             </motion.div>
           </motion.div>
 
           <motion.div
-            {...fadeUp(0.3)}
-            className="font-display absolute bottom-[10%] left-[3%] z-20 -rotate-3 rounded-2xl px-4 py-2 text-[11px] font-extrabold uppercase text-white lg:bottom-[14%] lg:left-[22%] lg:px-5 lg:py-2.5 lg:text-sm"
-            style={{ backgroundColor: DARK }}
+            initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              transition: { duration: 0.7, ease: EASE, delay: 0.3 },
+            }}
+            className="font-display absolute bottom-[10%] left-[3%] z-20 -rotate-3 rounded-2xl border-0 px-4 py-2 text-[11px] font-extrabold uppercase text-[#FFFFFF] lg:bottom-[14%] lg:left-[22%] lg:px-5 lg:py-2.5 lg:text-sm"
+            style={{ backgroundColor: PALETTE.ink }}
           >
-            Est. Njeru, Uganda
-            <span className="absolute -bottom-1 left-6 h-3 w-3 rotate-45" style={{ backgroundColor: DARK }} />
+            Gulu City, Uganda
+            <span
+              className="absolute -bottom-1 left-6 h-3 w-3 rotate-45"
+              style={{ backgroundColor: PALETTE.ink }}
+            />
           </motion.div>
 
           <motion.div
-            {...fadeUp(0.4)}
-            className="font-display absolute right-[3%] top-[22%] z-20 rounded-full bg-white px-4 py-2 text-[11px] font-extrabold uppercase lg:right-[20%] lg:px-5 lg:py-2.5 lg:text-sm"
-            style={{ color: DARK }}
+            initial={{ opacity: 0, y: 20, filter: "blur(6px)" }}
+            animate={{
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+              transition: { duration: 0.7, ease: EASE, delay: 0.4 },
+            }}
+            className="font-display absolute right-[3%] top-[22%] z-20 rounded-full border-0 px-4 py-2 text-[11px] font-extrabold uppercase lg:right-[20%] lg:px-5 lg:py-2.5 lg:text-sm"
+            style={{ backgroundColor: PALETTE.lime, color: PALETTE.ink }}
           >
-            Wood-Smoked Daily
+            {SLOGAN}
           </motion.div>
         </div>
 
         <div className="relative z-20 flex flex-col items-center gap-4">
-          <p className="font-body max-w-2xl text-center text-sm font-semibold leading-relaxed text-white/90 md:text-base">
-            {BRAND} merges traditional wood-smoking mastery with rigorous modern hygiene standards to serve Uganda’s finest pork dishes and raw farm cuts.
+          <p className="font-body max-w-2xl text-center text-sm font-semibold leading-relaxed text-[#FFFFFF] md:text-base">
+            {BRAND} brings together wood-smoked pork, juicy burgers, loaded
+            pizza, and crispy chicken in Gulu City—built to help you{" "}
+            <strong className="font-black text-[#D9FF00]">{SLOGAN}</strong> in
+            every bite.
           </p>
 
-          <div className="font-display flex flex-wrap items-center justify-center gap-2 text-white sm:gap-3">
-            {STATS.map((s, i) => (
-              <span key={s.label} className={cx(pill, i === 0 ? "bg-white/15 backdrop-blur-md" : "bg-white/10 backdrop-blur-md")}>
-                {s.icon && <s.icon size={13} strokeWidth={2.5} fill={s.icon === Star ? "currentColor" : "none"} />}
-                <b className="font-black">{s.value}</b> {s.label}
-              </span>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* --- PHILOSOPHY --- */}
-      <section className="relative bg-white px-4 py-20 md:py-32 lg:px-12">
-        <div className="mx-auto max-w-7xl">
-          <SectionHeading eyebrow="Our Philosophy" color={DARK} light={false}>
-            Built on <br /> Purity & Craft
-          </SectionHeading>
-
-          <div className="grid gap-6 md:grid-cols-2">
-            {PHILOSOPHY.map((item, i) => (
-              <ScrollReveal
-                key={item.num}
-                delay={i * 0.15}
-                className="group relative overflow-hidden rounded-[2.5rem] bg-[#2E0101]/[0.02] p-8 transition-all duration-300 hover:-translate-y-1 hover:bg-[#2E0101]/[0.04] md:p-12"
-              >
-                <div className="pointer-events-none absolute -right-4 -top-4 opacity-[0.03] transition-transform duration-500 group-hover:rotate-12">
-                  <Flame className="h-32 w-32 text-[#2E0101]" strokeWidth={1} />
-                </div>
-                <span className="font-display block text-6xl font-black leading-none tracking-[-0.04em]" style={{ color: RED }}>
-                  {item.num}
+          <div className="font-display flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+            {STATS.map((stat, idx) => {
+              const StatIcon = stat.icon;
+              return (
+                <span
+                  key={stat.label}
+                  className={cx(
+                    pillClass,
+                    idx === 0
+                      ? "bg-[#111111] text-[#D9FF00]"
+                      : "bg-[#111111] text-[#FFFFFF]"
+                  )}
+                >
+                  {StatIcon && (
+                    <StatIcon
+                      size={13}
+                      strokeWidth={2.5}
+                      fill={StatIcon === Star ? "currentColor" : "none"}
+                    />
+                  )}
+                  <span>
+                    <b className="font-black">{stat.value}</b> {stat.label}
+                  </span>
                 </span>
-                <h3 className="font-display mb-3 mt-6 text-2xl font-black uppercase leading-tight tracking-tight" style={{ color: DARK }}>{item.title}</h3>
-                <p className="font-body text-sm font-medium leading-relaxed text-[#2E0101]/70">{item.text}</p>
-              </ScrollReveal>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
 
-      {/* --- CORE STANDARDS --- */}
-      <section className="relative px-4 py-20 md:py-32 lg:px-12 bg-black">
-        <div className="relative z-10 mx-auto max-w-7xl">
-          <SectionHeading eyebrow="Core Standards" color={WORD_RED}>
-            What Drives <br /> Us Forward
-          </SectionHeading>
+      {/* PHILOSOPHY */}
+      <SectionContainer>
+        <SectionHeading eyebrow="Our Philosophy" color={PALETTE.ink}>
+          Built on <br /> Purity &amp; Craft
+        </SectionHeading>
 
-          <div className="grid gap-6 md:grid-cols-3">
-            {PILLARS.map((item, i) => (
-              <ScrollReveal
-                key={item.title}
-                delay={i * 0.1}
-                className="group rounded-[2.5rem] bg-white p-8 transition-all duration-300 hover:-translate-y-2"
+        <div className="grid gap-6 md:grid-cols-2">
+          {PHILOSOPHY.map((item, idx) => (
+            <Reveal
+              key={item.num}
+              delay={idx * 0.12}
+              className="group relative overflow-hidden rounded-[2.5rem] border-0 bg-[#F5F5F5] p-8 transition-colors duration-300 hover:bg-[#EFEFEF] md:p-12"
+            >
+              <div className="pointer-events-none absolute -right-4 -top-4 opacity-[0.05] transition-transform duration-500 group-hover:rotate-12">
+                <Flame className="h-32 w-32 text-[#111111]" strokeWidth={1} />
+              </div>
+              <span
+                className="font-display block text-6xl font-black leading-none tracking-[-0.04em]"
+                style={{ color: PALETTE.red }}
               >
-                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-full transition-transform duration-300 group-hover:scale-110" style={{ backgroundColor: BRAND_COLOR }}>
-                  <item.icon className="h-6 w-6 text-[#2E0101]" strokeWidth={2.2} />
+                {item.num}
+              </span>
+              <h3
+                className="font-display mb-3 mt-6 text-2xl font-black uppercase leading-tight tracking-tight"
+                style={{ color: PALETTE.ink }}
+              >
+                {item.title}
+              </h3>
+              <p className="font-body text-sm font-medium leading-relaxed text-[#2A2A2A]">
+                {item.text}
+              </p>
+            </Reveal>
+          ))}
+        </div>
+      </SectionContainer>
+
+      {/* CORE STANDARDS */}
+      <SectionContainer className="hidden">
+        <SectionHeading eyebrow="Core Standards" color={PALETTE.ink}>
+          What Drives <br /> Us Forward
+        </SectionHeading>
+
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-12">
+          <Reveal
+            delay={0.05}
+            className="group flex flex-col justify-between rounded-[2.5rem] border-0 p-8 transition-colors duration-300 md:p-10 lg:col-span-6"
+            style={{ backgroundColor: PALETTE.lime, color: PALETTE.ink }}
+          >
+            <div>
+              <div className="mb-10 flex items-center justify-between">
+                <span className="font-display text-xs font-black uppercase tracking-widest text-[#111111]">
+                  Standard {PILLARS[0].num}
+                </span>
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border-0 bg-[#111111] text-[#D9FF00]">
+                  <LeadIcon className="h-6 w-6" strokeWidth={2.2} />
                 </div>
-                <h3 className="font-display mb-3 text-xl font-black uppercase tracking-tight" style={{ color: DARK }}>{item.title}</h3>
-                <p className="font-body text-sm font-medium leading-relaxed text-[#2E0101]/70">{item.text}</p>
-              </ScrollReveal>
-            ))}
+              </div>
+
+              <h3 className="font-display mb-4 text-3xl font-black uppercase leading-[0.95] tracking-tight text-[#111111] md:text-4xl">
+                {PILLARS[0].title}
+              </h3>
+              <p className="font-body max-w-md text-sm font-semibold leading-relaxed text-[#111111] md:text-base">
+                {PILLARS[0].text}
+              </p>
+            </div>
+
+            <div className="mt-10 flex items-center justify-between pt-4">
+              <span className="font-display rounded-full border-0 bg-[#111111] px-3.5 py-1.5 text-[10px] font-black uppercase tracking-widest text-[#D9FF00]">
+                {BRAND} · {SLOGAN}
+              </span>
+              <span className="font-display text-5xl font-black leading-none tracking-[-0.04em] text-[#111111]">
+                {PILLARS[0].num}
+              </span>
+            </div>
+          </Reveal>
+
+          <div className="flex flex-col gap-6 lg:col-span-6">
+            {secondaryPillars.map((item, idx) => {
+              const isRedAccent = idx === 0;
+              const StepIcon = item.icon;
+
+              return (
+                <Reveal
+                  key={item.title}
+                  delay={0.12 + idx * 0.1}
+                  className="group flex flex-1 flex-col justify-between rounded-[2.5rem] border-0 bg-[#F5F5F5] p-8 transition-colors duration-300 hover:bg-[#EFEFEF] md:p-9"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div
+                      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-0"
+                      style={{
+                        backgroundColor: isRedAccent ? PALETTE.red : PALETTE.ink,
+                        color: isRedAccent ? PALETTE.white : PALETTE.lime,
+                      }}
+                    >
+                      <StepIcon className="h-5 w-5" strokeWidth={2.2} />
+                    </div>
+
+                    <span
+                      className="font-display text-4xl font-black leading-none tracking-[-0.04em]"
+                      style={{
+                        color: isRedAccent ? PALETTE.red : PALETTE.ink,
+                      }}
+                    >
+                      {item.num}
+                    </span>
+                  </div>
+
+                  <div className="mt-6">
+                    <div className="mb-1.5 flex items-center gap-2">
+                      <span
+                        className="h-2.5 w-2.5 rounded-full"
+                        style={{
+                          backgroundColor: isRedAccent ? PALETTE.red : PALETTE.ink,
+                        }}
+                      />
+                      <span className="font-display text-[11px] font-black uppercase tracking-widest text-[#4A4A4A]">
+                        Standard {item.num}
+                      </span>
+                    </div>
+                    <h3
+                      className="font-display mb-2 text-2xl font-black uppercase tracking-tight"
+                      style={{ color: PALETTE.ink }}
+                    >
+                      {item.title}
+                    </h3>
+                    <p className="font-body text-sm font-medium leading-relaxed text-[#2A2A2A]">
+                      {item.text}
+                    </p>
+                  </div>
+                </Reveal>
+              );
+            })}
           </div>
         </div>
-      </section>
+      </SectionContainer>
 
-      {/* --- TEAM --- */}
-      <section className="bg-white px-4 py-20 md:py-32 lg:px-12">
-        <div className="mx-auto max-w-7xl">
-          <SectionHeading eyebrow="Leadership" color={DARK} light={false}>
-            Meet Our <br /> Team
-          </SectionHeading>
-          <ScrollReveal delay={0.1} className="rounded-[2.5rem] bg-[#2E0101]/[0.02]/// p-6 md:p-10">
-            <Staff />
-          </ScrollReveal>
-        </div>
-      </section>
+      {/* TEAM */}
+      <SectionContainer>
+        <SectionHeading eyebrow="Leadership" color={PALETTE.ink}>
+          Meet Our <br /> Team
+        </SectionHeading>
+        <Reveal
+          delay={0.1}
+          className="rounded-[2.5rem] border-0 bg-[#F5F5F5] p-6 md:p-10"
+        >
+          <Staff />
+        </Reveal>
+      </SectionContainer>
 
-      {/* --- TESTIMONIALS --- */}
-      <section className="relative px-4 py-20 md:py-32 lg:px-12">
-        <div className="relative z-10 mx-auto max-w-7xl">
-          <SectionHeading eyebrow="Endorsements" color={RED}>
-            Client <br /> Reviews
-          </SectionHeading>
-          <ScrollReveal delay={0.1} className="rounded-[2.5rem] bg-[#2E0101]/[0.02] p-6 text-[#2E0101] md:p-10">
-            <Testimonials />
-          </ScrollReveal>
-        </div>
-      </section>
+      {/* TESTIMONIALS */}
+      <SectionContainer>
+        <SectionHeading eyebrow="Endorsements" color={PALETTE.red}>
+          Client <br /> Reviews
+        </SectionHeading>
+        <Reveal
+          delay={0.1}
+          className="rounded-[2.5rem] border-0 bg-[#F5F5F5] p-6 text-[#111111] md:p-10"
+        >
+          <Testimonials />
+        </Reveal>
+      </SectionContainer>
 
-      {/* --- GALLERY --- */}
-      <section className="bg-white px-4 py-20 md:py-32 lg:px-12">
-        <div className="mx-auto max-w-7xl">
-          <SectionHeading eyebrow="Gallery" color={DARK} light={false}>
-            Inside The <br /> Kitchen
-          </SectionHeading>
-          <ScrollReveal delay={0.1} className="rounded-[2.5rem] bg-[#2E0101]/[0.02] p-4 md:p-6">
-            <Gallery />
-          </ScrollReveal>
-        </div>
-      </section>
+      {/* GALLERY */}
+      <SectionContainer>
+        <SectionHeading eyebrow="Gallery" color={PALETTE.ink}>
+          Inside The <br /> Kitchen
+        </SectionHeading>
+        <Reveal
+          delay={0.1}
+          className="rounded-[2.5rem] border-0 bg-[#F5F5F5] p-4 md:p-6"
+        >
+          <Gallery />
+        </Reveal>
+      </SectionContainer>
 
-      {/* --- LOGISTICS --- */}
-      <section ref={deliveryRef} className="relative overflow-hidden px-4 py-20 md:py-32 lg:px-12 bg-white">
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center opacity-[0.03]">
-          <span className="font-display hidden text-[20vw] font-black uppercase tracking-tighter" style={{ color: DARK }}>
-            Deliver
-          </span>
-        </div>
+      {/* LOGISTICS */}
+      <SectionContainer sectionRef={deliveryRef} className="overflow-hidden">
+        <SectionHeading eyebrow="Logistics" color={PALETTE.ink}>
+          Swift &amp; Fresh <br /> Dispatch
+        </SectionHeading>
 
-        <div className="relative z-10 mx-auto max-w-7xl">
-          <SectionHeading eyebrow="Logistics" color={DARK} light={false}>
-            Swift & Cold-<br />Stored Dispatch
-          </SectionHeading>
+        <Reveal delay={0.1}>
+          <div className="grid overflow-hidden rounded-[2.5rem] border-0 bg-[#F5F5F5] md:grid-cols-2">
+            <div className="flex flex-col justify-center gap-8 p-8 md:p-14 lg:p-16">
+              <div className="flex">
+                <Eyebrow icon={Zap}>Fast Gulu City Delivery</Eyebrow>
+              </div>
 
-          <ScrollReveal delay={0.1}>
-            <div className="grid overflow-hidden rounded-[2.5rem] bg-[#2E0101]/[0.02] md:grid-cols-2">
-              <div className="flex flex-col justify-center gap-8 p-8 md:p-14 lg:p-16">
-                <div className="flex">
-                  <Eyebrow icon={Zap} light={false}>Swift & Cold-Chain Secure</Eyebrow>
-                </div>
+              <h3 className="font-display text-4xl font-black uppercase leading-[0.9] tracking-[-0.04em] text-[#111111] sm:text-5xl lg:text-6xl">
+                Hot &amp; Fresh <br />
+                <span style={{ color: PALETTE.red }}>To Your Doorstep</span>
+              </h3>
 
-                <h3 className="font-display text-4xl font-black uppercase leading-[0.9] tracking-[-0.04em] text-[#2E0101] sm:text-5xl lg:text-6xl">
-                  Fresh Cuts <br />
-                  <span style={{ color: RED }}>To Your Doorstep</span>
-                </h3>
+              <p className="font-body max-w-md text-sm font-medium leading-relaxed text-[#2A2A2A] sm:text-base">
+                Every order of pork, burgers, pizza, and chicken is packed
+                cleanly and dispatched quickly so your food arrives hot and
+                ready to enjoy.
+              </p>
 
-                <p className="font-body max-w-md text-sm font-medium leading-relaxed text-[#2E0101]/70 sm:text-base">
-                  Every order is vacuum-sealed and temperature-regulated right up until handoff, guaranteeing pristine quality whether you're grilling tonight or stocking up.
-                </p>
-
-                <div className="mt-4 space-y-6">
-                  {TRANSIT_STEPS.map((step, i) => (
+              <div className="mt-2 space-y-5">
+                {TRANSIT_STEPS.map((step, idx) => {
+                  const StepIcon = step.icon;
+                  return (
                     <motion.div
                       key={step.num}
                       initial={{ opacity: 0, x: -20 }}
                       whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.2 + i * 0.15, ease }}
-                      className="group flex items-center gap-5"
+                      viewport={VIEWPORT}
+                      transition={{ delay: 0.15 + idx * 0.1, ease: EASE }}
+                      className="flex items-center gap-5"
                     >
-                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#2E0101]/5 text-[#2E0101] transition-colors group-hover:bg-[#D9FF00]">
-                        <step.icon size={18} strokeWidth={2.5} />
+                      <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-0 bg-[#111111] text-[#D9FF00]">
+                        <StepIcon size={18} strokeWidth={2.5} />
                       </div>
-                      <div className="flex-1 pb-3 flex justify-between items-center border-b border-[#2E0101]/5">
-                        <span className="font-display text-sm font-bold uppercase tracking-wide text-[#2E0101]">{step.title}</span>
-                        <span className="font-display text-[10px] font-black uppercase tracking-widest text-[#2E0101]/50">{step.time}</span>
+                      <div className="flex flex-1 items-center justify-between gap-2">
+                        <span className="font-display text-sm font-extrabold uppercase tracking-wide text-[#111111]">
+                          {step.title}
+                        </span>
+                        <span className="font-display shrink-0 rounded-full bg-[#FFFFFF] px-3 py-1 text-[10px] font-black uppercase tracking-widest text-[#111111]">
+                          {step.time}
+                        </span>
                       </div>
                     </motion.div>
-                  ))}
-                </div>
-
-                <div className="flex flex-wrap items-center gap-3 pt-6">
-                  <motion.a
-                    href={`https://wa.me/${WHATSAPP}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={spring}
-                    className={cx(btn, "cursor-pointer", focusRing)}
-                    style={{ backgroundColor: BRAND_COLOR, color: DARK }}
-                  >
-                    Order via WhatsApp <ArrowRight size={14} strokeWidth={2.5} />
-                  </motion.a>
-
-                  <motion.a
-                    href={`tel:+${WHATSAPP}`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    transition={spring}
-                    className={cx(btn, "cursor-pointer bg-[#2E0101]/5 text-[#2E0101] backdrop-blur-md", focusRing)}
-                  >
-                    <Phone size={14} strokeWidth={2.5} /> Call Us
-                  </motion.a>
-                </div>
+                  );
+                })}
               </div>
 
-              <div className="relative flex min-h-[450px] items-center justify-center overflow-hidden p-8">
-                <div className="pointer-events-none absolute h-96 w-96 rounded-full opacity-100// blur-[0px]" style={{ backgroundColor: RED }} />
-
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.3, ease }}
-                  className="absolute hidden right-6 top-12 z-20 rounded-2xl p-4"
-                  style={{ backgroundColor: DARK }}
-                >
-                  <div className="flex items-center gap-2 text-[#D9FF00]">
-                    <Snowflake size={14} strokeWidth={2.5} />
-                    <span className="font-display text-[9px] font-black uppercase tracking-widest">Current Temp</span>
-                  </div>
-                  <span className="font-display mt-1 block text-2xl font-black text-white">4°C Sealed</span>
-                </motion.div>
-
-                <motion.div
-                  initial={{ opacity: 0, y: -20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: 0.45, ease }}
-                  className="absolute bottom-12 left-6 z-20 rounded-2xl bg-white p-4"
-                >
-                  <div className="flex items-center gap-2 text-[#2E0101]/60">
-                    <Clock size={14} strokeWidth={2.5} />
-                    <span className="font-display text-[9px] font-black uppercase tracking-widest">Estimated ETA</span>
-                  </div>
-                  <span className="font-display mt-1 block text-2xl font-black text-[#2E0101]">30 Minutes</span>
-                </motion.div>
-
-                <motion.img
-                  style={{ x: xBike }}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.8, ease }}
-                  src={Bike}
-                  alt="Green Pork delivery rider"
-                  className="pointer-events-none relative z-10 w-full max-w-lg object-contain"
-                />
-              </div>
-            </div>
-          </ScrollReveal>
-        </div>
-      </section>
-
-      {/* --- CONTACT --- */}
-      <section className="relative px-4 py-20 md:py-32 lg:px-12 bg-white">
-        <div className="relative z-10 mx-auto max-w-7xl">
-          <SectionHeading eyebrow="Location" color={RED}>
-            Direct <br /> Contact
-          </SectionHeading>
-
-          <div className="grid items-stretch gap-6 lg:grid-cols-2">
-            <div className="flex flex-col justify-between gap-4">
-              {CONTACT_ITEMS.map((item, i) => {
-                const inner = (
-                  <div className="group flex items-center gap-5 rounded-[2rem] bg-[#2E0101]/[0.02] p-5 transition-all duration-300 hover:-translate-y-1 hover:bg-[#2E0101]/[0.04] md:p-6">
-                    <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: DARK }}>
-                      <item.icon className="h-5 w-5" strokeWidth={2.2} />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="font-body mb-1 text-[10px] font-bold uppercase tracking-widest text-[#2E0101]/50">{item.title}</p>
-                      <p className="font-display text-sm font-extrabold leading-tight md:text-base" style={{ color: DARK }}>{item.desc}</p>
-                    </div>
-                    {item.href && <ArrowRight size={16} strokeWidth={2.5} className="ml-auto text-[#2E0101]/40 transition-transform group-hover:translate-x-1" />}
-                  </div>
-                );
-                return (
-                  <ScrollReveal key={item.title} delay={i * 0.1}>
-                    {item.href ? <a href={item.href} className={cx("block rounded-[2rem]", focusRing)}>{inner}</a> : inner}
-                  </ScrollReveal>
-                );
-              })}
-
-              <ScrollReveal delay={0.3}>
+              <div className="flex flex-wrap items-center gap-3 pt-4">
                 <motion.a
                   href={`https://wa.me/${WHATSAPP}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  transition={spring}
-                  className={cx("flex items-center justify-between rounded-[2rem] p-6", focusRing)}
-                  style={{ backgroundColor: BRAND_COLOR, color: DARK }}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={SPRING}
+                  className={cx(actionBtnClass, focusRing)}
+                  style={{ backgroundColor: PALETTE.lime, color: PALETTE.ink }}
                 >
-                  <div>
-                    <p className="font-body mb-1 text-[10px] font-bold uppercase tracking-widest opacity-50">Instant Support</p>
-                    <p className="font-display text-lg font-black uppercase tracking-tight md:text-xl">Start WhatsApp Chat</p>
-                  </div>
-                  <span className="flex h-10 w-10 items-center justify-center rounded-full" style={{ backgroundColor: DARK }}>
-                    <ArrowRight size={18} strokeWidth={2.5} className="text-white" />
-                  </span>
+                  <span>Order via WhatsApp</span>
+                  <ArrowRight size={14} strokeWidth={2.5} />
                 </motion.a>
-              </ScrollReveal>
+
+                <motion.a
+                  href={`tel:+${WHATSAPP}`}
+                  whileHover={{ scale: 1.04 }}
+                  whileTap={{ scale: 0.96 }}
+                  transition={SPRING}
+                  className={cx(
+                    actionBtnClass,
+                    "bg-[#111111] text-[#FFFFFF]",
+                    focusRing
+                  )}
+                >
+                  <Phone size={14} strokeWidth={2.5} />
+                  <span>Call Us</span>
+                </motion.a>
+              </div>
             </div>
 
-            <ScrollReveal delay={0.2}>
-              <div className="aspect-[4/3] overflow-hidden rounded-[2.5rem] bg-[#2E0101]/[0.02] p-2 lg:aspect-auto lg:h-full lg:min-h-[500px]">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d31909.39692968079!2d32.4343!3d0.4244!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x177db33b5d4c6d9%3A0x9e6c6c6c6c6c6c6c!2sNjeru!5e0!3m2!1sen!2sug!4v1634567890123!5m2!1sen!2sug"
-                  className="h-full w-full rounded-[2rem]"
-                  loading="lazy"
-                  title={`${BRAND} location`}
-                />
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
+            <div className="relative flex min-h-[450px] items-center justify-center overflow-hidden border-0 p-8">
+              <div
+                className="pointer-events-none absolute h-96 w-96 rounded-full"
+                style={{ backgroundColor: PALETTE.red }}
+              />
 
-      {/* --- FOOTER --- */}
-      <footer className="border-t border-[#2E0101]/10 bg-white px-4 py-8 lg:px-12">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-[10px] font-semibold uppercase tracking-widest text-[#2E0101]/60 sm:flex-row">
-          <p>© {year} {BRAND}. All rights reserved.</p>
-          <Link to="/returnPolicy" className={cx("rounded-full transition-colors hover:text-[#D9FF00]", focusRing)}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={VIEWPORT}
+                transition={{ delay: 0.25, ease: EASE }}
+                className="absolute right-6 top-12 z-20 hidden rounded-2xl border-0 p-4 md:block"
+                style={{ backgroundColor: PALETTE.ink }}
+              >
+                <div className="flex items-center gap-2 text-[#D9FF00]">
+                  <Snowflake size={14} strokeWidth={2.5} />
+                  <span className="font-display text-[9px] font-black uppercase tracking-widest">
+                    Fresh Prep
+                  </span>
+                </div>
+                <span className="font-display mt-1 block text-2xl font-black text-[#FFFFFF]">
+                  Made to Order
+                </span>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={VIEWPORT}
+                transition={{ delay: 0.35, ease: EASE }}
+                className="absolute bottom-12 left-6 z-20 rounded-2xl border-0 bg-[#FFFFFF] p-4"
+              >
+                <div className="flex items-center gap-2 text-[#111111]">
+                  <Clock size={14} strokeWidth={2.5} />
+                  <span className="font-display text-[9px] font-black uppercase tracking-widest text-[#4A4A4A]">
+                    Estimated ETA
+                  </span>
+                </div>
+                <span className="font-display mt-1 block text-2xl font-black text-[#111111]">
+                  30 Minutes
+                </span>
+              </motion.div>
+
+              <motion.img
+                style={{ x: xBike }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={VIEWPORT}
+                transition={{ duration: 0.75, ease: EASE }}
+                src={Bike}
+                alt={`${BRAND} delivery rider`}
+                className="pointer-events-none relative z-10 w-full max-w-lg border-0 object-contain"
+              />
+            </div>
+          </div>
+        </Reveal>
+      </SectionContainer>
+
+      {/* CONTACT */}
+      <SectionContainer>
+        <SectionHeading eyebrow="Location" color={PALETTE.red}>
+          Direct <br /> Contact
+        </SectionHeading>
+
+        <div className="grid items-stretch gap-6 lg:grid-cols-2">
+          <div className="flex flex-col justify-between gap-4">
+            {CONTACT_ITEMS.map((item, idx) => {
+              const ItemIcon = item.icon;
+              const cardBody = (
+                <div className="group flex items-center gap-5 rounded-[2rem] border-0 bg-[#F5F5F5] p-5 transition-colors duration-300 hover:bg-[#EFEFEF] md:p-6">
+                  <div
+                    className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-0 text-[#D9FF00]"
+                    style={{ backgroundColor: PALETTE.ink }}
+                  >
+                    <ItemIcon className="h-5 w-5" strokeWidth={2.2} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-body mb-1 text-[10px] font-bold uppercase tracking-widest text-[#4A4A4A]">
+                      {item.title}
+                    </p>
+                    <p
+                      className="font-display text-sm font-extrabold leading-tight md:text-base"
+                      style={{ color: PALETTE.ink }}
+                    >
+                      {item.desc}
+                    </p>
+                  </div>
+                  {item.href && (
+                    <ArrowRight
+                      size={16}
+                      strokeWidth={2.5}
+                      className="ml-auto text-[#111111] transition-transform group-hover:translate-x-1"
+                    />
+                  )}
+                </div>
+              );
+
+              return (
+                <Reveal key={item.title} delay={idx * 0.1}>
+                  {item.href ? (
+                    <a
+                      href={item.href}
+                      className={cx("block rounded-[2rem] border-0", focusRing)}
+                    >
+                      {cardBody}
+                    </a>
+                  ) : (
+                    cardBody
+                  )}
+                </Reveal>
+              );
+            })}
+
+            <Reveal delay={0.25}>
+              <motion.a
+                href={`https://wa.me/${WHATSAPP}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
+                transition={SPRING}
+                className={cx(
+                  "flex items-center justify-between rounded-[2rem] border-0 p-6",
+                  focusRing
+                )}
+                style={{ backgroundColor: PALETTE.lime, color: PALETTE.ink }}
+              >
+                <div>
+                  <p className="font-body mb-1 text-[10px] font-extrabold uppercase tracking-widest text-[#111111]">
+                    Instant Support
+                  </p>
+                  <p className="font-display text-lg font-black uppercase tracking-tight md:text-xl">
+                    Start WhatsApp Chat
+                  </p>
+                </div>
+                <span
+                  className="flex h-10 w-10 items-center justify-center rounded-full border-0"
+                  style={{ backgroundColor: PALETTE.ink }}
+                >
+                  <ArrowRight
+                    size={18}
+                    strokeWidth={2.5}
+                    className="text-[#D9FF00]"
+                  />
+                </span>
+              </motion.a>
+            </Reveal>
+          </div>
+
+          <Reveal delay={0.18}>
+            <div className="aspect-[4/3] overflow-hidden rounded-[2.5rem] border-0 bg-[#F5F5F5] p-2 lg:aspect-auto lg:h-full lg:min-h-[500px]">
+              <iframe
+                src="https://www.google.com/maps?q=Gulu,Uganda&output=embed"
+                className="h-full w-full rounded-[2rem] border-0"
+                loading="lazy"
+                title={`${BRAND} Gulu City location`}
+              />
+            </div>
+          </Reveal>
+        </div>
+      </SectionContainer>
+
+      {/* FOOTER */}
+      <footer className="border-0 bg-[#FFFFFF] px-4 py-8 lg:px-12">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 text-[10px] font-bold uppercase tracking-widest text-[#2A2A2A] sm:flex-row">
+          <p>
+            © {year} {BRAND}. {SLOGAN}. All rights reserved.
+          </p>
+          <Link
+            to="/returnPolicy"
+            className={cx(
+              "rounded-full border-0 transition-colors hover:text-[#E11D1D]",
+              focusRing
+            )}
+          >
             Return Policy
           </Link>
         </div>

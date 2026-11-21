@@ -1,7 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Minus, Plus, ShoppingBasket, Check, Clock, Star, Flame } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  ChevronLeft,
+  ChevronRight,
+  Minus,
+  Plus,
+  ShoppingBasket,
+  Check,
+  Clock,
+  Star,
+  Flame,
+  ArrowRight,
+} from "lucide-react";
 import { useCart } from "../components/cart/CartContext";
 
 import PorkStake from "../assets/ChatGPT Image Jun 18, 2026, 03_34_25 PM.png";
@@ -9,127 +20,186 @@ import Burger from "../assets/Burger.png";
 import Pizza from "../assets/pizza(17).png";
 import Chicken from "../assets/fullchicken.png";
 
-const BRAND_NAME = "Green Pork";
+/* ───────────── CONFIG + DESIGN TOKENS ───────────── */
+const BRAND_NAME = "Greenpork";
+const SLOGAN = "Eat Fresh. Live Happy.";
 const AUTOPLAY_MS = 5500;
 
-// Same palette as About.jsx: red, lime, deep red, white. No orange or gold.
-const RED = "#E11D1D";
-const LIME = "#D9FF00";
-const PIZZA = "#E65C00";
-const DARK = "#2E0101";
-const WHITE = "#FFFFFF";
-const SUCCESS_COLOR = "#059669";
+const PALETTE = {
+  red: "#E11D1D",
+  lime: "#D9FF00",
+  orange: "#E65C00",
+  ink: "#111111",
+  charcoal: "#2A2A2A",
+  muted: "#4A4A4A",
+  surface: "#F5F5F5",
+  surfaceHover: "#EFEFEF",
+  white: "#FFFFFF",
+  success: "#059669",
+};
 
-// Each slide carries its own colors so text, pills and arrows stay readable on every background.
+const GLOW =
+  "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.18) 0%, rgba(255,255,255,0) 60%)";
+const WORD_STYLE =
+  "font-display flex flex-col font-black uppercase tracking-[-0.04em]";
+
+/* ───────────── HELPERS ───────────── */
+const fmt = (v) => Number(v).toLocaleString();
+
+function savePct(price, oldPrice) {
+  if (!oldPrice || oldPrice <= price) return 0;
+  return Math.round(((oldPrice - price) / oldPrice) * 100);
+}
+
+const EASE = [0.16, 1, 0.3, 1];
+const SPRING = { type: "spring", stiffness: 220, damping: 26 };
+
+const hoverTap = (hover = 1.04, tap = 0.96) => ({
+  whileHover: { scale: hover },
+  whileTap: { scale: tap },
+  transition: SPRING,
+});
+
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 20, filter: "blur(6px)" },
+  animate: {
+    opacity: 1,
+    y: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.65, ease: EASE, delay },
+  },
+  exit: {
+    opacity: 0,
+    y: -12,
+    filter: "blur(6px)",
+    transition: { duration: 0.25 },
+  },
+});
+
+const imageVariants = {
+  enter: (dir) => ({
+    opacity: 0,
+    x: dir === "right" ? 90 : -90,
+    scale: 0.72,
+    rotate: dir === "right" ? -8 : 8,
+    filter: "blur(10px)",
+  }),
+  center: {
+    opacity: 1,
+    x: 0,
+    scale: 1,
+    rotate: 0,
+    filter: "blur(0px)",
+    transition: { duration: 0.8, ease: EASE },
+  },
+  exit: (dir) => ({
+    opacity: 0,
+    x: dir === "right" ? -70 : 70,
+    scale: 0.8,
+    rotate: dir === "right" ? 6 : -6,
+    filter: "blur(10px)",
+    transition: { duration: 0.4 },
+  }),
+};
+
+const cx = (...classes) => classes.filter(Boolean).join(" ");
+
+const pillClass =
+  "flex items-center gap-1.5 sm:gap-2 rounded-full border-0 px-3.5 py-2 sm:px-4 sm:py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wide transition-colors duration-500";
+const tabClass =
+  "cursor-pointer rounded-full border-0 px-3 py-2 md:px-3.5 md:py-1.5 text-[10px] font-bold uppercase tracking-wide transition-colors duration-300";
+const focusRing =
+  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--fg)]";
+
+/* ───────────── SLIDES DATA ───────────── */
 const SLIDES = [
   {
     id: "pork-skewer",
-    short: "Skewers",
-    words: ["SMOKY", "PORK"],
-    category: "Premium Wood-Fired Pork Skewers",
+    short: "Pork",
+    words: ["ROASTED", "PORK"],
+    category: "Wood-Fired Pork · Gulu City",
     image: PorkStake,
     price: 6000,
     oldPrice: 8000,
     rating: 4.9,
     prepTime: "12 min",
     tags: ["extra cassava", "salads"],
-    bg: RED,
+    bg: PALETTE.red,
     word: "#FFC2B3",
-    fg: WHITE,
-    line: "rgba(255,255,255,0.7)",
-    glass: "rgba(255,255,255,0.25)",
-    bubble: DARK,
-    bubbleText: WHITE,
-    accent: LIME,
-    accentText: DARK,
+    fg: PALETTE.white,
+    line: "rgba(255,255,255,0.45)",
+    glass: "rgba(17,17,17,0.28)",
+    bubble: PALETTE.ink,
+    bubbleText: PALETTE.white,
+    accent: PALETTE.lime,
+    accentText: PALETTE.ink,
   },
   {
     id: "angus-burger",
     short: "Burger",
     words: ["CHEESY", "BURGER"],
-    category: "Premium Angus Beef Burger",
+    category: "Juicy Burgers · Gulu City",
     image: Burger,
     price: 10000,
     oldPrice: 12000,
     rating: 4.9,
     prepTime: "10 min",
     tags: ["100% Angus", "Extra Cheese"],
-    bg: DARK,
-    word: RED,
-    fg: WHITE,
-    line: "rgba(255,255,255,0.7)",
-    glass: "rgba(255,255,255,0.18)",
-    bubble: RED,
-    bubbleText: WHITE,
-    accent: LIME,
-    accentText: DARK,
+    bg: PALETTE.ink,
+    word: PALETTE.red,
+    fg: PALETTE.white,
+    line: "rgba(255,255,255,0.45)",
+    glass: "rgba(255,255,255,0.14)",
+    bubble: PALETTE.red,
+    bubbleText: PALETTE.white,
+    accent: PALETTE.lime,
+    accentText: PALETTE.ink,
   },
   {
     id: "chicken-pizza",
     short: "Pizza",
     words: ["FIRED", "PIZZA"],
-    category: "Premium Chicken Pizza",
+    category: "Stone-Baked Pizza · Gulu City",
     image: Pizza,
     price: 10000,
     oldPrice: 12000,
     rating: 4.8,
     prepTime: "18 min",
     tags: ["Stone-Baked", "Fresh Mozzarella"],
-    bg: PIZZA,
-    word: "#F1FF9A",
-    fg: DARK,
-    line: "rgba(46,1,1,0.5)",
-    glass: "rgba(46,1,1,0.1)",
-    bubble: DARK,
-    bubbleText: WHITE,
-    accent: DARK,
-    accentText: LIME,
+    bg: PALETTE.orange,
+    word: PALETTE.lime,
+    fg: PALETTE.ink,
+    line: "rgba(17,17,17,0.38)",
+    glass: "rgba(255,255,255,0.42)",
+    bubble: PALETTE.ink,
+    bubbleText: PALETTE.white,
+    accent: PALETTE.ink,
+    accentText: PALETTE.lime,
   },
   {
     id: "roasted-chicken",
     short: "Chicken",
     words: ["GOLDEN", "CHICKEN"],
-    category: "Premium Fire-Roasted Chicken",
+    category: "Fire-Roasted Chicken · Gulu City",
     image: Chicken,
     price: 55000,
     oldPrice: 78000,
     rating: 4.9,
     prepTime: "25 min",
     tags: ["Fire Roasted", "Farm Fresh"],
-    bg: WHITE,
-    word: "#FFE3DC",
-    fg: DARK,
-    line: "rgba(46,1,1,0.4)",
-    glass: "rgba(46,1,1,0.07)",
-    bubble: RED,
-    bubbleText: WHITE,
-    accent: LIME,
-    accentText: DARK,
+    bg: PALETTE.white,
+    word: PALETTE.surface,
+    fg: PALETTE.ink,
+    line: "rgba(17,17,17,0.25)",
+    glass: PALETTE.surface,
+    bubble: PALETTE.red,
+    bubbleText: PALETTE.white,
+    accent: PALETTE.lime,
+    accentText: PALETTE.ink,
   },
 ];
 
-const fmt = (v) => Number(v).toLocaleString();
-const savePct = (p, o) => Math.round(((o - p) / o) * 100);
-
-const ease = [0.16, 1, 0.3, 1];
-const spring = { type: "spring", stiffness: 220, damping: 26 };
-
-const fadeUp = (d = 0) => ({
-  initial: { opacity: 0, y: 20, filter: "blur(6px)" },
-  animate: { opacity: 1, y: 0, filter: "blur(0px)", transition: { duration: 0.7, ease, delay: d } },
-  exit: { opacity: 0, y: -12, filter: "blur(6px)", transition: { duration: 0.25 } },
-});
-
-const imgVar = {
-  enter: (d) => ({ opacity: 0, x: d === "right" ? 90 : -90, scale: 0.7, rotate: d === "right" ? -8 : 8, filter: "blur(12px)" }),
-  center: { opacity: 1, x: 0, scale: 1, rotate: 0, filter: "blur(0px)", transition: { duration: 0.85, ease } },
-  exit: (d) => ({ opacity: 0, x: d === "right" ? -70 : 70, scale: 0.8, rotate: d === "right" ? 6 : -6, filter: "blur(12px)", transition: { duration: 0.4 } }),
-};
-
-const pill = "flex items-center gap-2 rounded-full px-4 py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wide transition-colors duration-700";
-const tab = "cursor-pointer rounded-full border px-3.5 py-1.5 text-[10px] font-bold uppercase tracking-wide transition-colors duration-300";
-const focusRing = "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color:var(--fg)]";
-
+/* ───────────── HERO COMPONENT ───────────── */
 export default function Hero() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState("right");
@@ -137,35 +207,37 @@ export default function Hero() {
   const [quantity, setQuantity] = useState(1);
   const [isAdded, setIsAdded] = useState(false);
 
+  const shouldReduceMotion = useReducedMotion();
   const touchStartX = useRef(null);
-
   const { addToCart } = useCart();
 
   const total = SLIDES.length;
   const slide = SLIDES[current];
+  const discount = savePct(slide.price, slide.oldPrice);
+  const outlineStyle = { boxShadow: `inset 0 0 0 1px ${slide.line}` };
 
   function goTo(i) {
     if (i === current) return;
     setDirection(i > current ? "right" : "left");
     setCurrent(i);
   }
+
   function next() {
     setDirection("right");
     setCurrent((c) => (c + 1) % total);
   }
+
   function prev() {
     setDirection("left");
     setCurrent((c) => (c === 0 ? total - 1 : c - 1));
   }
 
-  // Autoplay
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || isAdded) return;
     const t = setTimeout(next, AUTOPLAY_MS);
     return () => clearTimeout(t);
-  }, [current, isPaused]);
+  }, [current, isPaused, isAdded, total]);
 
-  // Arrow keys (ignored while typing in a field)
   useEffect(() => {
     function handleKey(e) {
       const tag = e.target.tagName;
@@ -177,20 +249,22 @@ export default function Hero() {
     return () => window.removeEventListener("keydown", handleKey);
   }, []);
 
-  // Reset quantity when the dish changes
   useEffect(() => {
     setQuantity(1);
+    setIsAdded(false);
   }, [slide.id]);
 
-  // Swipe on touch screens
   function handleTouchStart(e) {
     touchStartX.current = e.touches[0].clientX;
+    setIsPaused(true);
   }
+
   function handleTouchEnd(e) {
+    setIsPaused(false);
     if (touchStartX.current === null) return;
     const diff = e.changedTouches[0].clientX - touchStartX.current;
     touchStartX.current = null;
-    if (Math.abs(diff) < 50) return;
+    if (Math.abs(diff) < 45) return;
     if (diff < 0) next();
     else prev();
   }
@@ -202,7 +276,7 @@ export default function Hero() {
       category: slide.category,
       price: slide.price,
       image: slide.image,
-      quantity: quantity,
+      quantity,
     });
     setIsAdded(true);
     setTimeout(() => setIsAdded(false), 1500);
@@ -211,8 +285,8 @@ export default function Hero() {
   return (
     <section
       aria-roledescription="carousel"
-      aria-label="Food gallery"
-      className="relative flex min-h-[100dvh] max-h-[100dvh] w-full select-none flex-col overflow-hidden px-4 pb-5 pt-6 transition-colors duration-700 lg:px-12 lg:pt-8"
+      aria-label="Featured gallery"
+      className="relative flex min-h-[100dvh] w-full select-none flex-col justify-between overflow-x-clip border-0 px-4 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(1.25rem,env(safe-area-inset-bottom))] transition-colors duration-700 sm:px-6 md:h-[100dvh] md:overflow-hidden md:py-6 lg:px-12 lg:pt-8"
       style={{ backgroundColor: slide.bg, "--fg": slide.fg }}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
@@ -220,202 +294,375 @@ export default function Hero() {
       onTouchEnd={handleTouchEnd}
     >
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800;900&family=Inter:wght@400;500;600;700&display=swap');
         .font-display { font-family: 'Archivo', sans-serif; }
+        .font-body { font-family: 'Inter', sans-serif; }
       `}</style>
 
-      {/* Soft light in the center */}
+      {/* Ambient Glow */}
       <div
         className="pointer-events-none absolute inset-0"
-        style={{ background: "radial-gradient(circle at 50% 50%, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 60%)" }}
+        style={{ background: GLOW }}
       />
 
-      {/* Category eyebrow */}
-      <div className="relative z-20 flex justify-center">
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={`cat-${slide.id}`}
-            {...fadeUp(0)}
-            className="font-display hidden inline-flex// items-center gap-2 rounded-full px-4 py-2 text-[11px] font-bold uppercase tracking-wide backdrop-blur-md"
-            style={{ backgroundColor: slide.glass, color: slide.fg }}
-          >
-            <Flame size={13} strokeWidth={2.5} />
-            {slide.category}
-          </motion.span>
-        </AnimatePresence>
+      {/* Top Header */}
+      <div className="relative z-20 flex w-full items-center justify-between gap-2 md:justify-center">
+        
+        <span
+          className="font-display shrink-0 rounded-full border-0 px-3 py-2 text-[10px] font-extrabold tabular-nums tracking-wider md:block hidden"
+          style={{ backgroundColor: slide.glass, color: slide.fg }}
+        >
+          0{current + 1}/0{total}
+        </span>
       </div>
 
-      {/* Stage: giant words + product + badges */}
-      <div className="relative z-10 flex min-h-0 flex-1 items-center justify-center" aria-live="polite">
-        {/* Giant background words */}
+      {/* Stage & Editorial Typography */}
+      <div
+        className="relative z-10 my-auto flex min-h-0 flex-1 flex-col items-center justify-center py-2 md:flex-row md:py-0"
+        aria-live="polite"
+      >
         <AnimatePresence mode="wait">
           <motion.h1
-            key={`w-${slide.id}`}
+            key={`words-${slide.id}`}
             {...fadeUp(0.05)}
-            className="font-display pointer-events-none absolute inset-0 flex flex-col items-center justify-center text-center font-black uppercase leading-[0.82] tracking-[-0.04em]"
-            style={{ color: slide.word, fontSize: "clamp(4.5rem, 21vw, 17rem)" }}
+            className={cx(
+              WORD_STYLE,
+              "pointer-events-none absolute inset-x-0 top-20 items-start text-left leading-[0.84] md:inset-0 md:items-center md:justify-center md:text-center md:leading-[0.82]"
+            )}
+            style={{
+              color: slide.word,
+              fontSize: "clamp(3.35rem, 18vw, 16rem)",
+            }}
           >
             <span>{slide.words[0]}</span>
             <span>{slide.words[1]}</span>
           </motion.h1>
         </AnimatePresence>
 
-        {/* Product image */}
-        <AnimatePresence mode="popLayout" custom={direction}>
-          <motion.div
-            key={slide.id}
-            custom={direction}
-            variants={imgVar}
-            initial="enter"
-            animate="center"
-            exit="exit"
-            className="relative z-10 flex h-[46vh] w-full items-center justify-center sm:h-[46vh] lg:h-[64vh]"
-          >
-            <img
-              src={slide.image}
-              alt={slide.category}
-              className="pointer-events-none h-full max-w-[90vw] object-contain lg:max-w-[50rem]"
-              style={{ filter: "drop-shadow(0 30px 30px rgba(0,0,0,0.35))" }}
-            />
-          </motion.div>
-        </AnimatePresence>
+        <div className="relative flex w-full flex-1 items-center justify-center pt-6 md:h-full md:pt-0">
+          <AnimatePresence mode="popLayout" custom={direction}>
+            <motion.div
+              key={slide.id}
+              custom={direction}
+              variants={imageVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              className="relative z-10 flex h-[41vh] max-h-[400px] w-full items-center justify-center sm:h-[45vh] sm:max-h-[450px] md:h-[50vh] md:max-h-none lg:h-[60vh]"
+            >
+              <motion.img
+                src={slide.image}
+                alt={slide.category}
+                animate={shouldReduceMotion ? {} : { y: [0, -8, 0] }}
+                transition={{
+                  duration: 4.5,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+                className="pointer-events-none h-full max-w-[92vw] object-contain md:max-w-[80vw] lg:max-w-[48rem]"
+              />
+            </motion.div>
+          </AnimatePresence>
 
-        {/* Speech bubble (left) */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`b1-${slide.id}`}
-            {...fadeUp(0.3)}
-            className="font-display absolute bottom-[14%] left-[3%] z-20 -rotate-3 rounded-2xl px-4 py-2 text-[11px] font-extrabold uppercase lg:bottom-[20%] lg:left-[24%] lg:px-5 lg:py-2.5 lg:text-sm"
-            style={{ backgroundColor: slide.bubble, color: slide.bubbleText }}
-          >
-            {slide.tags[0]}
-            <span className="absolute -bottom-1 left-6 h-3 w-3 rotate-45" style={{ backgroundColor: slide.bubble }} />
-          </motion.div>
-        </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`bubble-${slide.id}`}
+              {...fadeUp(0.3)}
+              className="font-display pointer-events-none absolute bottom-2 left-1 z-20 -rotate-3 rounded-2xl border-0 px-3.5 py-1.5 text-[10px] font-extrabold uppercase sm:left-4 sm:px-4 sm:py-2 sm:text-[11px] md:bottom-[14%] md:left-[8%] lg:bottom-[18%] lg:left-[22%] lg:px-5 lg:py-2.5 lg:text-sm"
+              style={{
+                backgroundColor: slide.bubble,
+                color: slide.bubbleText,
+              }}
+            >
+              {slide.tags[0]}
+              <span
+                className="absolute -bottom-1 left-5 h-2.5 w-2.5 rotate-45 sm:left-6 sm:h-3 sm:w-3"
+                style={{ backgroundColor: slide.bubble }}
+              />
+            </motion.div>
+          </AnimatePresence>
 
-        {/* Accent pill (right) */}
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={`b2-${slide.id}`}
-            {...fadeUp(0.4)}
-            className="font-display absolute right-[3%] top-[55%] z-20 rounded-full px-4 py-2 text-[11px] font-extrabold uppercase shadow-lg lg:right-[22%] lg:px-5 lg:py-2.5 lg:text-sm"
-            style={{ backgroundColor: slide.accent, color: slide.accentText }}
-          >
-            {slide.tags[1]}
-          </motion.div>
-        </AnimatePresence>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={`badge-${slide.id}`}
+              {...fadeUp(0.4)}
+              className="font-display pointer-events-none absolute right-1 top-8 z-20 rotate-3 rounded-full border-0 px-3.5 py-1.5 text-[10px] font-extrabold uppercase sm:right-4 sm:px-4 sm:py-2 sm:text-[11px] md:right-[8%] md:top-[52%] md:rotate-0 lg:right-[22%] lg:top-[55%] lg:px-5 lg:py-2.5 lg:text-sm"
+              style={{
+                backgroundColor: slide.accent,
+                color: slide.accentText,
+              }}
+            >
+              {slide.tags[1]}
+            </motion.div>
+          </AnimatePresence>
+        </div>
 
-        {/* Side arrows */}
-        <motion.button
-          type="button"
-          onClick={prev}
-          aria-label="Previous"
-          whileHover={{ scale: 1.12 }}
-          whileTap={{ scale: 0.88 }}
-          transition={spring}
-          className={`absolute left-0 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full backdrop-blur-md lg:h-11 lg:w-11 ${focusRing}`}
-          style={{ backgroundColor: slide.glass, color: slide.fg }}
-        >
-          <ChevronLeft size={18} strokeWidth={2.5} />
-        </motion.button>
-        <motion.button
-          type="button"
-          onClick={next}
-          aria-label="Next"
-          whileHover={{ scale: 1.12 }}
-          whileTap={{ scale: 0.88 }}
-          transition={spring}
-          className={`absolute right-0 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full backdrop-blur-md lg:h-11 lg:w-11 ${focusRing}`}
-          style={{ backgroundColor: slide.glass, color: slide.fg }}
-        >
-          <ChevronRight size={18} strokeWidth={2.5} />
-        </motion.button>
+        {/* Desktop Side Arrows */}
+        {[
+          {
+            label: "Previous",
+            side: "left-0",
+            onClick: prev,
+            Icon: ChevronLeft,
+          },
+          { label: "Next", side: "right-0", onClick: next, Icon: ChevronRight },
+        ].map(({ label, side, onClick, Icon }) => (
+          <motion.button
+            key={label}
+            type="button"
+            aria-label={label}
+            onClick={onClick}
+            {...hoverTap(1.1, 0.9)}
+            className={cx(
+              "absolute top-1/2 z-30 hidden h-10 w-10 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full border-0 md:flex lg:h-11 lg:w-11",
+              side,
+              focusRing
+            )}
+            style={{ backgroundColor: slide.glass, color: slide.fg }}
+          >
+            <Icon size={18} strokeWidth={2.5} />
+          </motion.button>
+        ))}
       </div>
 
-      {/* Bottom area */}
-      <div className="relative z-20 flex flex-col items-center gap-3">
-        {/* Pill row */}
-        <div className="font-display flex flex-wrap items-center justify-center gap-2 sm:gap-3" style={{ color: slide.fg }}>
-          {/* Save pill, with the old price crossed out */}
-          <span className={`${pill} shadow-sm`} style={{ backgroundColor: slide.accent, color: slide.accentText }}>
-            Save {savePct(slide.price, slide.oldPrice)}%
-            <s className="font-semibold opacity-60">{fmt(slide.oldPrice * quantity)}</s>
-          </span>
+      {/* Bottom Dock */}
+      <div className="relative z-20 mx-auto flex w-full max-w-lg flex-col items-center gap-2.5 md:max-w-none md:gap-3">
+        {/* Desktop Metadata & CTA Strip */}
+        <div
+          className="font-display flex w-full flex-wrap items-center justify-start gap-1.5 md:w-auto md:justify-center md:gap-3"
+          style={{ color: slide.fg }}
+        >
+          {discount > 0 && (
+            <span
+              className={pillClass}
+              style={{
+                backgroundColor: slide.accent,
+                color: slide.accentText,
+              }}
+            >
+              Save {discount}%
+              <s className="font-semibold tabular-nums opacity-65">
+                {fmt(slide.oldPrice * quantity)}
+              </s>
+            </span>
+          )}
 
-          <span className={`${pill} border`} style={{ borderColor: slide.line }}>
+          <span className={pillClass} style={outlineStyle}>
             <Clock size={13} strokeWidth={2.5} /> {slide.prepTime}
           </span>
 
-          <span className={`${pill} border`} style={{ borderColor: slide.line }}>
-            <Star size={13} strokeWidth={2.5} fill="currentColor" /> {slide.rating}
+          <span className={pillClass} style={outlineStyle}>
+            <Star size={13} strokeWidth={2.5} fill="currentColor" />{" "}
+            {slide.rating}
           </span>
 
-          {/* Quantity */}
-          <span className={`${pill} border`} style={{ borderColor: slide.line }}>
+          <span className={cx(pillClass, "hidden md:flex")} style={outlineStyle}>
             <button
               type="button"
               aria-label="Reduce quantity"
-              className={`cursor-pointer rounded-full ${focusRing}`}
+              className={cx("cursor-pointer rounded-full border-0", focusRing)}
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
             >
               <Minus size={13} strokeWidth={3} />
             </button>
-            <span className="w-4 text-center">{quantity}</span>
+            <span className="w-4 text-center tabular-nums">{quantity}</span>
             <button
               type="button"
               aria-label="Increase quantity"
-              className={`cursor-pointer rounded-full ${focusRing}`}
+              className={cx("cursor-pointer rounded-full border-0", focusRing)}
               onClick={() => setQuantity(quantity + 1)}
             >
               <Plus size={13} strokeWidth={3} />
             </button>
           </span>
 
-          {/* Main CTA */}
           <motion.button
             type="button"
             onClick={handleAddToCart}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={spring}
-            className={`${pill} cursor-pointer shadow-lg ${focusRing}`}
+            {...hoverTap()}
+            className={cx(pillClass, "hidden cursor-pointer md:flex", focusRing)}
             style={{
-              backgroundColor: isAdded ? SUCCESS_COLOR : slide.accent,
-              color: isAdded ? WHITE : slide.accentText,
+              backgroundColor: isAdded ? PALETTE.success : slide.accent,
+              color: isAdded ? PALETTE.white : slide.accentText,
             }}
           >
-            {isAdded ? <Check size={14} strokeWidth={3} /> : <ShoppingBasket size={14} strokeWidth={2.5} />}
-            {isAdded ? "Added" : `Order now · ${fmt(slide.price * quantity)} UGX`}
+            {isAdded ? (
+              <Check size={14} strokeWidth={3} />
+            ) : (
+              <ShoppingBasket size={14} strokeWidth={2.5} />
+            )}
+            <span className="tabular-nums">
+              {isAdded
+                ? "Added"
+                : `Order now · ${fmt(slide.price * quantity)} UGX`}
+            </span>
           </motion.button>
+
+          <motion.div
+            whileHover={{ scale: 1.04 }}
+            whileTap={{ scale: 0.96 }}
+            transition={SPRING}
+            className="hidden md:flex"
+          >
+            <Link
+              to="/Products"
+              className={cx(pillClass, focusRing)}
+              style={{ ...outlineStyle, color: slide.fg }}
+            >
+              Menu <ArrowRight size={13} strokeWidth={2.5} />
+            </Link>
+          </motion.div>
         </div>
 
-        {/* Dish tabs */}
-        <div role="tablist" aria-label="Choose a dish" className="font-display flex flex-wrap items-center justify-center gap-2">
-          {SLIDES.map((s, i) => (
+        {/* Mobile Conversion Row */}
+        <div
+          className="font-display flex w-full items-center gap-1.5 md:hidden"
+          style={{ color: slide.fg }}
+        >
+          <div
+            className="flex h-11 shrink-0 items-center gap-1.5 rounded-full border-0 px-2.5"
+            style={outlineStyle}
+          >
             <button
-              key={s.id}
               type="button"
-              role="tab"
-              aria-selected={i === current}
-              onClick={() => goTo(i)}
-              className={`${tab} ${focusRing}`}
-              style={
-                i === current
-                  ? { backgroundColor: slide.fg, borderColor: slide.fg, color: slide.bg }
-                  : { backgroundColor: "transparent", borderColor: slide.line, color: slide.fg }
-              }
+              aria-label="Reduce quantity"
+              className={cx(
+                "flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-0",
+                focusRing
+              )}
+              onClick={() => setQuantity(Math.max(1, quantity - 1))}
             >
-              {s.short}
+              <Minus size={13} strokeWidth={3} />
             </button>
-          ))}
+            <span className="w-4 text-center text-xs font-extrabold tabular-nums">
+              {quantity}
+            </span>
+            <button
+              type="button"
+              aria-label="Increase quantity"
+              className={cx(
+                "flex h-7 w-7 cursor-pointer items-center justify-center rounded-full border-0",
+                focusRing
+              )}
+              onClick={() => setQuantity(quantity + 1)}
+            >
+              <Plus size={13} strokeWidth={3} />
+            </button>
+          </div>
+
+          <motion.button
+            type="button"
+            onClick={handleAddToCart}
+            whileTap={{ scale: 0.96 }}
+            transition={SPRING}
+            className={cx(
+              "flex h-11 flex-1 cursor-pointer items-center justify-center gap-2 rounded-full border-0 px-3 text-[11px] font-extrabold uppercase tracking-wide",
+              focusRing
+            )}
+            style={{
+              backgroundColor: isAdded ? PALETTE.success : slide.accent,
+              color: isAdded ? PALETTE.white : slide.accentText,
+            }}
+          >
+            {isAdded ? (
+              <Check size={14} strokeWidth={3} />
+            ) : (
+              <ShoppingBasket size={14} strokeWidth={2.5} />
+            )}
+            <span className="truncate tabular-nums">
+              {isAdded
+                ? "Added"
+                : `Order · ${fmt(slide.price * quantity)} UGX`}
+            </span>
+          </motion.button>
+
+          <Link
+            to="/Products"
+            aria-label="Browse full menu"
+            className={cx(
+              "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border-0",
+              focusRing
+            )}
+            style={{ ...outlineStyle, color: slide.fg }}
+          >
+            <ArrowRight size={16} strokeWidth={2.5} />
+          </Link>
+        </div>
+
+        {/* Category Dish Selector Tabs */}
+        <div className="flex w-full items-center gap-1.5 md:w-auto">
+          <motion.button
+            type="button"
+            aria-label="Previous"
+            onClick={prev}
+            whileTap={{ scale: 0.88 }}
+            transition={SPRING}
+            className={cx(
+              "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 md:hidden",
+              focusRing
+            )}
+            style={{ backgroundColor: slide.glass, color: slide.fg }}
+          >
+            <ChevronLeft size={17} strokeWidth={2.5} />
+          </motion.button>
+
+          <div
+            role="tablist"
+            aria-label="Choose a dish"
+            className="font-display grid flex-1 grid-cols-4 gap-1 md:flex md:flex-initial md:flex-wrap md:items-center md:justify-center md:gap-2"
+          >
+            {SLIDES.map((s, i) => (
+              <button
+                key={s.id}
+                type="button"
+                role="tab"
+                aria-selected={i === current}
+                onClick={() => goTo(i)}
+                className={cx(
+                  tabClass,
+                  "truncate px-1.5 text-center text-[9px] sm:text-[10px] md:px-3.5",
+                  focusRing
+                )}
+                style={
+                  i === current
+                    ? { backgroundColor: slide.fg, color: slide.bg }
+                    : {
+                        backgroundColor: "transparent",
+                        color: slide.fg,
+                        boxShadow: `inset 0 0 0 1px ${slide.line}`,
+                      }
+                }
+              >
+                {s.short}
+              </button>
+            ))}
+          </div>
+
+          <motion.button
+            type="button"
+            aria-label="Next"
+            onClick={next}
+            whileTap={{ scale: 0.88 }}
+            transition={SPRING}
+            className={cx(
+              "flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-full border-0 md:hidden",
+              focusRing
+            )}
+            style={{ backgroundColor: slide.glass, color: slide.fg }}
+          >
+            <ChevronRight size={17} strokeWidth={2.5} />
+          </motion.button>
         </div>
 
         <Link
           to="/returnPolicy"
-          className={`rounded-full text-[10px] font-semibold uppercase tracking-widest opacity-70 transition-opacity hover:opacity-100 ${focusRing}`}
+          className={cx(
+            "rounded-full border-0 text-[10px] font-bold uppercase tracking-widest opacity-80 transition-opacity hover:opacity-100",
+            focusRing
+          )}
           style={{ color: slide.fg }}
         >
-          © {new Date().getFullYear()} {BRAND_NAME} · Return Policy
+          © {new Date().getFullYear()} {BRAND_NAME} · {SLOGAN} · Return Policy
         </Link>
       </div>
     </section>
