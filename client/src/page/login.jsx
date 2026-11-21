@@ -16,7 +16,7 @@ import BG_IMAGE from "../assets/bgimage.png";
 
 const BRAND = "greenpork";
 const BRAND_NAME = "Greenpork";
-const SLOGAN = "Crave the difference";
+const SLOGAN = "Eat Fresh. Live Happy.";
 
 const DEMO_USERS = {
   admin: {
