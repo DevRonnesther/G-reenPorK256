@@ -11,7 +11,7 @@ import {
   Flame,
 } from "lucide-react";
 
-import Logo from "../assets/Greenore.png";
+import Logo from "../assets/Greenore01.png";
 import BG_IMAGE from "../assets/bgimage.png";
 
 const BRAND = "greenpork";

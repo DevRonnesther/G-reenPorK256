@@ -11,7 +11,7 @@ import {
   ArrowRight,
   MapPin,
 } from "lucide-react";
-import GreenPorkIcon from "../../assets/Greenore.png";
+import GreenPorkIcon from "../../assets/Greenore01.png";
 
 /* ───────────── CONFIG + DESIGN TOKENS ───────────── */
 const BRAND = "Greenpork";

@@ -1,5 +1,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
+import GreenSplash from "../page/greensplash.jsx";
 import Hero from "../Hero/hero";
 import Review from "../page/review";
 import Abouts from "../page/Abouts";
@@ -20,14 +21,7 @@ const FullScreenAuth = ({ children }) => (
 const Router = () => {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <FullScreenAuth>
-            <Login />
-          </FullScreenAuth>
-        }
-      />
+      <Route path="/" element={<GreenSplash />} />
       <Route
         path="/login"
         element={
